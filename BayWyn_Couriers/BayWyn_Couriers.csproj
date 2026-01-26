@@ -8,4 +8,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Service\" />
+    <Folder Include="Views\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
