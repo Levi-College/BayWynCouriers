@@ -9,9 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Service\" />
-    <Folder Include="Views\" />
-    <Folder Include="Models\" />
+    <Compile Update="Views\AdminView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\OwnerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\CourierView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>
