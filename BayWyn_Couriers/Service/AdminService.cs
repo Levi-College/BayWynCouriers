@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BayWyn_Couriers.Service
 {
-    internal class ContractService
+    internal class AdminService
     {
     }
 }

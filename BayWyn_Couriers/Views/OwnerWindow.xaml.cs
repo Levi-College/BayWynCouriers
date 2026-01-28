@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace BayWyn_Couriers.Views
 {
     /// <summary>
-    /// Interaction logic for ClientView.xaml
+    /// Interaction logic for OwnerWindow.xaml
     /// </summary>
-    public partial class ClientView : Window
+    public partial class OwnerWindow : Window
     {
-        public ClientView()
+        public OwnerWindow()
         {
             InitializeComponent();
         }

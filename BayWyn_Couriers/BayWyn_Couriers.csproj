@@ -9,15 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="Views\AdminView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\OwnerView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\CourierView.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
 </Project>
