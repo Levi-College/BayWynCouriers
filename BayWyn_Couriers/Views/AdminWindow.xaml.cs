@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using BayWyn_Couriers.Pages;
 
 namespace BayWyn_Couriers.Views
 {
@@ -19,9 +20,16 @@ namespace BayWyn_Couriers.Views
     /// </summary>
     public partial class AdminWindow : Window
     {
+        // Creatings objects for the pages
+        JobsPage jobsPage { get; set; }
+
         public AdminWindow(int userID)
         {
             InitializeComponent();
+            // Initializing the pages
+            jobsPage = new JobsPage();
+            // Setting the default page to JobsPage
+            MainFrame.Content = jobsPage;
         }
     }
 }

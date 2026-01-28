@@ -13,19 +13,66 @@
         <!-- Base Grid -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="230" />
-                <ColumnDefinition Width="620" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Side Menu -->
-            <Grid Grid.Column="0">
-                <Label Content="Admin Page" HorizontalAlignment="Left" Height="109"/>
-                <Button Content="Manage Users" HorizontalAlignment="Left" Margin="34,200,0,0" VerticalAlignment="Top" Width="161" Height="40"/>
+            <Grid Grid.Column="0" Background="Aqua">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Background="Beige">
+                    <Label Content="BayWyn Couriers" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="20"/>
+                </Grid>
+                
+                <!--Side menu buttons-->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Vertical">
+                        <Button Content="Manage Jobs" Height="40" Margin="0,5,5,5"/>
+                        <Button Content="Reports" Height="40" Margin="0,5,5,5"/>
+                        <Button Content="Contracts" Height="40" Margin="0,5,5,5"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
 
             <!-- Main Content Area -->
-            <Grid Grid.Column="1">
-                <Label Content="Welcome, Admin!" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" FontSize="24"/>
+            <Grid Grid.Column="1" Background="Azure">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Background="#2C3E50">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="400" />
+                        <ColumnDefinition Width="200" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Label Content="Welcome Admin" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
+                    </Grid>
+
+                    <Grid Grid.Column="1">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
+                            <Label Content="Admin Name" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
+                            <Button Content="Logout" Width="80" Height="30"/>
+                        </StackPanel>
+                    </Grid>
+
+
+                </Grid>
+
+                <!--Main content goes here-->
+                <!--Used for displaying multiple pages-->
+
+                <Grid Grid.Row="1" Background="WhiteSmoke">
+                    <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+                </Grid>
             </Grid>
         </Grid>
 
