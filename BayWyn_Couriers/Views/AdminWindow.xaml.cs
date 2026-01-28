@@ -19,7 +19,7 @@ namespace BayWyn_Couriers.Views
     /// </summary>
     public partial class AdminWindow : Window
     {
-        public AdminWindow()
+        public AdminWindow(int userID)
         {
             InitializeComponent();
         }

@@ -50,7 +50,8 @@ namespace BayWyn_Couriers
                 // Opening admin window if the user is an admin
                 if (loginService.Role == "Admin")
                 {
-                    AdminWindow adminWindow = new AdminWindow();
+                    MessageBox.Show("Opening Admin Window with the Admin:"+loginService.UserId);
+                    AdminWindow adminWindow = new AdminWindow(loginService.UserId);
                     adminWindow.Show();
                     this.Close();
                 }

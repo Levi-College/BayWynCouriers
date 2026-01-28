@@ -7,7 +7,28 @@
         mc:Ignorable="d"
         Title="AdminWindow" Height="450" Width="800">
     <Grid>
-        <Label Content="Admin Page" HorizontalAlignment="Left" Height="109" Margin="229,78,0,0" VerticalAlignment="Top" Width="288"/>
+        
+        <!-- Window Border -->
+        <Border CornerRadius="20" />
+        <!-- Base Grid -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="230" />
+                <ColumnDefinition Width="620" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Side Menu -->
+            <Grid Grid.Column="0">
+                <Label Content="Admin Page" HorizontalAlignment="Left" Height="109"/>
+                <Button Content="Manage Users" HorizontalAlignment="Left" Margin="34,200,0,0" VerticalAlignment="Top" Width="161" Height="40"/>
+            </Grid>
+
+            <!-- Main Content Area -->
+            <Grid Grid.Column="1">
+                <Label Content="Welcome, Admin!" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" FontSize="24"/>
+            </Grid>
+        </Grid>
 
     </Grid>
+
 </Window>

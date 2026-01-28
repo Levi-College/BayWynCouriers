@@ -54,13 +54,9 @@ namespace BayWyn_Couriers.Service
 
                     MessageBox.Show(loginCheck[0].ToString());
 
-                    //UserId = Convert.ToInt32(loginCheck["UserId"]);
+                    UserId = Convert.ToInt32(loginCheck["UserId"]);
                     //UserName = loginCheck["Username"].ToString();
                     Role = loginCheck["UserRole"].ToString();
-                    MessageBox.Show("Step1");
-
-
-
                     loginCheck.Close();
                
 
