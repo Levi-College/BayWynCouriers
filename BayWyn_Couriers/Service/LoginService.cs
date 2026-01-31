@@ -21,7 +21,7 @@ namespace BayWyn_Couriers.Service
         public bool checkLogin(string userName, string password) {
 
             // Getting the database connection string
-            string myCon = ConfigurationManager.ConnectionStrings"BayWynCouriersDB"].ConnectionString;
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
 
 
             SqlConnection mySqlCon = new SqlConnection(myCon);
@@ -52,11 +52,11 @@ namespace BayWyn_Couriers.Service
 
                     loginCheck.Read();
 
-                    MessageBox.Show(loginCheck0].ToString());
+                    MessageBox.Show(loginCheck[0].ToString());
 
-                    UserId = Convert.ToInt32(loginCheck"UserId"]);
+                    UserId = Convert.ToInt32(loginCheck["UserId"]);
                     //UserName = loginCheck"Username"].ToString();
-                    Role = loginCheck"UserRole"].ToString();
+                    Role = loginCheck["UserRole"].ToString();
                     loginCheck.Close();
                
 
