@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BayWyn_Couriers.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,14 @@ namespace BayWyn_Couriers.Pages
         public JobsPage()
         {
             InitializeComponent();
+
+            List<User> users = new List<User>();
+            users.Add(new User() { UserId = 1, UserName = "John Doe", Role = "Client" });
+            users.Add(new User() { UserId = 2, UserName = "John Doe", Role = "Client" });
+            users.Add(new User() { UserId = 3, UserName = "John Doe", Role = "Client" });
+
+            jobsList.ItemsSource = users;
+
         }
     }
 }
