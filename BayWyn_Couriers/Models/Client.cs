@@ -7,7 +7,7 @@ using static BayWyn_Couriers.Models.User;
 
 namespace BayWyn_Couriers.Models
 {
-    internal class Client : User
+    public class Client : User
     {
         // Additional properties specific to Client can be added here in the future
         public string CompanyName { get; set; }

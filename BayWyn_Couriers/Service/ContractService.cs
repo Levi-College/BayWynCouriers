@@ -7,7 +7,7 @@ using BayWyn_Couriers.Models;
 
 namespace BayWyn_Couriers.Service
 {
-    internal class ContractService 
+    public class ContractService 
     {
         // Simple test code to create a new contract
         public void NewContract(string companyName)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BayWyn_Couriers.Models
 {
-    internal class Courier : User
+    public class Courier : User
     {
         // Additional properties specific to Courier can be added here in the future
         public string DriverLicenseNumber { get; set; }

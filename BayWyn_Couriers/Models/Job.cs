@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BayWyn_Couriers.Models
 {
-    internal class Job
+    public class Job
     {
         // Setting properties as to ensure they must be provided during object initialization
         public int JobId { get; set; }
@@ -20,5 +20,6 @@ namespace BayWyn_Couriers.Models
 
         public string Description { get; set; }
         public float Price { get; set; }
+        public string JobStatus { get; set; }
     }
 }

@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         
         <!--Data grid for the jobs to be displayed-->
-        <DataGrid Grid.Row="1" x:Name="jobsList" />
+        <DataGrid ItemsSource="{Binding PendingJobs}" Grid.Row="1" x:Name="jobsList" />
 
         <!--
         <TextBlock Grid.Row="0" Text="Jobs Page" Background="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="24"/>

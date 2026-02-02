@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BayWyn_Couriers.Models
 {
-    internal class Owner : User
+    public class Owner : User
     {
     }
 }

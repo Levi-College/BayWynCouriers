@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BayWyn_Couriers.Models
 {
-    internal class User
+    public class User
     {
         // Setting properties as to ensure they must be provided during object initialization
         

@@ -1,6 +1,8 @@
 ﻿using BayWyn_Couriers.Models;
+using BayWyn_Couriers.Service;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace BayWyn_Couriers.Pages
 {
     /// <summary>
@@ -21,16 +24,23 @@ namespace BayWyn_Couriers.Pages
     /// </summary>
     public partial class JobsPage : Page
     {
+
+        // Observable collection to hold the pending jobs
+        public ObservableCollection<Job> PendingJobs { get; set; }
+
+        // Declaring the admin service
+        AdminService adService = new AdminService();
+
         public JobsPage()
         {
             InitializeComponent();
 
-            List<User> users = new List<User>();
-            users.Add(new User() { UserId = 1, UserName = "John Doe", Role = "Client" });
-            users.Add(new User() { UserId = 2, UserName = "John Doe", Role = "Client" });
-            users.Add(new User() { UserId = 3, UserName = "John Doe", Role = "Client" });
 
-            jobsList.ItemsSource = users;
+            PendingJobs = adService.GetPendingJobs();
+            MessageBox.Show("Number of pending jobs: " + PendingJobs.Count);
+
+            // Giving the data context for the data binding
+            this.DataContext = this;
 
         }
     }

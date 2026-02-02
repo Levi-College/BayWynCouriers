@@ -11,7 +11,7 @@ using System.Windows;
 
 namespace BayWyn_Couriers.Service
 {
-    internal class LoginService
+    public class LoginService
     {
         // To hold the current user information
         public int UserId;
@@ -31,7 +31,7 @@ namespace BayWyn_Couriers.Service
             try
             {
                 // Creating the SQL command to check for user credential
-                string sqlQuery = "SELECT COUNT(1) FROM Users WHERE UserName=@UserName AND LoginPassword=@LoginPassword";
+                //string sqlQuery = "SELECT COUNT(1) FROM Users WHERE UserName=@UserName AND LoginPassword=@LoginPassword";
   
 
                 SqlCommand cmLogin = new SqlCommand();
@@ -47,12 +47,7 @@ namespace BayWyn_Couriers.Service
                 // If a record is found, open the main application window
                 if (loginCheck.HasRows)
                 {
-
-                    MessageBox.Show("Login successful!");
-
                     loginCheck.Read();
-
-                    MessageBox.Show(loginCheck[0].ToString());
 
                     UserId = Convert.ToInt32(loginCheck["UserId"]);
                     //UserName = loginCheck"Username"].ToString();

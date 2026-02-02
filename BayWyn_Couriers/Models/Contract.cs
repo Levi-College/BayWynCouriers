@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BayWyn_Couriers.Models
 {
-    internal class Contract
+    public class Contract
     {
         // Setting contract properties to ensure they must be provided during object initialization
         public int ContractId { get; set; }
