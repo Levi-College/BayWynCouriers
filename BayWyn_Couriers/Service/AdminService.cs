@@ -13,10 +13,14 @@ using System.Windows;
 namespace BayWyn_Couriers.Service
 {
     public class AdminService
-    {    
+    {
 
-        // Method to return the jobs in an observable collection
-        public ObservableCollection<Job> PendingJobs { get; set; }
+        public ObservableCollection<Job> PendingJobs { get; set; } // Observable collection to hold the pending jobs
+        public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
+
+        // Constructor
+        public AdminService() { }
+
 
         public ObservableCollection<Job> GetPendingJobs()
         {
@@ -50,18 +54,18 @@ namespace BayWyn_Couriers.Service
                 // If a record is found, open the main application window
                 if (listJobs.HasRows)
                 {
-
                     MessageBox.Show("Test 4");
+                    // Initializing the observable collection
                     PendingJobs = new ObservableCollection<Job>();
+
                     // Reading through each record found
                     while (listJobs.Read())
                     {
                         MessageBox.Show("Test 5");
                         // Initializing the observable collection
                         PendingJobs.Add(
+
                             //For each record found, add it to the observable collection
-
-
                             new Job
                             {
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
@@ -69,14 +73,13 @@ namespace BayWyn_Couriers.Service
                                 CourierId = Convert.ToInt32(listJobs["CourierId"]),
                                 JobStatus = listJobs["JobStatus"].ToString(),
                             }
-                            );
-                        
+                         );
                     }
-                       
-                    
+
+                    // Closing the data reader
                     listJobs.Close();
 
-
+                    // Returning the observable collection of jobs with pending status
                     return PendingJobs;
                 }
                 else
@@ -107,6 +110,83 @@ namespace BayWyn_Couriers.Service
 
         }
 
+        // Method to get all contracts from the database
+        public ObservableCollection<Contract> GetAllContracts()
+        {
+            // Going through the database to get all jobs status that are pending
+            // Getting the database connection string
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+
+            SqlConnection mySqlCon = new(myCon);
+            // Opening the SQL connection
+            mySqlCon.Open();
+
+            try
+            {
+                // Creating the SQL command to check for user credential
+
+                SqlCommand cmGetContracts = new SqlCommand();
+                cmGetContracts.Connection = mySqlCon;
+                cmGetContracts.CommandType = CommandType.Text;
+                cmGetContracts.CommandText = "SELECT * FROM Jobs WHERE JobStatus=@Status";
+
+                cmGetContracts.Parameters.AddWithValue("@Status", "Pending");
+
+                SqlDataReader lstContracts = cmGetContracts.ExecuteReader();
+
+                // If a record is found, open the main application window
+                if (lstContracts.HasRows)
+                {
+
+                    // Initializing the observable collection
+                    ContractsList = new ObservableCollection<Contract>();
+
+                    // Reading through each record found
+                    while (lstContracts.Read())
+                    {
+                        // Initializing the observable collection
+                        ContractsList.Add(
+
+                            //For each record found, add it to the observable collection
+                            new Contract
+                            {
+                                ClientId = Convert.ToInt32(lstContracts["ClientId"]),
+                                CompanyName = lstContracts["CompanyName"].ToString(),
+                                Address = lstContracts["Address"].ToString(),
+                                PhoneNumber = lstContracts["PhoneNumber"].ToString(),
+                                ContractStatus = lstContracts["ContractStatus"].ToString(),
+                            }
+                         );
+                    }
+
+                    // Closing the data reader
+                    lstContracts.Close();
+
+                    // Returning the observable collection of jobs with pending status
+                    return ContractsList;
+                }
+                else
+                {
+
+                    Console.WriteLine("Error (1)");
+
+                    return ContractsList;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                mySqlCon.Close();
+
+                return ContractsList;
+
+            }
+
+            finally
+            {
+                mySqlCon.Close();
+            }
+        }
     }
 }
 

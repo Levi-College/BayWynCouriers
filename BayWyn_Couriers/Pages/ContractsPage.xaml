@@ -9,6 +9,19 @@
       Title="ContractsPage">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--Data grid for the jobs to be displayed-->
+        <DataGrid ItemsSource="{Binding ContractsList}" Grid.Row="0" x:Name="contractsList" />
+
+                <!--
+            <TextBlock Grid.Row="0" Text="Jobs Page" Background="AntiqueWhite" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="24"/>
+            <StackPanel Grid.Row="1" Margin="20" Background="AntiqueWhite">
+                <TextBlock Text="This is where job management features will be implemented." FontSize="16"/>
+            </StackPanel>
+            -->
+
     </Grid>
 </Page>

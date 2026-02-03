@@ -20,5 +20,7 @@ namespace BayWyn_Couriers.Models
         public decimal MonthlyRate { get; set; }
         public decimal CostPerJob { get; set; }
 
+        public string ContractStatus { get; set; }
+
     }
 }
