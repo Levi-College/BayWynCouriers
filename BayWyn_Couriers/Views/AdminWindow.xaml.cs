@@ -21,7 +21,8 @@ namespace BayWyn_Couriers.Views
     public partial class AdminWindow : Window
     {
         // Creatings objects for the pages
-        JobsPage jobsPage { get; set; }
+        JobsPage jobsPage { get; set; } // Adding the jobs page to the admin window
+        ContractsPage contractsPage { get; set; } // Adding the contracts page
 
         public AdminWindow(int userID)
         {
@@ -30,6 +31,16 @@ namespace BayWyn_Couriers.Views
             jobsPage = new JobsPage();
             // Setting the default page to JobsPage
             MainFrame.Content = jobsPage;
+
+       
+        }
+
+        private void btnContracts_Click(object sender, RoutedEventArgs e)
+        {
+            // Initializing the contracts page
+            contractsPage = new ContractsPage();
+            // Setting the page to ContractsPage when the button is clicked
+            MainFrame.Content = contractsPage;
         }
     }
 }

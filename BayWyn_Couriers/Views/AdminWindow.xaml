@@ -32,9 +32,9 @@
                 <!--Side menu buttons-->
                 <Grid Grid.Row="1">
                     <StackPanel Orientation="Vertical">
-                        <Button x:Name="btnManageJobs" Content="Manage Jobs" Height="40" Margin="0,5,5,5" Click="Button_Click"/>
+                        <Button x:Name="btnManageJobs" Content="Manage Jobs" Height="40" Margin="0,5,5,5"/>
                         <Button Content="Reports" Height="40" Margin="0,5,5,5"/>
-                        <Button x:Name="btnContracts" Content="Contracts" Height="40" Margin="0,5,5,5"/>
+                        <Button x:Name="btnContracts" Content="Contracts" Height="40" Click="btnContracts_Click"/>
                     </StackPanel>
                 </Grid>
             </Grid>
