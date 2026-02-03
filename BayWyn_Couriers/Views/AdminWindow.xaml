@@ -34,7 +34,7 @@
                     <StackPanel Orientation="Vertical">
                         <Button x:Name="btnManageJobs" Content="Manage Jobs" Height="40" Margin="0,5,5,5" Click="Button_Click"/>
                         <Button Content="Reports" Height="40" Margin="0,5,5,5"/>
-                        <Button Content="Contracts" Height="40" Margin="0,5,5,5"/>
+                        <Button x:Name="btnContracts" Content="Contracts" Height="40" Margin="0,5,5,5"/>
                     </StackPanel>
                 </Grid>
             </Grid>
