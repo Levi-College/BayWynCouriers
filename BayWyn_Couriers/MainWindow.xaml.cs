@@ -24,41 +24,5 @@ namespace BayWyn_Couriers
         {
             InitializeComponent();
         }
-
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-            //string Username = txtUsername.Text;
-            
-            //string Password = txtPassword.Text;
-            //MessageBox.Show(Username+Password);
-            // Checking if the credentials are correct
-
-            //bool isValidUser = loginService.checkLogin(Username, Password);
-
-            // Checking if the user is valid
-            //if (isValidUser)
-            //{
-            //    //Opening windows based on role
-            //    // If valid, open the main application window
-            //    MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-
-            //    // Opening admin window if the user is an admin
-            //    if (loginService.Role == "Admin")
-            //    {
-            //        MessageBox.Show("Opening Admin Window with the Admin:"+loginService.UserId);
-            //        AdminWindow adminWindow = new AdminWindow(loginService.UserId);
-            //        adminWindow.Show();
-            //        this.Close();
-            //    }
-                
-
-            //}
-            //else
-            //{
-            //    // If invalid, show an error message
-            //    MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
-        }
     }
 }

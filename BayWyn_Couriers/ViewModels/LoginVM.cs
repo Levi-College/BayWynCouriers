@@ -58,16 +58,11 @@ namespace BayWyn_Couriers.ViewModels
 
         private void ExecuteLogin(object? obj)
         {
-            MessageBox.Show("Attempting to login with username: " + UserName + " and password: " + Password);
-
             if (checkLogin(UserName, Password))
             {
-                MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 // If the user is an admin, changing the view to the admindashboard, if the user is a courier, changing the view to the courier dashboard, if the user is an LC, changing the view to the LC dashboard
                 if (Role == "Admin")
                 {
-                    MessageBox.Show("Opening Admin Window with the Admin:" + UserId);
                     // Navigating to the admin dashboard view (passing the navigation view model to the admin view model constructor to allow for navigation from the admin dashboard)
                     _navigationVM.CurrentView = new AdminVM(_navigationVM);
                 }
@@ -103,10 +98,7 @@ namespace BayWyn_Couriers.ViewModels
                 cmLogin.Parameters.AddWithValue("@UserName", userName);
                 cmLogin.Parameters.AddWithValue("@LoginPassword", password);
 
-                MessageBox.Show("Line 103");
-
                 SqlDataReader loginCheck = cmLogin.ExecuteReader();
-                MessageBox.Show("Line 104");
 
                 // If a record is found, open the main application window
                 if (loginCheck.HasRows)

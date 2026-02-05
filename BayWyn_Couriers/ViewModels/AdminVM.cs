@@ -46,7 +46,6 @@ namespace BayWyn_Couriers.ViewModels
         public void ExecuteLogout(object? obj)
         {
             // Code to handle logout logic, such as clearing user session and navigating to the login screen
-            MessageBox.Show("Logout successful!");
             // Navigating back to the login screen by setting the CurrentView of the navigation view model to a new instance of the LoginVM
             _navigationVM.CurrentView = new LoginVM(_navigationVM);
         }
