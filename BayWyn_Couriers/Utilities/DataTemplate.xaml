@@ -3,8 +3,15 @@
                     xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
                     xmlns:view="clr-namespace:BayWyn_Couriers.Views">
 
-    <DataTemplate x:Key="LoginViewTemplate">
-        <view:Login/>
+    <!--This ensure that when LoginWindowVM is used, the view associated with it is Login view (used for the design)-->
+    <DataTemplate DataType="{x:Type vm:LoginWindowVM}">
+        <view:Login />
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AdminVM}">
+        <view:Login />
+    </DataTemplate>
+
+    
 
 </ResourceDictionary>

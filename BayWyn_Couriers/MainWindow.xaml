@@ -5,15 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BayWyn_Couriers"
         xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
+        xmlns:view="clr-namespace:BayWyn_Couriers.Views"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="BayWyn Couriers" Height="450" Width="800">
 
     <Window.DataContext>
         <vm:NavigationVM />
     </Window.DataContext>
+
     <!--This grid will hold the content control to switch between the user controls (login and user window-->
     <Grid>
-        <ContentControl x:Name="OuterWindow" 
+        <ContentControl x:Name="UserWindow" 
                         Content="{Binding CurrentView}" />
     </Grid>
 </Window>

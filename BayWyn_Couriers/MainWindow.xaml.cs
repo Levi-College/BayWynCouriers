@@ -20,10 +20,6 @@ namespace BayWyn_Couriers
     /// </summary>
     public partial class MainWindow : Window
     {
-        // Creating an instance of the login service
-        LoginVM loginService = new LoginVM();
-
-
         public MainWindow()
         {
             InitializeComponent();

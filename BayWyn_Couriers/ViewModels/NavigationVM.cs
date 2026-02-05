@@ -30,7 +30,7 @@ namespace BayWyn_Couriers.ViewModels
         /// Sets the current view to the home page by initializing a new instance of the <see cref="HomeVM"/> class.
         /// </summary>
         /// <param name="obj">An optional parameter that is not used in this method.</param>
-        private void Login(object? obj) => CurrentView = new LoginVM();
+        private void Login(object? obj) => CurrentView = new LoginWindowVM();
         private void AdminDashboard(object? obj) => CurrentView = new AdminVM();
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
         private void LCDashboard(object? obj) => CurrentView = new LCVM();
@@ -51,7 +51,7 @@ namespace BayWyn_Couriers.ViewModels
             LCCommand = new RelayCommand(LCDashboard);
 
             // Startup Page
-            CurrentView = new LoginVM();
+            CurrentView = new LoginWindowVM();
         }
     }
 }
