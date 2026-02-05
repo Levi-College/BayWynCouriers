@@ -29,18 +29,18 @@ namespace BayWyn_Couriers.Pages
         public ObservableCollection<Contract> ContractsList { get; set; }
 
         // Declaring the admin service
-        AdminVM adService = new AdminVM();
+        //AdminVM adService = new AdminVM();
 
-        public ContractsPage()
-        {
-            InitializeComponent();
+        //public ContractsPage()
+        //{
+        //    InitializeComponent();
 
 
-            ContractsList = adService.GetAllContracts();
+        //    ContractsList = adService.GetAllContracts();
 
-            // Giving the data context for the data binding
-            this.DataContext = this;
+        //    // Giving the data context for the data binding
+        //    this.DataContext = this;
 
-        }
+        //}
     }
 }

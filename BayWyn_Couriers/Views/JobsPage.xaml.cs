@@ -29,19 +29,19 @@ namespace BayWyn_Couriers.Pages
         public ObservableCollection<Job> PendingJobs { get; set; }
 
         // Declaring the admin service
-        AdminVM adService = new AdminVM();
+        //AdminVM adService = new AdminVM();
 
-        public JobsPage()
-        {
-            InitializeComponent();
+        //public JobsPage()
+        //{
+        //    InitializeComponent();
 
 
-            PendingJobs = adService.GetPendingJobs();
-            MessageBox.Show("Number of pending jobs: " + PendingJobs.Count);
+        //    PendingJobs = adService.GetPendingJobs();
+        //    MessageBox.Show("Number of pending jobs: " + PendingJobs.Count);
 
-            // Giving the data context for the data binding
-            this.DataContext = this;
+        //    // Giving the data context for the data binding
+        //    this.DataContext = this;
 
-        }
+        //}
     }
 }

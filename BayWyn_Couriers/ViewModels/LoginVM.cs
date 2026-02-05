@@ -22,7 +22,8 @@ namespace BayWyn_Couriers.ViewModels
         private string _userName;
         private string _password;
 
-        private NavigationVM _navigationVM; // To hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role
+        // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
+        private NavigationVM _navigationVM; 
 
         // To hold the current user information
         public int UserId;
@@ -33,9 +34,7 @@ namespace BayWyn_Couriers.ViewModels
         public string UserName
         {
             get { return _userName; }
-            set { 
-                _userName = value; OnPropertyChanged();
-            }
+            set { _userName = value; OnPropertyChanged(); }
         }
 
         public string Password
@@ -43,14 +42,16 @@ namespace BayWyn_Couriers.ViewModels
             get { return _password; }
             set { _password = value; OnPropertyChanged(); }
         }
-        
-       
+
+
+        // Command to execute the login process when the user clicks the login button
         public ICommand LoginCommand { get; }
 
 
         public LoginVM(NavigationVM nav)
         {
             _navigationVM = nav;
+
             LoginCommand = new RelayCommand(ExecuteLogin);
         }
 
@@ -67,7 +68,8 @@ namespace BayWyn_Couriers.ViewModels
                 if (Role == "Admin")
                 {
                     MessageBox.Show("Opening Admin Window with the Admin:" + UserId);
-                    _navigationVM.CurrentView = new AdminVM();
+                    // Navigating to the admin dashboard view (passing the navigation view model to the admin view model constructor to allow for navigation from the admin dashboard)
+                    _navigationVM.CurrentView = new AdminVM(_navigationVM);
                 }
                
             }

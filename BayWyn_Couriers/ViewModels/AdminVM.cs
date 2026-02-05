@@ -16,6 +16,8 @@ namespace BayWyn_Couriers.ViewModels
 {
     public class AdminVM : ViewModelBase
     {
+        // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
+        private NavigationVM _navigationVM;
 
         public ObservableCollection<Job> PendingJobs { get; set; } // Observable collection to hold the pending jobs
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
@@ -24,20 +26,30 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand LogoutCommand { get; }
 
 
-        // Constructor to initialize the logout command
-        //public AdminVM()
+        //public AdminVM(NavigationVM nav)
         //{
-        //    LogoutCommand = new RelayCommand(Logout);
+        //    _navigationVM = nav;
+
+        //    LogoutCommand = new RelayCommand(ExecuteLogout);
         //}
 
-        //public void Logout()
-        //{
-        //    // Code to handle logout logic, such as clearing user session and navigating to the login screen
-        //    MessageBox.Show("Logout successful!");
+        public AdminVM(NavigationVM nav)
+        {
+            _navigationVM = nav;
+            // Initializing the LogoutCommand with a new RelayCommand that executes the ExecuteLogout method when invoked
+            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
+            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning 
+        }
 
-        //    // Changing the current view to the login page by initializing a new instance of the LoginVM class and passing the reference of the NavigationVM to it,
-        //    // allowing the LoginVM to navigate to other views based on the user's role after a successful login.
-        //}
+
+        public void ExecuteLogout(object? obj)
+        {
+            // Code to handle logout logic, such as clearing user session and navigating to the login screen
+            MessageBox.Show("Logout successful!");
+            // Navigating back to the login screen by setting the CurrentView of the navigation view model to a new instance of the LoginVM
+            _navigationVM.CurrentView = new LoginVM(_navigationVM);
+        }
 
         public ObservableCollection<Job> GetPendingJobs()
         {
