@@ -9,11 +9,11 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
    
-    <!--
+    
     <UserControl.DataContext>
-        <vm:AdminVM />
+        <vm:NavigationVM />
     </UserControl.DataContext>
-    -->
+    
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -71,7 +71,7 @@
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
                         <Label Content="Admin Name" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
-                        <Button Content="Logout" Width="80" Height="30"/>
+                        <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>
                     </StackPanel>
                 </Grid>
 

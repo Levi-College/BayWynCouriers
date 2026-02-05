@@ -1,4 +1,5 @@
 ﻿using BayWyn_Couriers.Models;
+using BayWyn_Couriers.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,18 +10,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace BayWyn_Couriers.ViewModels
 {
-    public class AdminVM
+    public class AdminVM : ViewModelBase
     {
 
         public ObservableCollection<Job> PendingJobs { get; set; } // Observable collection to hold the pending jobs
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
 
-        // Constructor
-        public AdminVM() { }
+        
+        public ICommand LogoutCommand { get; }
 
+
+        // Constructor to initialize the logout command
+        //public AdminVM()
+        //{
+        //    LogoutCommand = new RelayCommand(Logout);
+        //}
+
+        //public void Logout()
+        //{
+        //    // Code to handle logout logic, such as clearing user session and navigating to the login screen
+        //    MessageBox.Show("Logout successful!");
+
+        //    // Changing the current view to the login page by initializing a new instance of the LoginVM class and passing the reference of the NavigationVM to it,
+        //    // allowing the LoginVM to navigate to other views based on the user's role after a successful login.
+        //}
 
         public ObservableCollection<Job> GetPendingJobs()
         {

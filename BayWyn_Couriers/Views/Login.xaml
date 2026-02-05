@@ -17,11 +17,11 @@
         <TextBox x:Name="txtUsername"
             Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
             HorizontalAlignment="Left" Margin="358,161,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        
+
         <Button x:Name="btnLogin" Content="Login" 
                 Command="{Binding LoginCommand}"
                 HorizontalAlignment="Left" Margin="374,273,0,0" VerticalAlignment="Top" Height="47" Width="101"/>
     </Grid>
 
-  
+
 </UserControl>

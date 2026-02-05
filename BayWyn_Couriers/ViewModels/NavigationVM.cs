@@ -25,6 +25,8 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand AdminCommand { get; set; } = null!;   // Find Password Page
         public ICommand CourierCommand { get; set; } = null!;   // New Password Page
         public ICommand LCCommand { get; set; } = null!;   // View All Passwords Page
+
+        public ICommand LogoutCommand { get; set; } = null!;   // Logout Command (returns to Login Page)
         //public ICommand EditPasswordCommand { get; set; } = null!;   // Edit Password Page
 
         /// <summary>
@@ -35,6 +37,8 @@ namespace BayWyn_Couriers.ViewModels
         private void AdminDashboard(object? obj) => CurrentView = new AdminVM();
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
         private void LCDashboard(object? obj) => CurrentView = new LCVM();
+
+        private void Logout(object? obj) => CurrentView = new LoginVM(this);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationVM"/> class, setting up commands and the default
@@ -50,6 +54,7 @@ namespace BayWyn_Couriers.ViewModels
             AdminCommand = new RelayCommand(AdminDashboard);
             CourierCommand = new RelayCommand(CourierDashboard);
             LCCommand = new RelayCommand(LCDashboard);
+            LogoutCommand = new RelayCommand(Logout);
 
             // Startup Page. This sets the initial view to the login page when the application starts every time.
             // LoginVM(this) is used to pass the reference of the NavigationVM to the LoginVM, allowing the LoginVM to navigate to other views based on the user's role after a successful login.
