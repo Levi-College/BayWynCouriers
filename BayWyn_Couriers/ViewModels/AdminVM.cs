@@ -6,20 +6,20 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;                   
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace BayWyn_Couriers.Service
+namespace BayWyn_Couriers.ViewModels
 {
-    public class AdminService
+    public class AdminVM
     {
 
         public ObservableCollection<Job> PendingJobs { get; set; } // Observable collection to hold the pending jobs
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
 
         // Constructor
-        public AdminService() { }
+        public AdminVM() { }
 
 
         public ObservableCollection<Job> GetPendingJobs()

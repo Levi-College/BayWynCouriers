@@ -9,9 +9,9 @@ using System.Data.SqlClient;
 using BayWyn_Couriers.Models;
 using System.Windows;
 
-namespace BayWyn_Couriers.Service
+namespace BayWyn_Couriers.ViewModels
 {
-    public class LoginService
+    public class LoginVM
     {
         // To hold the current user information
         public int UserId;

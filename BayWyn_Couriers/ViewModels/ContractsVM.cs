@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using BayWyn_Couriers.Models;
 
-namespace BayWyn_Couriers.Service
+namespace BayWyn_Couriers.ViewModels
 {
-    public class ContractService 
+    public class ContractsVM 
     {
         // Simple test code to create a new contract
         public void NewContract(string companyName)

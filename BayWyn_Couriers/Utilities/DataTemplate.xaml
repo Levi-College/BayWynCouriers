@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
+                    xmlns:view="clr-namespace:BayWyn_Couriers.Views">
+
+    <DataTemplate x:Key="LoginViewTemplate">
+        <view:Login/>
+    </DataTemplate>
+
+</ResourceDictionary>

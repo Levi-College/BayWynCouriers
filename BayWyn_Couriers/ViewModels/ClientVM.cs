@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BayWyn_Couriers.Service
+namespace BayWyn_Couriers.ViewModels
 {
-    public class ClientService
+    public class ClientVM
     {
     }
 }

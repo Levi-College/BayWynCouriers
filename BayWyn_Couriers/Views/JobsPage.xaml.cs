@@ -1,5 +1,5 @@
 ﻿using BayWyn_Couriers.Models;
-using BayWyn_Couriers.Service;
+using BayWyn_Couriers.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,7 +29,7 @@ namespace BayWyn_Couriers.Pages
         public ObservableCollection<Job> PendingJobs { get; set; }
 
         // Declaring the admin service
-        AdminService adService = new AdminService();
+        AdminVM adService = new AdminVM();
 
         public JobsPage()
         {
