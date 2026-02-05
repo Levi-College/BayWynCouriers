@@ -1,9 +1,10 @@
 ﻿using BayWyn_Couriers.Utilities;
 using System.Windows.Input;
+using BayWyn_Couriers.Views;
 
 namespace BayWyn_Couriers.ViewModels
 {
-    class NavigationVM : ViewModelBase
+    public class NavigationVM : ViewModelBase
     {
         /// <summary>
         /// Represents the current view object being managed.  This field is intended for internal use only.
@@ -30,7 +31,7 @@ namespace BayWyn_Couriers.ViewModels
         /// Sets the current view to the home page by initializing a new instance of the <see cref="HomeVM"/> class.
         /// </summary>
         /// <param name="obj">An optional parameter that is not used in this method.</param>
-        private void Login(object? obj) => CurrentView = new LoginWindowVM();
+        private void Login(object? obj) => CurrentView = new LoginVM(this);
         private void AdminDashboard(object? obj) => CurrentView = new AdminVM();
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
         private void LCDashboard(object? obj) => CurrentView = new LCVM();
@@ -50,8 +51,9 @@ namespace BayWyn_Couriers.ViewModels
             CourierCommand = new RelayCommand(CourierDashboard);
             LCCommand = new RelayCommand(LCDashboard);
 
-            // Startup Page
-            CurrentView = new LoginWindowVM();
+            // Startup Page. This sets the initial view to the login page when the application starts every time.
+            // LoginVM(this) is used to pass the reference of the NavigationVM to the LoginVM, allowing the LoginVM to navigate to other views based on the user's role after a successful login.
+            CurrentView = new LoginVM(this);
         }
     }
 }

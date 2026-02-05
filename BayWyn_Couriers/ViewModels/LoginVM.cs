@@ -8,15 +8,75 @@ using System.Data;
 using System.Data.SqlClient;
 using BayWyn_Couriers.Models;
 using System.Windows;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
+using BayWyn_Couriers.Utilities;
+
 
 namespace BayWyn_Couriers.ViewModels
 {
-    public class LoginVM
+    public class LoginVM : ViewModelBase
     {
+        // To hold the login credentials entered by the user
+        private string _userName;
+        private string _password;
+
+        private NavigationVM _navigationVM; // To hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role
+
         // To hold the current user information
         public int UserId;
-        public string UserName;
+        public string UserFName;
+        public string UserLName;
         public string Role;
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { 
+                _userName = value; OnPropertyChanged();
+            }
+        }
+
+        public string Password
+        {
+            get { return _password; }
+            set { _password = value; OnPropertyChanged(); }
+        }
+        
+       
+        public ICommand LoginCommand { get; }
+
+
+        public LoginVM(NavigationVM nav)
+        {
+            _navigationVM = nav;
+            LoginCommand = new RelayCommand(ExecuteLogin);
+        }
+
+
+        private void ExecuteLogin(object? obj)
+        {
+            MessageBox.Show("Attempting to login with username: " + UserName + " and password: " + Password);
+
+            if (checkLogin(UserName, Password))
+            {
+                MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // If the user is an admin, changing the view to the admindashboard, if the user is a courier, changing the view to the courier dashboard, if the user is an LC, changing the view to the LC dashboard
+                if (Role == "Admin")
+                {
+                    MessageBox.Show("Opening Admin Window with the Admin:" + UserId);
+                    _navigationVM.CurrentView = new AdminVM();
+                }
+               
+            }
+            else
+            {
+                // If invalid, show an error message
+                MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         public bool checkLogin(string userName, string password) {
 
@@ -41,8 +101,10 @@ namespace BayWyn_Couriers.ViewModels
                 cmLogin.Parameters.AddWithValue("@UserName", userName);
                 cmLogin.Parameters.AddWithValue("@LoginPassword", password);
 
-                SqlDataReader loginCheck = cmLogin.ExecuteReader();
+                MessageBox.Show("Line 103");
 
+                SqlDataReader loginCheck = cmLogin.ExecuteReader();
+                MessageBox.Show("Line 104");
 
                 // If a record is found, open the main application window
                 if (loginCheck.HasRows)

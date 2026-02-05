@@ -10,26 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BayWyn_Couriers.Pages;
 
 namespace BayWyn_Couriers.Views
 {
     /// <summary>
-    /// Interaction logic for AdminWindow.xaml
+    /// Interaction logic for AdminDashboard.xaml
     /// </summary>
-    public partial class AdminWindow : Window
+    public partial class Admin : UserControl
     {
-        // Creatings objects for the pages
-        JobsPage jobsPage { get; set; }
-
-        public AdminWindow(int userID)
+        public Admin()
         {
             InitializeComponent();
-            // Initializing the pages
-            jobsPage = new JobsPage();
-            // Setting the default page to JobsPage
-            MainFrame.Content = jobsPage;
         }
     }
 }

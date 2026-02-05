@@ -4,12 +4,12 @@
                     xmlns:view="clr-namespace:BayWyn_Couriers.Views">
 
     <!--This ensure that when LoginWindowVM is used, the view associated with it is Login view (used for the design)-->
-    <DataTemplate DataType="{x:Type vm:LoginWindowVM}">
+    <DataTemplate DataType="{x:Type vm:LoginVM}">
         <view:Login />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:AdminVM}">
-        <view:Login />
+        <view:Admin />
     </DataTemplate>
 
     
