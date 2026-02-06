@@ -38,7 +38,7 @@
             <!--Side menu buttons-->
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
-                    <Button Content="Manage Jobs" Command="{Binding ShowJobsCommand}" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Manage Jobs" Command="{Binding ViewJobsCommand }" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Reports" Command="{Binding ShowReportsCommand}" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Contracts" Command="{Binding ShowContractsCommand}" Height="40" Margin="0,5,5,5"/>
                 </StackPanel>
@@ -73,9 +73,12 @@
 
             </Grid>
 
-            <!--This is subview area inside a content control-->
+            <DataGrid Grid.Row="1" ItemsSource="{Binding PendingJobs}" AutoGenerateColumns="True" Margin="10">
+            </DataGrid>
+                <!--This is subview area inside a content control-->
             <!---The content of this control will change based on the button clicked in the side menu-->
-            <ContentControl Grid.Row="1" Content="{Binding CurrentSubView}" Background="WhiteSmoke"/>
+            <!--<ContentControl Grid.Row="1" Content="{Binding CurrentSubView}" Background="WhiteSmoke"/>
+            -->
         </Grid>
     </Grid>
 

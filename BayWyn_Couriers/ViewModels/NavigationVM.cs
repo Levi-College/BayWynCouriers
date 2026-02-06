@@ -38,7 +38,7 @@ namespace BayWyn_Couriers.ViewModels
         /// Sets the current view to the home page by initializing a new instance of the <see cref="HomeVM"/> class.
         /// </summary>
         /// <param name="obj">An optional parameter that is not used in this method.</param>
-        private void Login(object? obj) => CurrentView = new LoginVM();
+        private void Login(object? obj) => CurrentView = new LoginVM(this);
 
         // Can also be written as:
         // private void Login(object? obj)
@@ -46,11 +46,11 @@ namespace BayWyn_Couriers.ViewModels
         //     CurrentView = new LoginVM(this);
         // }
 
-        private void AdminDashboard(object? obj) => CurrentView = new AdminVM();
+        private void AdminDashboard(object? obj) => CurrentView = new AdminVM(this);
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
         private void LCDashboard(object? obj) => CurrentView = new LCVM();
 
-        private void Logout(object? obj) => CurrentView = new LoginVM();
+        private void Logout(object? obj) => CurrentView = new LoginVM(this);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationVM"/> class, setting up commands and the default
@@ -72,7 +72,7 @@ namespace BayWyn_Couriers.ViewModels
             // LoginVM(this) is used to pass the reference of the NavigationVM to the LoginVM, allowing the LoginVM to navigate to other views based on the user's role after a successful login.
             // if (this) is not passed, the LoginVM will not have access to the NavigationVM and will not be able to change the current view after a successful login.
             // It was added to allow the LoginVM to call the methods in the NavigationVM to change the current view based on the user's role after a successful login.
-            CurrentView = new LoginVM();
+            CurrentView = new LoginVM(this);
         }
     }
 }

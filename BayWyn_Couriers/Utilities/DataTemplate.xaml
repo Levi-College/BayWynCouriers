@@ -12,6 +12,4 @@
         <view:Admin />
     </DataTemplate>
 
-    
-
 </ResourceDictionary>

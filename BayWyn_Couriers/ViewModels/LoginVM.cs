@@ -49,22 +49,13 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand LoginCommand { get; }
 
 
-        //public LoginVM(NavigationVM nav)
-        //{
-        //    _navigationVM = nav;
-        //    // Initializing the login command and linking it to the ExecuteLogin method, which will handle the login logic when the command is executed
-        //    // Relay command is a common implementation of the ICommand interface that allows for parameterized commands in WPF applications, enabling the binding of UI actions to methods in the view model
-        //    LoginCommand = new RelayCommand(ExecuteLogin);
-        //}
-
-        public LoginVM()
+        public LoginVM(NavigationVM nav)
         {
-            //_navigationVM = nav;
+            _navigationVM = nav;
             // Initializing the login command and linking it to the ExecuteLogin method, which will handle the login logic when the command is executed
             // Relay command is a common implementation of the ICommand interface that allows for parameterized commands in WPF applications, enabling the binding of UI actions to methods in the view model
             LoginCommand = new RelayCommand(ExecuteLogin);
         }
-
 
         private void ExecuteLogin(object? obj)
         {
@@ -75,7 +66,7 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     // Navigating to the admin dashboard view (passing the navigation view model to the admin view model constructor to allow for navigation from the admin dashboard)
                     //_navigationVM.CurrentView = new AdminVM(_navigationVM);
-                    _navigationVM.CurrentView = new AdminVM();
+                    _navigationVM.CurrentView = new AdminVM(_navigationVM);
                 }
                
             }
