@@ -25,6 +25,7 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
         private NavigationVM _navigationVM; 
 
+
         // To hold the current user information
         public int UserId;
         public string UserFName;
@@ -48,9 +49,17 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand LoginCommand { get; }
 
 
-        public LoginVM(NavigationVM nav)
+        //public LoginVM(NavigationVM nav)
+        //{
+        //    _navigationVM = nav;
+        //    // Initializing the login command and linking it to the ExecuteLogin method, which will handle the login logic when the command is executed
+        //    // Relay command is a common implementation of the ICommand interface that allows for parameterized commands in WPF applications, enabling the binding of UI actions to methods in the view model
+        //    LoginCommand = new RelayCommand(ExecuteLogin);
+        //}
+
+        public LoginVM()
         {
-            _navigationVM = nav;
+            //_navigationVM = nav;
             // Initializing the login command and linking it to the ExecuteLogin method, which will handle the login logic when the command is executed
             // Relay command is a common implementation of the ICommand interface that allows for parameterized commands in WPF applications, enabling the binding of UI actions to methods in the view model
             LoginCommand = new RelayCommand(ExecuteLogin);
@@ -65,7 +74,8 @@ namespace BayWyn_Couriers.ViewModels
                 if (Role == "Admin")
                 {
                     // Navigating to the admin dashboard view (passing the navigation view model to the admin view model constructor to allow for navigation from the admin dashboard)
-                    _navigationVM.CurrentView = new AdminVM(_navigationVM);
+                    //_navigationVM.CurrentView = new AdminVM(_navigationVM);
+                    _navigationVM.CurrentView = new AdminVM();
                 }
                
             }

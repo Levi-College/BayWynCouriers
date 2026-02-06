@@ -33,9 +33,8 @@ namespace BayWyn_Couriers.ViewModels
         //    LogoutCommand = new RelayCommand(ExecuteLogout);
         //}
 
-        public AdminVM(NavigationVM nav)
+        public AdminVM()
         {
-            _navigationVM = nav;
             // Initializing the LogoutCommand with a new RelayCommand that executes the ExecuteLogout method when invoked
             // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
             // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
@@ -47,7 +46,8 @@ namespace BayWyn_Couriers.ViewModels
         {
             // Code to handle logout logic, such as clearing user session and navigating to the login screen
             // Navigating back to the login screen by setting the CurrentView of the navigation view model to a new instance of the LoginVM
-            _navigationVM.CurrentView = new LoginVM(_navigationVM);
+            //_navigationVM.CurrentView = new LoginVM(_navigationVM);
+            _navigationVM.CurrentView = new LoginVM();
         }
 
         public ObservableCollection<Job> GetPendingJobs()
