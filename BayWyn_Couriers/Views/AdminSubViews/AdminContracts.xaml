@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="BayWyn_Couriers.Views.AdminSubViews.AdminContracts"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BayWyn_Couriers.Views.AdminSubViews"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="AntiqueWhite">
+        <TextBlock Text="Contracts Page" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Arial Black" FontSize="24" Margin="0,20,0,0"/>
+        <StackPanel Margin="50">
+            <TextBlock Text="This is where contract management features will be implemented." FontSize="16"/>
+            <!-- Placeholder for report management controls -->
+        </StackPanel>
+    </Grid>
+</UserControl>

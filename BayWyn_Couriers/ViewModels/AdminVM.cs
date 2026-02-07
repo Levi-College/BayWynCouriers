@@ -1,6 +1,7 @@
 ﻿using BayWyn_Couriers.Models;
 using BayWyn_Couriers.Utilities;
 using BayWyn_Couriers.Views;
+using BayWyn_Couriers.Views.AdminSubViews;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,10 @@ namespace BayWyn_Couriers.ViewModels
         
         public ICommand LogoutCommand { get; }
         public ICommand JobsCommand { get; }
+        public ICommand ContractsCommand { get; }
+        public ICommand ClientsCommand { get; }
+        public ICommand CouriersCommand { get; }
+        public ICommand ReportsCommand { get; }
 
 
 
@@ -53,6 +58,11 @@ namespace BayWyn_Couriers.ViewModels
 
         // Command to handle the action of viewing pending jobs. When executed, it will set the CurrentSubView to a new instance of the AdminJobs view, which will display the pending jobs to the admin user.
         private void JobsPage(object? obj) => CurrentSubView = new AdminJobs();
+        private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
+        private void ContractsPage(object? obj) => CurrentSubView = new AdminContracts();
+        private void ClientsPage(object? obj) => CurrentSubView = new AdminClients();
+        private void CouriersPage(object? obj) => CurrentSubView = new AdminCouriers();
+
 
         public AdminVM(NavigationVM _nav)
         {
@@ -64,6 +74,11 @@ namespace BayWyn_Couriers.ViewModels
 
             // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
             JobsCommand = new RelayCommand(JobsPage); // Giving the JobsCommand a meaning (when executed, it will call the JobsPage method to set the CurrentSubView to the AdminJobs view, allowing the admin user to see the pending jobs)
+            ReportsCommand = new RelayCommand(ReportsPage); // Giving the ReportsCommand a meaning (when executed, it will call the ReportsPage method to set the CurrentSubView to the AdminReports view, allowing the admin user to see various reports related to the courier service)
+            ContractsCommand = new RelayCommand(ContractsPage); // Giving the ContractsCommand a meaning (when executed, it will call the ContractsPage method to set the CurrentSubView to the AdminContracts view, allowing the admin user to manage contracts with clients)
+            ClientsCommand = new RelayCommand(ClientsPage); // Giving the ClientsCommand a meaning (when executed, it will call the ClientsPage method to set the CurrentSubView to the AdminClients view, allowing the admin user to manage client information and interactions)
+            CouriersCommand = new RelayCommand(CouriersPage); // Giving the CouriersCommand a meaning (when executed, it will call the CouriersPage method to set the CurrentSubView to the AdminCouriers view, allowing the admin user to manage courier information and interactions)
+
         }
 
 

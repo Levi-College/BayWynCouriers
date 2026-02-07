@@ -13,6 +13,6 @@
             <!-- Placeholder for job management controls -->
         </StackPanel>
 
-
     </Grid>
+    
 </UserControl>
