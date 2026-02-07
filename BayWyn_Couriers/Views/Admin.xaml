@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:BayWyn_Couriers.Views"
              xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="1000">
 
     
 
@@ -21,7 +21,6 @@
             <Button Content="View Reports" Command="{Binding ShowReportsCommand}" />
         </StackPanel>
 
-        <ContentControl Grid.Column="1" Content="{Binding CurrentSubView}" />
 
         <!-- Side Menu -->
         <Grid Grid.Column="0" Background="Aqua">
@@ -38,7 +37,7 @@
             <!--Side menu buttons-->
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
-                    <Button Content="Manage Jobs" Command="{Binding ViewJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Manage Jobs" Command="{Binding JobsCommand }" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Reports" Command="{Binding ShowReportsCommand}" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Contracts" Command="{Binding ShowContractsCommand}" Height="40" Margin="0,5,5,5"/>
                 </StackPanel>
@@ -73,12 +72,11 @@
 
             </Grid>
 
-            <DataGrid Grid.Row="1" ItemsSource="{Binding PendingJobs}" AutoGenerateColumns="True" Margin="10">
-            </DataGrid>
-                <!--This is subview area inside a content control-->
-            <!---The content of this control will change based on the button clicked in the side menu-->
-            <!--<ContentControl Grid.Row="1" Content="{Binding CurrentSubView}" Background="WhiteSmoke"/>
-            -->
+            <Grid Grid.Row="1" Background="White">
+                <ContentControl Content="{Binding CurrentSubView}" />
+                    
+            </Grid>
+          
         </Grid>
     </Grid>
 

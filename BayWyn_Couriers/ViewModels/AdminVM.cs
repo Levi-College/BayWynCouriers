@@ -1,5 +1,6 @@
 ﻿using BayWyn_Couriers.Models;
 using BayWyn_Couriers.Utilities;
+using BayWyn_Couriers.Views;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -19,26 +20,16 @@ namespace BayWyn_Couriers.ViewModels
     {
         // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
         private NavigationVM _navigationVM;
-        private AdminVM _adminVM; //Holding the reference to the admin view model to allow for navigation from the admin dashboard to other views (e.g., contracts view)
+        // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
+        private object _currentSubView;
 
         public ObservableCollection<Job> PendingJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
 
         
         public ICommand LogoutCommand { get; }
+        public ICommand JobsCommand { get; }
 
-        // Command to view pending jobs, linked to the GetPendingJobs method which retrieves the pending jobs from the database and updates the PendingJobs observable collection
-        public ICommand ViewJobsCommand => new RelayCommand(o => GetPendingJobs(o));
-
-
-        public AdminVM(NavigationVM _nav)
-        {
-            // Initializing the LogoutCommand with a new RelayCommand that executes the ExecuteLogout method when invoked
-            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
-            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
-            _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
-            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning 
-        }
 
 
         public void ExecuteLogout(object? obj)
@@ -48,7 +39,33 @@ namespace BayWyn_Couriers.ViewModels
             _navigationVM.CurrentView = new LoginVM(_navigationVM);
         }
 
-        
+
+        // Property to get or set the current subview displayed in the admin dashboard. This allows the admin dashboard to display different content based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
+        public object CurrentSubView
+        {
+            get { return _currentSubView; }
+            set
+            {
+                _currentSubView = value;
+                OnPropertyChanged(nameof(CurrentSubView)); // Notify the view that the CurrentSubView property has changed, allowing the UI to update accordingly (e.g., displaying the new subview content)
+            }
+        }
+
+        // Command to handle the action of viewing pending jobs. When executed, it will set the CurrentSubView to a new instance of the AdminJobs view, which will display the pending jobs to the admin user.
+        private void JobsPage(object? obj) => CurrentSubView = new AdminJobs();
+
+        public AdminVM(NavigationVM _nav)
+        {
+            // Initializing the LogoutCommand with a new RelayCommand that executes the ExecuteLogout method when invoked
+            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
+            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
+            _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning 
+
+            // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
+            JobsCommand = new RelayCommand(JobsPage); // Giving the JobsCommand a meaning (when executed, it will call the JobsPage method to set the CurrentSubView to the AdminJobs view, allowing the admin user to see the pending jobs)
+        }
+
 
         public void GetPendingJobs(object? obj)
         {
