@@ -7,6 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="AntiqueWhite">
+        <Grid.ColumnDefinitions>
+            
+
+        </Grid.ColumnDefinitions>
+
         <TextBlock Text="Clients Page" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Arial Black" FontSize="24" Margin="0,20,0,0"/>
         <StackPanel Margin="50">
             <TextBlock Text="This is where client management features will be implemented." FontSize="16"/>

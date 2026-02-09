@@ -6,14 +6,14 @@
              xmlns:local="clr-namespace:BayWyn_Couriers.Views"
              xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="1000">
+             d:DesignHeight="800" d:DesignWidth="1000">
 
     
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="800"/>
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Background="DarkBlue">
@@ -56,7 +56,7 @@
             <Grid Grid.Row="0" Background="#2C3E50">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="400" />
+                    <ColumnDefinition Width="600" />
                     <ColumnDefinition Width="200" />
                 </Grid.ColumnDefinitions>
 
@@ -76,7 +76,6 @@
 
             <Grid Grid.Row="1" Background="White">
                 <ContentControl Content="{Binding CurrentSubView}" />
-                    
             </Grid>
           
         </Grid>
