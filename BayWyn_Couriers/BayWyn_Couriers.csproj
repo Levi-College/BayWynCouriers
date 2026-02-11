@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\LCSubViews\" />
     <Folder Include="Views\CourierSubViews\" />
+    <Folder Include="Views\LCSubViews\" />
   </ItemGroup>
 
 </Project>

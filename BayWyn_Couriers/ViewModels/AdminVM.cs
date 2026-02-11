@@ -31,9 +31,8 @@ namespace BayWyn_Couriers.ViewModels
         // To hold the selected job from the observable collection of customers in the admin clients page
         //public Job SelectedJob { get; set; }
 
-
-        // Variables to hold the job details to be displayed in the admin clients page when a job is selected from the list of pending jobs. This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
-        public int JobId { get; set; }
+        // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
+        // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
         public Job SelectedJob        {
             get => _selectedJob;
             set
@@ -43,14 +42,7 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-
-
-
-
-        // Creating an instance of the Jobs class to hold details
-        //Job jobDetails = new Job();
-
-        // Establishing the commands for the admin menu (sidebar)
+        // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
         public ICommand JobsCommand { get; }
         public ICommand ContractsCommand { get; }
@@ -62,6 +54,8 @@ namespace BayWyn_Couriers.ViewModels
 
         public void ExecuteLogout(object? obj)
         {
+            _navigationVM.WindowWidth = 600;
+            _navigationVM.WindowHeight = 300;
             // Code to handle logout logic, such as clearing user session and navigating to the login screen
             // Navigating back to the login screen by setting the CurrentView of the navigation view model to a new instance of the LoginVM
             _navigationVM.CurrentView = new LoginVM(_navigationVM);
@@ -134,9 +128,6 @@ namespace BayWyn_Couriers.ViewModels
             // Going through the database to get all jobs status that are pending
             // Getting the database connection string
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
-
-            MessageBox.Show("Test 1");
-
             SqlConnection mySqlCon = new(myCon);
             // Opening the SQL connection
             mySqlCon.Open();
@@ -144,8 +135,6 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                MessageBox.Show("Test 2");
-
                 SqlCommand cmGetJobs = new SqlCommand();
                 cmGetJobs.Connection = mySqlCon;
                 cmGetJobs.CommandType = CommandType.Text;
@@ -155,22 +144,13 @@ namespace BayWyn_Couriers.ViewModels
 
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
-                MessageBox.Show("Test 3");
-
-
                 // If a record is found, open the main application window
                 if (listJobs.HasRows)
-                {
-                    MessageBox.Show("Test 4");
-                    // Initializing the observable collection
-                    
-
+                {                   
                     // Reading through each record found
                     while (listJobs.Read())
                     {
-                        MessageBox.Show("Test 5");
-                        // Initializing the observable collection
-                     
+                        // Adding the jobs to the pending jobs collection so that the data grid in the admin clients page can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
                         PendingJobs.Add(
 
                             //For each record found, add it to the observable collection
@@ -185,12 +165,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
 
                     // Closing the data reader
-                    listJobs.Close();
-
-                    MessageBox.Show("Adding a job");
-
-                    // Returning the observable collection of jobs with pending status
-  
+                    listJobs.Close();  
                 }
                 else
                 {

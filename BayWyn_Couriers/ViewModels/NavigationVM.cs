@@ -11,7 +11,7 @@ namespace BayWyn_Couriers.ViewModels
         /// </summary>
         private object _currentView = null!;
         private int _windowWidth = 600;
-        private int _windowHeight = 400;
+        private int _windowHeight = 300;
 
         /// <summary>
         /// Gets or sets the current view displayed in the application.
@@ -77,7 +77,7 @@ namespace BayWyn_Couriers.ViewModels
         private void Logout(object? obj)
         {
             WindowHeight = 600; // Set the window height to 600 when navigating back to the login page
-            WindowWidth = 600; // Set the window width to 600 when navigating back to the login page
+            WindowWidth = 300; // Set the window width to 600 when navigating back to the login page
             CurrentView = new LoginVM(this);
         }
 
