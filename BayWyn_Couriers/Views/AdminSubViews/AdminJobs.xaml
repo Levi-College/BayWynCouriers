@@ -66,22 +66,22 @@
             <StackPanel Grid.Row="0" Margin="10" >
             
                 <Label Content="Job ID:"/>
-                <TextBox x:Name="txtJobID" Margin="0,0,0,10" Text="{Binding SelectedJob.JobId}" IsReadOnly="True"/>
+                <TextBox x:Name="txtJobID" Margin="0,0,0,10" Text="{Binding SelectedJob.JobId, Mode=TwoWay}" IsReadOnly="True"/>
             
                 <Label Content="Client Name:"/>
-                <TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientId}"/>
+                <TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientId, Mode=TwoWay}"/>
             
                 <Label Content="Courier Name:"/>
-                <TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId}"/>
+                <TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>
             
                 <Label Content="Date Created:"/>
-                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d}" />
+                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
             
                 <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}"/>
             
                 <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description}"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}"/>
             
                 <Label Content="Status:"/>
                 <ComboBox Grid.Row="0" Grid.Column="0" Margin="10" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center">

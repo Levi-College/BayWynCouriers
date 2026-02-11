@@ -160,8 +160,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 cmAddJob.ExecuteReader();
                 MessageBox.Show("Job Added Successfully");
-                // Refreshing the jobs data grid after deletion by calling get all jobs
-                GetAllJobs();
+                
             }
             catch (Exception ex)
             {
@@ -175,6 +174,8 @@ namespace BayWyn_Couriers.ViewModels
                 mySqlCon.Close();
             }
 
+            // Refreshing the jobs data grid after deletion by calling get all jobs
+            GetAllJobs();
 
 
         }
@@ -307,7 +308,7 @@ namespace BayWyn_Couriers.ViewModels
                             {
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                CourierId = Convert.ToInt32(listJobs["CourierId"]),
+                                CourierId = listJobs["CourierId"] as int? ?? 0,
                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
                                 JobStatus = listJobs["JobStatus"].ToString(),
                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
@@ -320,7 +321,7 @@ namespace BayWyn_Couriers.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                MessageBox.Show(ex.Message);
                 mySqlCon.Close();
             }
 
