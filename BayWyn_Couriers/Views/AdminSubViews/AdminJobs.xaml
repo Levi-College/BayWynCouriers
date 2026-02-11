@@ -24,13 +24,17 @@
         <!-- Structure to hold the edit window and the buttons-->
 
         <!--Filter and date picker-->
-        <ComboBox Grid.Row="0" Grid.Column="0" Margin="10" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <ComboBox Grid.Row="0" Grid.Column="0" Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
             <ComboBoxItem Content="All Jobs"/>
             <ComboBoxItem Content="Pending Jobs"/>
             <ComboBoxItem Content="Completed Jobs"/>
         </ComboBox>
 
-        <DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        <DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+        <Button Content="New Job" Command="{Binding NewJobCommand}"
+                Grid.Row="0" Grid.Column="0" Margin="10" 
+                HorizontalAlignment="Right" Width="120"/>
 
         <!--Header for the edit column-->
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
@@ -44,9 +48,9 @@
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
-                <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}" Width="Auto"/>
-                <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="Auto"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="Auto"/>
+                <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}" Width="*"/>
+                <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
             </DataGrid.Columns>
 
         </DataGrid>
@@ -62,7 +66,7 @@
             <StackPanel Grid.Row="0" Margin="10" >
             
                 <Label Content="Job ID:"/>
-                <TextBox x:Name="txtJobID" Margin="0,0,0,10" Text="{Binding SelectedJob.JobId}"/>
+                <TextBox x:Name="txtJobID" Margin="0,0,0,10" Text="{Binding SelectedJob.JobId}" IsReadOnly="True"/>
             
                 <Label Content="Client Name:"/>
                 <TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientId}"/>
@@ -71,10 +75,10 @@
                 <TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId}"/>
             
                 <Label Content="Date Created:"/>
-                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate}" />
+                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d}" />
             
                 <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, StringFormat=d}"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}"/>
             
                 <Label Content="Description:"/>
                 <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description}"/>
@@ -88,9 +92,9 @@
             </StackPanel>
         
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Delete" Command="{Binding DeleteJob}" Width="120" Margin="5" ></Button>
-                <Button Content="Update" Command="{Binding DeleteJob}" Width="120" Margin="5" ></Button>
-                <Button Content="Save" Command="{Binding DeleteJob}" Width="120" Margin="5" ></Button>
+                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="120" Margin="5" ></Button>
+                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="120" Margin="5" ></Button>
+                <Button Content="Add" Command="{Binding AddJobCommand}" Width="120" Margin="5" ></Button>
             </StackPanel>
             
         </Grid>

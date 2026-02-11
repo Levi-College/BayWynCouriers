@@ -52,6 +52,14 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand ReportsCommand { get; }
 
 
+        // Admin jobs commands
+        public ICommand AddJobCommand {  get; }
+        public ICommand DeleteJobCommand { get; }
+        public ICommand UpdateJobCommand { get; }
+
+        public ICommand NewJobCommand { get; }
+
+
 
         public void ExecuteLogout(object? obj)
         {
@@ -78,10 +86,7 @@ namespace BayWyn_Couriers.ViewModels
         private void JobsPage(object? obj)
         {
             CurrentSubView = new AdminJobs();
-            // Calling the GetPendingJobs() so that the AdminJobs view can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
-            //GetPendingJobs();
-
-            GetAllJobs();
+            GetAllJobs(); // To display all jobs
         }
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
@@ -104,27 +109,176 @@ namespace BayWyn_Couriers.ViewModels
             ContractsCommand = new RelayCommand(ContractsPage); // Giving the ContractsCommand a meaning (when executed, it will call the ContractsPage method to set the CurrentSubView to the AdminContracts view, allowing the admin user to manage contracts with clients)
             ClientsCommand = new RelayCommand(ClientsPage); // Giving the ClientsCommand a meaning (when executed, it will call the ClientsPage method to set the CurrentSubView to the AdminClients view, allowing the admin user to manage client information and interactions)
             CouriersCommand = new RelayCommand(CouriersPage); // Giving the CouriersCommand a meaning (when executed, it will call the CouriersPage method to set the CurrentSubView to the AdminCouriers view, allowing the admin user to manage courier information and interactions)
+            
+            AddJobCommand = new RelayCommand(AddNewJob);
+            DeleteJobCommand = new RelayCommand(
+                execute: obj => DeleteJob(obj),
+                canExecute: obj => SelectedJob != null // Logic: Disable if SelectedJob is null
+            );
+            UpdateJobCommand = new RelayCommand(UpdateJob);
+            NewJobCommand = new RelayCommand(NewJob);
+        }
+
+        //
+        public void NewJob(object? obj)
+        {
+            // Refreshing the texboxes in the edit window
+            GetAllJobs();
+            MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
+
+            // Creating an empty SelectedJob so that the values can be used to add it to the database
+            SelectedJob = new Job()
+            {
+                StartDate = DateTime.Now.Date,
+                JobStatus = "Pending",
+                Cost = 2.5,
+            };
+        }
+
+        // Function to add job to the database
+        public void AddNewJob(object? obj)
+        {
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            MessageBox.Show("Adding job");
+            try
+            {
+                // Setting up the sql command
+                SqlCommand cmAddJob = new SqlCommand("INSERT INTO Jobs (ClientID, DeliveryAddress, Description, Cost,  JobStatus) " +
+                    "VALUES(@ClientID, @DeliveryAddress, @Description, @Cost, @JobStatus)", mySqlCon);
+
+
+                // Use the ID to find the record, then set the new values
+                cmAddJob.Parameters.AddWithValue("@ClientID", SelectedJob.CourierId);
+                cmAddJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
+                cmAddJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
+                cmAddJob.Parameters.AddWithValue("@Cost", SelectedJob.Cost);
+                cmAddJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+
+                cmAddJob.ExecuteReader();
+                MessageBox.Show("Job Added Successfully");
+                // Refreshing the jobs data grid after deletion by calling get all jobs
+                GetAllJobs();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                //Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                mySqlCon.Close();
+            }
+
+            finally
+            {
+                mySqlCon.Close();
+            }
+
+
 
         }
 
-        // Displaying the details of the selected job in the admin clients
-        public string JobDetails
+        public void UpdateJob(object? obj)
         {
-            get
+            //Checking if a job is selected
+            if (SelectedJob == null)
             {
-                if (SelectedJob != null)
+                MessageBox.Show("Please select a job to be update");
+                return;
+
+            }
+            else
+            {
+                // Confirming deletion
+                MessageBoxResult result = MessageBox.Show("Confirm Update", "Update", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
                 {
-                    return $"Job ID: {SelectedJob.JobId}\nClient ID: {SelectedJob.ClientId}\nCourier ID: {SelectedJob.CourierId}\nStatus: {SelectedJob.JobStatus}";
-                }
-                else
-                {
-                    return "No job selected.";
+                    // Setting up sql connection
+                    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                    SqlConnection mySqlCon = new(myCon);
+                    mySqlCon.Open();
+
+                    try
+                    {
+                        // Setting up the sql command
+                        SqlCommand cmUpdateJob = new SqlCommand("UPDATE Jobs SET CourierID = @CourierID, " +
+                            "DeliveryAddress = @DeliveryAddress, " +
+                            "Description = @Description, JobStatus = @JobStatus " +
+                            "WHERE JobID = @JobID", mySqlCon);
+
+
+                        // Use the ID to find the record, then set the new values
+                        cmUpdateJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                        cmUpdateJob.Parameters.AddWithValue("@CourierID", SelectedJob.CourierId);
+                        cmUpdateJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
+                        cmUpdateJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
+                        cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+
+                        cmUpdateJob.ExecuteReader();
+                        MessageBox.Show("Job Updated Successfully");
+                        // Refreshing the jobs data grid after deletion by calling get all jobs
+                        GetAllJobs();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                        mySqlCon.Close();
+                    }
+
+                    finally
+                    {
+                        mySqlCon.Close();
+                    }
                 }
             }
         }
 
-        // When selections changes, update the JobDetails property to reflect the details of the newly selected job. This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
+        public void DeleteJob(object? obj)
+        {
+            //Checking if a job is selected
+            if (SelectedJob == null)
+            {
+                MessageBox.Show("Please select a job to be deleted");
+                return;
 
+            }
+            else
+            {
+                // Confirming deletion
+                MessageBoxResult result = MessageBox.Show("Are you sure","Deletion",MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Setting up sql connection
+                    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                    SqlConnection mySqlCon = new(myCon);
+                    mySqlCon.Open();
+
+                    try
+                    {
+                        // Setting up the sql command
+                        SqlCommand cmDeleteJob = new SqlCommand("DELETE FROM Jobs WHERE JobID=@ID", mySqlCon);
+                        cmDeleteJob.Parameters.AddWithValue("@ID", SelectedJob.JobId);
+                        cmDeleteJob.ExecuteReader();
+
+                        // Refreshing the jobs data grid after deletion by calling get all jobs
+                        GetAllJobs();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                        mySqlCon.Close();
+                    }
+
+                    finally
+                    {
+                        mySqlCon.Close();
+                    }
+                }
+            }
+        }
 
         public void GetAllJobs()
         {
