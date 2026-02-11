@@ -1,15 +1,16 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
-                    xmlns:view="clr-namespace:BayWyn_Couriers.Views">
+                    xmlns:view="clr-namespace:BayWyn_Couriers.Views"
+                    xmlns:adminSubViews="clr-namespace:BayWyn_Couriers.Views.AdminSubViews">
 
-    <!--This ensure that when LoginWindowVM is used, the view associated with it is Login view (used for the design)-->
+    <!--Attatching the View models with the view-->
     <DataTemplate DataType="{x:Type vm:LoginVM}">
-        <view:Login />
+        <view:Login/>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vm:AdminVM}">
-        <view:Admin />
+        <view:Admin/>
     </DataTemplate>
 
 </ResourceDictionary>

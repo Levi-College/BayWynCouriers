@@ -4,8 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BayWyn_Couriers.Views"
+             xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels" d:DataContext="{d:DesignInstance Type=vm:AdminVM}"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
+
+
     <Grid Background="AntiqueWhite">
 
         <Grid.RowDefinitions>
@@ -27,16 +30,43 @@
 
         <DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-        <!--Data grid for the jobs to be displayed-->
+        <!--Header for the edit column-->
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 
         <!--Data grid for the jobs to be displayed-->
-        <DataGrid ItemsSource="{Binding PendingJobs}" Grid.Row="1" Grid.Column="0" x:Name="jobsList" />
+        <DataGrid ItemsSource="{Binding PendingJobs}" 
+                  SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
+                  Grid.Row="1" Grid.Column="0" x:Name="jobsList" />
 
-        <StackPanel Grid.Row="1" Grid.Column="1" Background="Blue">
-            <TextBlock Text="Job Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" TextWrapping="Wrap"/>
-            <TextBlock Text="This is where job details and management features will be implemented." FontSize="16" TextWrapping="Wrap"/>
+        <!-- Edit section for the selected job -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="10" >
+
+            <Label Content="Job ID:"/>
+            <TextBox x:Name="txtJobID" Margin="0,0,0,10" Text="{Binding SelectedJob.JobId}"/>
+            
+            <Label Content="Client Name:"/>
+            <TextBox x:Name="txtClientName" Margin="0,0,0,10"/>
+            
+            <Label Content="Courier Name:"/>
+            <TextBox x:Name="txtCourierName" Margin="0,0,0,10"/>
+            
+            <Label Content="Date Created:"/>
+            <TextBox x:Name="txtDateCreated" Margin="0,0,0,10"/>
+            
+            <Label Content="Delivery Address:"/>
+            <TextBlock x:Name="txtDeliveryAddress" Margin="0,0,0,10" TextWrapping="Wrap"/>
+            
+            <Label Content="Description:"/>
+            <TextBlock x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap"/>
+            
+            <Label Content="Status:"/>
+            <ComboBox Grid.Row="0" Grid.Column="0" Margin="10" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <ComboBoxItem Content="Approve"/>
+                <ComboBoxItem Content="Pending"/>
+            </ComboBox>
+
         </StackPanel>
 
     </Grid>
-    
+
 </UserControl>

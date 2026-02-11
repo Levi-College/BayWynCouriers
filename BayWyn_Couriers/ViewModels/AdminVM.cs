@@ -23,11 +23,34 @@ namespace BayWyn_Couriers.ViewModels
         private NavigationVM _navigationVM;
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
+        private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
 
         public ObservableCollection<Job> PendingJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
 
-        
+        // To hold the selected job from the observable collection of customers in the admin clients page
+        //public Job SelectedJob { get; set; }
+
+
+        // Variables to hold the job details to be displayed in the admin clients page when a job is selected from the list of pending jobs. This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
+        public int JobId { get; set; }
+        public Job SelectedJob        {
+            get => _selectedJob;
+            set
+            {
+                _selectedJob= value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
+
+
+        // Creating an instance of the Jobs class to hold details
+        //Job jobDetails = new Job();
+
+        // Establishing the commands for the admin menu (sidebar)
         public ICommand LogoutCommand { get; }
         public ICommand JobsCommand { get; }
         public ICommand ContractsCommand { get; }
@@ -57,7 +80,13 @@ namespace BayWyn_Couriers.ViewModels
         }
 
         // Command to handle the action of viewing pending jobs. When executed, it will set the CurrentSubView to a new instance of the AdminJobs view, which will display the pending jobs to the admin user.
-        private void JobsPage(object? obj) => CurrentSubView = new AdminJobs();
+        private void JobsPage(object? obj)
+        {
+            CurrentSubView = new AdminJobs();
+            // Calling the GetPendingJobs() so that the AdminJobs view can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
+            GetPendingJobs();
+        }
+
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
         private void ContractsPage(object? obj) => CurrentSubView = new AdminContracts();
         private void ClientsPage(object? obj) => CurrentSubView = new AdminClients();
@@ -81,8 +110,26 @@ namespace BayWyn_Couriers.ViewModels
 
         }
 
+        // Displaying the details of the selected job in the admin clients
+        public string JobDetails
+        {
+            get
+            {
+                if (SelectedJob != null)
+                {
+                    return $"Job ID: {SelectedJob.JobId}\nClient ID: {SelectedJob.ClientId}\nCourier ID: {SelectedJob.CourierId}\nStatus: {SelectedJob.JobStatus}";
+                }
+                else
+                {
+                    return "No job selected.";
+                }
+            }
+        }
 
-        public void GetPendingJobs(object? obj)
+        // When selections changes, update the JobDetails property to reflect the details of the newly selected job. This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
+
+
+        public void GetPendingJobs()
         {
             // Going through the database to get all jobs status that are pending
             // Getting the database connection string

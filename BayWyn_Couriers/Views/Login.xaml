@@ -6,21 +6,23 @@
              xmlns:local="clr-namespace:BayWyn_Couriers.Views"
              xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="209.57" d:DesignWidth="561.328"
              d:DataContext="{d:DesignInstance Type=vm:LoginVM, IsDesignTimeCreatable=False}">
 
     <Grid Background="AntiqueWhite">
+        <Label Content="Username:" HorizontalAlignment="Left" Margin="100,71,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtPassword" 
             Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
-            HorizontalAlignment="Left" Margin="359,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
+            HorizontalAlignment="Left" Margin="193,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
 
+        <Label Content="Password:" HorizontalAlignment="Left" Margin="100,121,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtUsername"
             Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
-            HorizontalAlignment="Left" Margin="358,161,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            HorizontalAlignment="Left" Margin="193,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
 
         <Button x:Name="btnLogin" Content="Login" 
                 Command="{Binding LoginCommand}"
-                HorizontalAlignment="Left" Margin="374,273,0,0" VerticalAlignment="Top" Height="47" Width="101"/>
+                HorizontalAlignment="Left" Margin="376,80,0,0" VerticalAlignment="Top" Height="47" Width="101"/>
     </Grid>
 
 
