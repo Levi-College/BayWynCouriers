@@ -37,7 +37,7 @@
 
         <!--Data grid for the jobs to be displayed-->
         <DataGrid AutoGenerateColumns="False"
-                  ItemsSource="{Binding PendingJobs}" 
+                  ItemsSource="{Binding AllJobs}" 
                   SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
                   IsReadOnly="True"
                   Grid.Row="1" Grid.Column="0" x:Name="jobsList">
@@ -88,9 +88,9 @@
             </StackPanel>
         
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Delete" Width="120" Margin="5"></Button>
-                <Button Content="Update" Width="120" Margin="5" ></Button>
-                <Button Content="Save" Width="120" Margin="5" ></Button>
+                <Button Content="Delete" Command="{Binding DeleteJob}" Width="120" Margin="5" ></Button>
+                <Button Content="Update" Command="{Binding DeleteJob}" Width="120" Margin="5" ></Button>
+                <Button Content="Save" Command="{Binding DeleteJob}" Width="120" Margin="5" ></Button>
             </StackPanel>
             
         </Grid>
