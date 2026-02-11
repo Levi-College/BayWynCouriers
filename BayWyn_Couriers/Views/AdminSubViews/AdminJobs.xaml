@@ -34,9 +34,19 @@
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 
         <!--Data grid for the jobs to be displayed-->
-        <DataGrid ItemsSource="{Binding PendingJobs}" 
+        <DataGrid AutoGenerateColumns="True"
+                  ItemsSource="{Binding PendingJobs}" 
                   SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
-                  Grid.Row="1" Grid.Column="0" x:Name="jobsList" />
+                  Grid.Row="1" Grid.Column="0" x:Name="jobsList">
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
+                <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}" Width="Auto"/>
+                <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate}" Width="Auto"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="Auto"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
 
         <!-- Edit section for the selected job -->
         <StackPanel Grid.Row="1" Grid.Column="1" Margin="10" >
@@ -45,19 +55,19 @@
             <TextBox x:Name="txtJobID" Margin="0,0,0,10" Text="{Binding SelectedJob.JobId}"/>
             
             <Label Content="Client Name:"/>
-            <TextBox x:Name="txtClientName" Margin="0,0,0,10"/>
+            <TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientId}"/>
             
             <Label Content="Courier Name:"/>
-            <TextBox x:Name="txtCourierName" Margin="0,0,0,10"/>
+            <TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId}"/>
             
             <Label Content="Date Created:"/>
-            <TextBox x:Name="txtDateCreated" Margin="0,0,0,10"/>
+            <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate}" />
             
             <Label Content="Delivery Address:"/>
-            <TextBlock x:Name="txtDeliveryAddress" Margin="0,0,0,10" TextWrapping="Wrap"/>
+            <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}"/>
             
             <Label Content="Description:"/>
-            <TextBlock x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap"/>
+            <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description}"/>
             
             <Label Content="Status:"/>
             <ComboBox Grid.Row="0" Grid.Column="0" Margin="10" Width="150" HorizontalAlignment="Left" VerticalAlignment="Center">

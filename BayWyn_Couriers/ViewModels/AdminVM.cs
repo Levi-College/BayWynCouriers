@@ -33,7 +33,7 @@ namespace BayWyn_Couriers.ViewModels
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
-        public Job SelectedJob        {
+        public Job SelectedJob {
             get => _selectedJob;
             set
             {
@@ -123,6 +123,76 @@ namespace BayWyn_Couriers.ViewModels
         // When selections changes, update the JobDetails property to reflect the details of the newly selected job. This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
 
 
+        public void GetAllJobs()
+        {
+            // Going through the database to get all jobs status that are pending
+            // Getting the database connection string
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            // Opening the SQL connection
+            mySqlCon.Open();
+
+            try
+            {
+                // Creating the SQL command to check for user credential
+                SqlCommand cmGetJobs = new SqlCommand();
+                cmGetJobs.Connection = mySqlCon;
+                cmGetJobs.CommandType = CommandType.Text;
+                cmGetJobs.CommandText = "SELECT * FROM Jobs";
+
+                SqlDataReader listJobs = cmGetJobs.ExecuteReader();
+
+                // If a record is found, open the main application window
+                if (listJobs.HasRows)
+                {
+                    // Reading through each record found
+                    while (listJobs.Read())
+                    {
+                        
+                        // Adding the jobs to the pending jobs collection so that the data grid in the admin clients page can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
+                        PendingJobs.Add(
+
+                            //For each record found, adding it to the observable collection with all details
+                            new Job
+                            {
+                                JobId = Convert.ToInt32(listJobs["JobId"]),
+                                ClientId = Convert.ToInt32(listJobs["ClientId"]),
+                                CourierId = Convert.ToInt32(listJobs["CourierId"]),
+                                //ClientName = "Hi",
+                                //CourierName = listJobs["CourierName"].ToString(),
+
+                                StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                EndDate = Convert.ToDateTime(listJobs["EndDate"]),
+                                DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+
+                                ////JobStatus = listJobs["JobStatus"].ToString(),
+                                //Description = listJobs["Description"].ToString(),
+                                ////Cost = Convert.ToSingle(listJobs["Cost"]),
+                            }
+                         );
+                    }
+
+                    // Closing the data reader
+                    listJobs.Close();
+                }
+                else
+                {
+
+                    Console.WriteLine("Error (1)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                mySqlCon.Close();
+            }
+
+            finally
+            {
+                mySqlCon.Close();
+            }
+        }
+
         public void GetPendingJobs()
         {
             // Going through the database to get all jobs status that are pending
@@ -146,7 +216,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 // If a record is found, open the main application window
                 if (listJobs.HasRows)
-                {                   
+                {
                     // Reading through each record found
                     while (listJobs.Read())
                     {
@@ -159,7 +229,11 @@ namespace BayWyn_Couriers.ViewModels
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
                                 CourierId = Convert.ToInt32(listJobs["CourierId"]),
+                                StartDate = Convert.ToDateTime(listJobs["StartDate"]),
                                 JobStatus = listJobs["JobStatus"].ToString(),
+                                DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+                                Description = listJobs["Description"].ToString(),
+
                             }
                          );
                     }
