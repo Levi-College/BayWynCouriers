@@ -66,7 +66,7 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     // Navigating to the admin dashboard view (passing the navigation view model to the admin view model constructor to allow for navigation from the admin dashboard)
                     //_navigationVM.CurrentView = new AdminVM(_navigationVM);
-                    _navigationVM.WindowWidth = 1100;
+                    _navigationVM.WindowWidth = 1000;
                     _navigationVM.WindowHeight = 600;
                     _navigationVM.CurrentView = new AdminVM(_navigationVM);
                 }

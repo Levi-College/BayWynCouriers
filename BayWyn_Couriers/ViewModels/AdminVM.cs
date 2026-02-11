@@ -161,8 +161,8 @@ namespace BayWyn_Couriers.ViewModels
                                 //ClientName = "Hi",
                                 //CourierName = listJobs["CourierName"].ToString(),
 
-                                StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                EndDate = Convert.ToDateTime(listJobs["EndDate"]),
+                                StartDate = Convert.ToDateTime(listJobs["StartDate"]).Date,
+                                EndDate = Convert.ToDateTime(listJobs["EndDate"]).Date,
                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
 
                                 ////JobStatus = listJobs["JobStatus"].ToString(),
@@ -209,22 +209,18 @@ namespace BayWyn_Couriers.ViewModels
                 cmGetJobs.Connection = mySqlCon;
                 cmGetJobs.CommandType = CommandType.Text;
                 cmGetJobs.CommandText = "SELECT * FROM Jobs WHERE JobStatus=@Status";
-
                 cmGetJobs.Parameters.AddWithValue("@Status", "Pending");
-
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // If a record is found, open the main application window
                 if (listJobs.HasRows)
                 {
-                    // Reading through each record found
-                    while (listJobs.Read())
+                    PendingJobs.Clear(); // Clearing the collection before adding to it to avoid duplicates
+                    while (listJobs.Read()) // Reading through each record found
                     {
                         // Adding the jobs to the pending jobs collection so that the data grid in the admin clients page can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
                         PendingJobs.Add(
-
-                            //For each record found, add it to the observable collection
-                            new Job
+                            new Job  //For each record found, add it to the observable collection
                             {
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
@@ -233,17 +229,14 @@ namespace BayWyn_Couriers.ViewModels
                                 JobStatus = listJobs["JobStatus"].ToString(),
                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
                                 Description = listJobs["Description"].ToString(),
-
                             }
                          );
                     }
-
                     // Closing the data reader
                     listJobs.Close();  
                 }
                 else
                 {
-
                     Console.WriteLine("Error (1)");
                 }
             }
