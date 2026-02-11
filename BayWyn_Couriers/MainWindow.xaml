@@ -8,7 +8,8 @@
         xmlns:view="clr-namespace:BayWyn_Couriers.Views"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="BayWyn Couriers" Width="600" Height="200">
+        ResizeMode="NoResize"
+        Title="BayWyn Couriers" Width="{Binding WindowWidth, Mode=TwoWay}" Height="{Binding WindowHeight, Mode=TwoWay}">
 
     <Window.DataContext>
         <vm:NavigationVM />

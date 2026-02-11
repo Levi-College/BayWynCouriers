@@ -10,6 +10,8 @@ namespace BayWyn_Couriers.ViewModels
         /// Represents the current view object being managed.  This field is intended for internal use only.
         /// </summary>
         private object _currentView = null!;
+        private int _windowWidth = 600;
+        private int _windowHeight = 400;
 
         /// <summary>
         /// Gets or sets the current view displayed in the application.
@@ -23,6 +25,18 @@ namespace BayWyn_Couriers.ViewModels
             // to notify the UI of changes to the property
             set { _currentView = value; OnPropertyChanged(); }
         } 
+
+        public int WindowWidth
+        {
+            get { return _windowWidth; }
+            set { _windowWidth = value; OnPropertyChanged(); }
+        }
+
+        public int WindowHeight
+        {
+            get { return _windowHeight; }
+            set { _windowHeight = value; OnPropertyChanged(); }
+        }
 
         /// <summary>
         /// Gets or sets the command that navigates to the home page.
@@ -38,19 +52,34 @@ namespace BayWyn_Couriers.ViewModels
         /// Sets the current view to the home page by initializing a new instance of the <see cref="HomeVM"/> class.
         /// </summary>
         /// <param name="obj">An optional parameter that is not used in this method.</param>
-        private void Login(object? obj) => CurrentView = new LoginVM(this);
+        //private void Login(object? obj) => CurrentView = new LoginVM(this);
 
         // Can also be written as:
-        // private void Login(object? obj)
-        // {
-        //     CurrentView = new LoginVM(this);
-        // }
+        private void Login(object? obj)
+        {
+            //WindowHeight = 400; // Set the window height to 800 when navigating to the admin dashboard
+            //WindowWidth = 400; // Set the window width to 1200 when navigating to the admin dashboard
+            CurrentView = new LoginVM(this);
+        }
 
-        private void AdminDashboard(object? obj) => CurrentView = new AdminVM(this);
+        //private void AdminDashboard(object? obj) => CurrentView = new AdminVM(this);
+
+        private void AdminDashboard(object? obj)
+        {
+            CurrentView = new AdminVM(this);
+        }
+
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
         private void LCDashboard(object? obj) => CurrentView = new LCVM();
 
-        private void Logout(object? obj) => CurrentView = new LoginVM(this);
+        //private void Logout(object? obj) => CurrentView = new LoginVM(this);\
+
+        private void Logout(object? obj)
+        {
+            WindowHeight = 600; // Set the window height to 600 when navigating back to the login page
+            WindowWidth = 600; // Set the window width to 600 when navigating back to the login page
+            CurrentView = new LoginVM(this);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationVM"/> class, setting up commands and the default
