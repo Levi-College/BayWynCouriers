@@ -10,9 +10,11 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace BayWyn_Couriers.ViewModels
@@ -291,10 +293,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand();
-                cmGetJobs.Connection = mySqlCon;
-                cmGetJobs.CommandType = CommandType.Text;
-                cmGetJobs.CommandText = "SELECT * FROM Jobs";
+                SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs",mySqlCon);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -343,10 +342,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                SqlCommand cmGetJobs = new SqlCommand();
-                cmGetJobs.Connection = mySqlCon;
-                cmGetJobs.CommandType = CommandType.Text;
-                cmGetJobs.CommandText = "SELECT * FROM Jobs WHERE JobStatus=@Status";
+                SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", "Pending");
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
@@ -375,11 +371,13 @@ namespace BayWyn_Couriers.ViewModels
                 }
                 else
                 {
-                    Console.WriteLine("Error (1)");
+                    MessageBox.Show("Error in getting the list");
+                    
                 }
             }
             catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
                 Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
                 mySqlCon.Close();
             }
@@ -447,8 +445,6 @@ namespace BayWyn_Couriers.ViewModels
                 }
                 else
                 {
-
-                    Console.WriteLine("Error (1)");
 
                     return ContractsList;
                 }

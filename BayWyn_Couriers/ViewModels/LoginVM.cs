@@ -95,13 +95,9 @@ namespace BayWyn_Couriers.ViewModels
                 //string sqlQuery = "SELECT COUNT(1) FROM Users WHERE UserName=@UserName AND LoginPassword=@LoginPassword";
   
 
-                SqlCommand cmLogin = new SqlCommand();
-                cmLogin.Connection = mySqlCon;
-                cmLogin.CommandType = CommandType.Text;
-                cmLogin.CommandText = "SELECT * FROM Users WHERE Username=@UserName AND LoginPassword=@LoginPassword";
+                SqlCommand cmLogin = new SqlCommand("SELECT * FROM Users WHERE Username=@UserName AND LoginPassword=@LoginPassword",mySqlCon);
                 cmLogin.Parameters.AddWithValue("@UserName", userName);
                 cmLogin.Parameters.AddWithValue("@LoginPassword", password);
-
                 SqlDataReader loginCheck = cmLogin.ExecuteReader();
 
                 // If a record is found, open the main application window
