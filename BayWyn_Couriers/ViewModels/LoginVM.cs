@@ -69,8 +69,20 @@ namespace BayWyn_Couriers.ViewModels
                     _navigationVM.WindowWidth = 1000;
                     _navigationVM.WindowHeight = 600;
                     _navigationVM.CurrentView = new AdminVM(_navigationVM);
+                }else if (Role == "LC")
+                {
+                    // Placeholder
                 }
-               
+                else if (Role == "Courier")
+                {
+                    // Placeholder
+                }
+                else if (Role == "Owner")
+                {
+                    // Placeholder
+
+                }
+
             }
             else
             {
