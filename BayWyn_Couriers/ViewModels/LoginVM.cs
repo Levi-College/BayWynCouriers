@@ -129,12 +129,12 @@ namespace BayWyn_Couriers.ViewModels
                 }
                 else
                 {
-                    Console.WriteLine("Invalid username or password.");
+                    MessageBox.Show("Invalid credentials");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                MessageBox.Show(ex.Message);
                 mySqlCon.Close();
 
             }

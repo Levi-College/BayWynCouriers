@@ -31,6 +31,8 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (irrespective of status)
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
 
+        public List<string> StatusList { get; } = new List<string>{ "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
+
         // To hold the selected job from the observable collection of customers in the admin clients page
         //public Job SelectedJob { get; set; }
 
@@ -121,7 +123,12 @@ namespace BayWyn_Couriers.ViewModels
             NewJobCommand = new RelayCommand(NewJob);
         }
 
-        //
+
+        public void RefreshPage()
+        {
+            // Placeholder for page refresh code
+        }
+       
         public void NewJob(object? obj)
         {
             // Refreshing the texboxes in the edit window
@@ -167,7 +174,6 @@ namespace BayWyn_Couriers.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                //Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
                 mySqlCon.Close();
             }
 
@@ -226,7 +232,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                        MessageBox.Show(ex.Message);
                         mySqlCon.Close();
                     }
 
@@ -271,7 +277,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                        MessageBox.Show(ex.Message);
                         mySqlCon.Close();
                     }
 
@@ -293,7 +299,8 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs",mySqlCon);
+                //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs",mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT Jobs.*, Clients.Name FROM Jobs INNER JOIN Clients ON Jobs.ClientID = Clients.ClientID",mySqlCon);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -308,6 +315,8 @@ namespace BayWyn_Couriers.ViewModels
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
                                 CourierId = listJobs["CourierId"] as int? ?? 0,
+                                ClientName = listJobs["Name"].ToString(),
+                                //CourierName = listJobs["CourierName"].ToString(),
                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
                                 JobStatus = listJobs["JobStatus"].ToString(),
                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
@@ -378,7 +387,7 @@ namespace BayWyn_Couriers.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                MessageBox.Show(ex.Message);
                 mySqlCon.Close();
             }
 
@@ -451,7 +460,7 @@ namespace BayWyn_Couriers.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine("An error occurred while closing the connection: " + ex.Message);
+                MessageBox.Show(ex.Message);
                 mySqlCon.Close();
 
                 return ContractsList;

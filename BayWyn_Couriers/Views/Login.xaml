@@ -11,14 +11,16 @@
 
     <Grid Background="AntiqueWhite">
         <Label Content="Username:" HorizontalAlignment="Left" Margin="100,71,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtPassword" 
-            Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
-            HorizontalAlignment="Left" Margin="193,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtUsername"
+                Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Left" Margin="193,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        
+        
 
         <Label Content="Password:" HorizontalAlignment="Left" Margin="100,121,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtUsername"
-            Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
-            HorizontalAlignment="Left" Margin="193,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="txtPassword" 
+                    Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+                    HorizontalAlignment="Left" Margin="193,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
 
         <Button x:Name="btnLogin" Content="Login" 
                 Command="{Binding LoginCommand}"
