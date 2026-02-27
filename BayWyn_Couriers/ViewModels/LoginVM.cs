@@ -98,7 +98,6 @@ namespace BayWyn_Couriers.ViewModels
             // Getting the database connection string
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
 
-
             SqlConnection mySqlCon = new SqlConnection(myCon);
             // Opening the SQL connection
             mySqlCon.Open();
@@ -108,7 +107,6 @@ namespace BayWyn_Couriers.ViewModels
                 // Creating the SQL command to check for user credential
                 //string sqlQuery = "SELECT COUNT(1) FROM Users WHERE UserName=@UserName AND LoginPassword=@LoginPassword";
   
-
                 SqlCommand cmLogin = new SqlCommand("SELECT * FROM Users WHERE Username=@UserName AND LoginPassword=@LoginPassword",mySqlCon);
                 cmLogin.Parameters.AddWithValue("@UserName", userName);
                 cmLogin.Parameters.AddWithValue("@LoginPassword", password);
