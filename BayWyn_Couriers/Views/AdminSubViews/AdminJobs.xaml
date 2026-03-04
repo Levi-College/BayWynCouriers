@@ -89,7 +89,7 @@
                     <Label Content="Status:"/>
                     <ComboBox Width="150" 
                               ItemsSource="{Binding StatusList}"
-                              SelectedItem="{Binding SelectedJob.JobStatus, Mode=OneWay}"/>
+                              SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
                 </StackPanel>
                 
                 

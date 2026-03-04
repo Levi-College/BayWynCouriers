@@ -14,7 +14,7 @@ namespace BayWyn_Couriers.ViewModels
         //private int _windowHeight = 300;
 
         // For testing changing the dimensions
-        private int _windowWidth = 1200;
+        private int _windowWidth = 1000;
         private int _windowHeight = 800;
 
         /// <summary>

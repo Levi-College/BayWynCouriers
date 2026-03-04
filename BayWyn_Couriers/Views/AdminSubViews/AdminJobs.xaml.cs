@@ -25,6 +25,5 @@ namespace BayWyn_Couriers.Views
             InitializeComponent();
         }
 
-        
     }
 }
