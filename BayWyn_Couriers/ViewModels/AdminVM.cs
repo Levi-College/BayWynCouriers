@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace BayWyn_Couriers.ViewModels
@@ -26,17 +27,22 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
-        private string _selectedJobStatus = "All"; // Setting the private variable and a default value
+        private string _selectedJobStatus = "All"; // Setting the private variable
+        private User _selectedCourier; // To hold the selected courier for dropdown display
+
 
         public ObservableCollection<Job> FilteredJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (irrespective of status)
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
+        public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
 
         // A list of string for the items in the job status combo box (item source)
-        public List<String> FilterStatus { get; } = new List<String>{ "All", "Pending", "Approved" };
+        public List<String> FilterStatus { get; } = new List<String>{ "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
 
-
+        // A list to show the conditions in the edit box
         public List<string> StatusList { get; } = new List<string>{ "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
+
+        
 
         // To hold the selected job from the observable collection of customers in the admin clients page
         //public Job SelectedJob { get; set; }
@@ -49,6 +55,25 @@ namespace BayWyn_Couriers.ViewModels
             {
                 _selectedJob= value;
                 OnPropertyChanged();
+
+                // Updating the select courier (used to update the dropdown)
+                // If no job selected let the selected courier be null
+                if (_selectedJob == null)
+                {
+                    SelectedCourier = null;
+                    return;
+                }
+
+                //Matching the courier using the ID
+                foreach (User courier in CouriersList)
+                {
+                    if (courier.UserId == _selectedJob.CourierId)
+                    {
+                        // Update the selected courier
+                        SelectedCourier= courier;
+                        break;
+                    }
+                }
             }
         }
 
@@ -65,10 +90,32 @@ namespace BayWyn_Couriers.ViewModels
 
                     // Filtering the jobs list based on the selected job status
                     FilterJobsByStatus(value);
-                }
-                
+
+                    // Get all couriers and store in the list (including ID)
+                }   
             }
         }
+
+        // To hold and update the selected courier details
+        public User SelectedCourier
+        {
+            get => _selectedCourier;
+            set
+            {
+                if (_selectedCourier != value)
+                {
+                    _selectedCourier = value;
+                    OnPropertyChanged();
+
+                    // Updating the courierId of the Job based on the selected new courier
+                    if (_selectedCourier != null)
+                    {
+                        SelectedJob.CourierId = _selectedCourier.UserId;
+                    }
+                }
+            }
+        }
+        
 
         // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
@@ -87,7 +134,7 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand NewJobCommand { get; }
 
 
-
+        // Logout method
         public void ExecuteLogout(object? obj)
         {
             _navigationVM.WindowWidth = 600;
@@ -118,7 +165,7 @@ namespace BayWyn_Couriers.ViewModels
             // Set the item source of the job status
 
             // Populate the status filter
-            
+            GetCouriers();
 
             FilterJobsByStatus("All");
         }
@@ -157,6 +204,40 @@ namespace BayWyn_Couriers.ViewModels
         public void RefreshPage()
         {
             // Placeholder for page refresh code
+        }
+
+        //To get all the couriers with their ID and to add it to the list of couriers. Used for combo box dropdown
+        private void GetCouriers()
+        {
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("SELECT UserID, Username FROM Users WHERE UserRole = 'Courier'", mySqlCon);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        CouriersList.Clear();
+                        while (reader.Read())
+                        {
+                            CouriersList.Add(new User
+                            {
+                                UserId = Convert.ToInt32(reader["UserID"]),
+                                UserName = reader["UserName"].ToString(),
+                            });
+                        }
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
        
         public void NewJob(object? obj)
@@ -422,14 +503,6 @@ namespace BayWyn_Couriers.ViewModels
                        AllJobs.Add(
                             new Job  //For each record found, add it to the observable collection
                             {
-                                //JobId = Convert.ToInt32(listJobs["JobId"]),
-                                //ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                //CourierId = Convert.ToInt32(listJobs["CourierId"]),
-                                //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                //JobStatus = listJobs["JobStatus"].ToString(),
-                                //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                //Description = listJobs["Description"].ToString(),
-
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
                                 ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN

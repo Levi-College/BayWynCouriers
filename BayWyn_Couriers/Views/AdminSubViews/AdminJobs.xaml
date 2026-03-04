@@ -9,7 +9,7 @@
              d:DesignHeight="600" d:DesignWidth="800">
 
 
-    <Grid Background="AntiqueWhite">
+    <Grid Background="AntiqueWhite" Margin="5">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -30,7 +30,8 @@
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+
 
         <Button Content="New Job" Command="{Binding NewJobCommand}"
                 Grid.Row="0" Grid.Column="0" Margin="10" 
@@ -45,7 +46,7 @@
                   SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
                   IsReadOnly="True"
                   Grid.Row="1" Grid.Column="0" x:Name="jobsList">
-            
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
                 <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}" Width="*"/>
@@ -56,7 +57,7 @@
         </DataGrid>
 
 
-        <Grid Grid.Row="1" Grid.Column="1">
+        <Grid Grid.Row="1" Grid.Column="1" Width="350">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="50"/>
@@ -69,19 +70,29 @@
                     <Label Content="Job ID:"/>
                     <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
                 </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Client Name:"/>
+                    <Label Content="{Binding SelectedJob.ClientName}"/>
+                </StackPanel>
                 
-                <Label Content="Client Name:"/>
-                <TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>
-            
+                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
+
                 <Label Content="Courier Name:"/>
-                <TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>
-            
+                <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding CouriersList}" 
+                          SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
+                          DisplayMemberPath="UserName" SelectedValuePath="UserId" />
+                
+                <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
+
                 <Label Content="Date Created:"/>
+
                 <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
-            
+
+
                 <Label Content="Delivery Address:"/>
                 <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="80"/>
-            
+
                 <Label Content="Description:"/>
                 <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="75"/>
 
@@ -91,17 +102,17 @@
                               ItemsSource="{Binding StatusList}"
                               SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
                 </StackPanel>
-                
-                
+
+
 
             </StackPanel>
-        
+
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="120" Margin="5" ></Button>
-                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="120" Margin="5" ></Button>
-                <Button Content="Add" Command="{Binding AddJobCommand}" Width="120" Margin="5" ></Button>
+                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="120" Margin="5" />
+                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="120" Margin="5"/>
+                <Button Content="Add" Command="{Binding AddJobCommand}" Width="120" Margin="5" />
             </StackPanel>
-            
+
         </Grid>
     </Grid>
 
