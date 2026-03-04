@@ -2,20 +2,11 @@
 using BayWyn_Couriers.Utilities;
 using BayWyn_Couriers.Views;
 using BayWyn_Couriers.Views.AdminSubViews;
-using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace BayWyn_Couriers.ViewModels
@@ -29,40 +20,46 @@ namespace BayWyn_Couriers.ViewModels
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
         private string _selectedJobStatus = "All"; // Setting the private variable
         private User _selectedCourier; // To hold the selected courier for dropdown display
-
+        private Client _selectedClient; // To hold the client details when adding a new job
+        private bool _enableItemsForNewJob = false; // This is used to enable and disable items for adding new job (new job window)
 
         public ObservableCollection<Job> FilteredJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (irrespective of status)
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
+        public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)
 
         // A list of string for the items in the job status combo box (item source)
-        public List<String> FilterStatus { get; } = new List<String>{ "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
+        public List<String> FilterStatus { get; } = new List<String> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
 
         // A list to show the conditions in the edit box
-        public List<string> StatusList { get; } = new List<string>{ "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
+        public List<string> StatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
 
-        
+
 
         // To hold the selected job from the observable collection of customers in the admin clients page
         //public Job SelectedJob { get; set; }
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
-        public Job SelectedJob {
+        public Job SelectedJob
+        {
             get => _selectedJob;
             set
             {
-                _selectedJob= value;
+                _selectedJob = value;
                 OnPropertyChanged();
 
                 // Updating the select courier (used to update the dropdown)
-                // If no job selected let the selected courier be null
+                // If no job selected let the selected courier and client be null
                 if (_selectedJob == null)
                 {
                     SelectedCourier = null;
+                    SelectedClient = null;
                     return;
                 }
+
+ 
 
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
@@ -70,7 +67,16 @@ namespace BayWyn_Couriers.ViewModels
                     if (courier.UserId == _selectedJob.CourierId)
                     {
                         // Update the selected courier
-                        SelectedCourier= courier;
+                        SelectedCourier = courier;
+                        break;
+                    }
+                }
+
+                foreach (Client client in ClientList)
+                {
+                    if (client.ClientId == _selectedJob.ClientId)
+                    {
+                        SelectedClient = client;
                         break;
                     }
                 }
@@ -90,9 +96,7 @@ namespace BayWyn_Couriers.ViewModels
 
                     // Filtering the jobs list based on the selected job status
                     FilterJobsByStatus(value);
-
-                    // Get all couriers and store in the list (including ID)
-                }   
+                }
             }
         }
 
@@ -110,12 +114,44 @@ namespace BayWyn_Couriers.ViewModels
                     // Updating the courierId of the Job based on the selected new courier
                     if (_selectedCourier != null)
                     {
-                        SelectedJob.CourierId = _selectedCourier.UserId;
+                        SelectedJob.CourierId = value.UserId;
                     }
                 }
             }
         }
-        
+
+        // To hold and update the selected courier details
+        public Client SelectedClient
+        {
+            get => _selectedClient;
+            set
+            {
+                // If same value (ignore)
+                if (_selectedClient != value)
+                {
+                    _selectedClient = value;
+                    OnPropertyChanged();
+
+                    // Updating the courierId of the Job based on the selected new courier
+                    if (_selectedCourier != null)
+                    {
+                        SelectedJob.ClientId = value.ClientId;
+                    }
+                }
+            }
+        }
+
+        // To update the boolean in UI when it is updated in code
+        public bool EnableItemsForNewJob
+        {
+            get => _enableItemsForNewJob;
+            set
+            {
+                _enableItemsForNewJob = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
@@ -127,7 +163,7 @@ namespace BayWyn_Couriers.ViewModels
 
 
         // Admin jobs commands
-        public ICommand AddJobCommand {  get; }
+        public ICommand AddJobCommand { get; }
         public ICommand DeleteJobCommand { get; }
         public ICommand UpdateJobCommand { get; }
 
@@ -160,15 +196,21 @@ namespace BayWyn_Couriers.ViewModels
         private void JobsPage(object? obj)
         {
             CurrentSubView = new AdminJobs();
+            RefreshPage();
             //GetAllJobs(); // To display all jobs
             // Display jobs using filtered collection
             // Set the item source of the job status
 
             // Populate the status filter
             GetCouriers();
+            // Populate the clients combo box
+            GetClients();
 
             FilterJobsByStatus("All");
+
+            EnableItemsForNewJob = false;
         }
+
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
         private void ContractsPage(object? obj) => CurrentSubView = new AdminContracts();
@@ -190,7 +232,7 @@ namespace BayWyn_Couriers.ViewModels
             ContractsCommand = new RelayCommand(ContractsPage); // Giving the ContractsCommand a meaning (when executed, it will call the ContractsPage method to set the CurrentSubView to the AdminContracts view, allowing the admin user to manage contracts with clients)
             ClientsCommand = new RelayCommand(ClientsPage); // Giving the ClientsCommand a meaning (when executed, it will call the ClientsPage method to set the CurrentSubView to the AdminClients view, allowing the admin user to manage client information and interactions)
             CouriersCommand = new RelayCommand(CouriersPage); // Giving the CouriersCommand a meaning (when executed, it will call the CouriersPage method to set the CurrentSubView to the AdminCouriers view, allowing the admin user to manage courier information and interactions)
-            
+
             AddJobCommand = new RelayCommand(AddNewJob);
             DeleteJobCommand = new RelayCommand(
                 execute: obj => DeleteJob(obj),
@@ -203,7 +245,11 @@ namespace BayWyn_Couriers.ViewModels
 
         public void RefreshPage()
         {
-            // Placeholder for page refresh code
+            // Clearing all the fields
+            SelectedJob = null;
+            // 2. Clear the dropdown selections
+            SelectedCourier = null;
+            SelectedClient = null;
         }
 
         //To get all the couriers with their ID and to add it to the list of couriers. Used for combo box dropdown
@@ -231,7 +277,7 @@ namespace BayWyn_Couriers.ViewModels
                             });
                         }
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -239,12 +285,52 @@ namespace BayWyn_Couriers.ViewModels
                 MessageBox.Show(ex.Message);
             }
         }
-       
+
+        private void GetClients()
+        {
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand("SELECT ClientID, Name FROM Clients", mySqlCon);
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        ClientList.Clear();
+                        while (reader.Read())
+                        {
+                            ClientList.Add(new Client
+                            {
+                                ClientId = Convert.ToInt32(reader["ClientID"]),
+                                Name = reader["Name"].ToString(),
+                            });
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Reader has no rows");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+
         public void NewJob(object? obj)
         {
             // Refreshing the texboxes in the edit window
             GetAllJobs();
             MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
+
+            // Setting the boolean to show client list to true
+            EnableItemsForNewJob = true;
 
             // Creating an empty SelectedJob so that the values can be used to add it to the database
             SelectedJob = new Job()
@@ -272,7 +358,7 @@ namespace BayWyn_Couriers.ViewModels
 
 
                 // Use the ID to find the record, then set the new values
-                cmAddJob.Parameters.AddWithValue("@ClientID", SelectedJob.CourierId);
+                cmAddJob.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
                 cmAddJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
                 cmAddJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
                 cmAddJob.Parameters.AddWithValue("@Cost", SelectedJob.Cost);
@@ -280,7 +366,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 cmAddJob.ExecuteReader();
                 MessageBox.Show("Job Added Successfully");
-                
+
             }
             catch (Exception ex)
             {
@@ -367,7 +453,7 @@ namespace BayWyn_Couriers.ViewModels
             else
             {
                 // Confirming deletion
-                MessageBoxResult result = MessageBox.Show("Are you sure","Deletion",MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show("Are you sure", "Deletion", MessageBoxButton.YesNo);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -419,33 +505,33 @@ namespace BayWyn_Couriers.ViewModels
                     AllJobs.Clear();
                     while (listJobs.Read())
                     {
-                       AllJobs.Add(
-                            new Job
-                            {
-                                //JobId = Convert.ToInt32(listJobs["JobId"]),
-                                //ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                //CourierId = listJobs["CourierId"] as int? ?? 0,
-                                //ClientName = listJobs["Name"].ToString(),
-                                ////CourierName = listJobs["CourierName"].ToString(),
-                                //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                //JobStatus = listJobs["JobStatus"].ToString(),
-                                //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                //Description = listJobs["Description"].ToString(),
+                        AllJobs.Add(
+                             new Job
+                             {
+                                 //JobId = Convert.ToInt32(listJobs["JobId"]),
+                                 //ClientId = Convert.ToInt32(listJobs["ClientId"]),
+                                 //CourierId = listJobs["CourierId"] as int? ?? 0,
+                                 //ClientName = listJobs["Name"].ToString(),
+                                 ////CourierName = listJobs["CourierName"].ToString(),
+                                 //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                 //JobStatus = listJobs["JobStatus"].ToString(),
+                                 //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+                                 //Description = listJobs["Description"].ToString(),
 
-                                JobId = Convert.ToInt32(listJobs["JobId"]),
-                                ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
+                                 JobId = Convert.ToInt32(listJobs["JobId"]),
+                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
+                                 ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
 
-                                // Handling potential NULLs for CourierID
-                                CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
+                                 // Handling potential NULLs for CourierID
+                                 CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
 
-                                StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                JobStatus = listJobs["JobStatus"].ToString(),
-                                DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                Description = listJobs["Description"].ToString(),
-                                Cost = Convert.ToDouble(listJobs["Cost"])
-                            }
-                         );
+                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                 JobStatus = listJobs["JobStatus"].ToString(),
+                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+                                 Description = listJobs["Description"].ToString(),
+                                 Cost = Convert.ToDouble(listJobs["Cost"])
+                             }
+                          );
                     }
                     listJobs.Close();
                 }
@@ -462,13 +548,14 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+
         // This method is used to update or filter the data grid source based on the selected job status
         private void FilterJobsByStatus(string jobStatus)
         {
-            
+
             if (jobStatus == null)
             {
-                return; 
+                return;
             }
 
             //If the status is "All", call show all jobs method
@@ -496,35 +583,35 @@ namespace BayWyn_Couriers.ViewModels
                 // If a record is found, open the main application window
                 if (listJobs.HasRows)
                 {
-                   AllJobs.Clear(); // Clearing the collection before adding to it to avoid duplicates
+                    AllJobs.Clear(); // Clearing the collection before adding to it to avoid duplicates
                     while (listJobs.Read()) // Reading through each record found
                     {
                         // Adding the jobs to the pending jobs collection so that the data grid in the admin clients page can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
-                       AllJobs.Add(
-                            new Job  //For each record found, add it to the observable collection
-                            {
-                                JobId = Convert.ToInt32(listJobs["JobId"]),
-                                ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
+                        AllJobs.Add(
+                             new Job  //For each record found, add it to the observable collection
+                             {
+                                 JobId = Convert.ToInt32(listJobs["JobId"]),
+                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
+                                 ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
 
-                                // Handling potential NULLs for CourierID
-                                CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
+                                 // Handling potential NULLs for CourierID
+                                 CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
 
-                                StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                JobStatus = listJobs["JobStatus"].ToString(),
-                                DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                Description = listJobs["Description"].ToString(),
-                                Cost = Convert.ToDouble(listJobs["Cost"])
-                            }
-                         );
+                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                 JobStatus = listJobs["JobStatus"].ToString(),
+                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+                                 Description = listJobs["Description"].ToString(),
+                                 Cost = Convert.ToDouble(listJobs["Cost"])
+                             }
+                          );
                     }
                     // Closing the data reader
-                    listJobs.Close();  
+                    listJobs.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Error in getting the list");
-                    
+                    MessageBox.Show("No jobs available for the filter");
+                    AllJobs.Clear();
                 }
             }
             catch (Exception ex)

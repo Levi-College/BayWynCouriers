@@ -71,15 +71,15 @@
                     <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Client Name:"/>
-                    <Label Content="{Binding SelectedJob.ClientName}"/>
-                </StackPanel>
-                
+                <Label Content="Client Name:"/>
+                <!--<Label Content="{Binding SelectedJob.ClientName}"/>-->
+                <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
+                          DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewJob}"/>
+
                 <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
 
                 <Label Content="Courier Name:"/>
-                <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding CouriersList}" 
+                <ComboBox ItemsSource="{Binding CouriersList}" 
                           SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
                           DisplayMemberPath="UserName" SelectedValuePath="UserId" />
                 
@@ -108,11 +108,10 @@
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="120" Margin="5" />
-                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="120" Margin="5"/>
-                <Button Content="Add" Command="{Binding AddJobCommand}" Width="120" Margin="5" />
+                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="50" Margin="5" />
+                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="50" Margin="5"/>
+                <Button Content="Add" Command="{Binding AddJobCommand}" IsEnabled="{Binding EnableItemsForNewJob}" Width="50" Margin="5" />
             </StackPanel>
-
         </Grid>
     </Grid>
 
