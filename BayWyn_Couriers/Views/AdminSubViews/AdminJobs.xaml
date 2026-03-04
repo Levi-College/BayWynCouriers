@@ -24,10 +24,10 @@
         <!-- Structure to hold the edit window and the buttons-->
 
         <!--Filter and date picker-->
-        <ComboBox Grid.Row="0" Grid.Column="0" Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <ComboBoxItem Content="All Jobs"/>
-            <ComboBoxItem Content="Pending Jobs"/>
-            <ComboBoxItem Content="Completed Jobs"/>
+        <ComboBox Grid.Row="0" Grid.Column="0" 
+                  ItemsSource="{Binding FilterStatus}"
+                  SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
+                  Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
         <DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -67,7 +67,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Job ID:"/>
-                    <TextBox x:Name="txtJobID" Text="{Binding SelectedJob.JobId, Mode=TwoWay}" IsReadOnly="True" Width="50"/>
+                    <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
                 </StackPanel>
                 
                 <Label Content="Client Name:"/>
@@ -80,10 +80,10 @@
                 <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
             
                 <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="80"/>
             
                 <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="75"/>
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>

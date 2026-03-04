@@ -26,10 +26,15 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
+        private string _selectedJobStatus = "All"; // Setting the private variable and a default value
 
-        public ObservableCollection<Job> PendingJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
+        public ObservableCollection<Job> FilteredJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (irrespective of status)
         public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
+
+        // A list of string for the items in the job status combo box (item source)
+        public List<String> FilterStatus { get; } = new List<String>{ "All", "Pending", "Approved" };
+
 
         public List<string> StatusList { get; } = new List<string>{ "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
 
@@ -44,6 +49,24 @@ namespace BayWyn_Couriers.ViewModels
             {
                 _selectedJob= value;
                 OnPropertyChanged();
+            }
+        }
+
+        // To set and get the select job status (for filtering the data grid)
+        public string SelectedJobStatus
+        {
+            get => _selectedJobStatus;
+            set
+            {
+                if (_selectedJobStatus != value)
+                {
+                    _selectedJobStatus = value;
+                    OnPropertyChanged();
+
+                    // Filtering the jobs list based on the selected job status
+                    FilterJobsByStatus(value);
+                }
+                
             }
         }
 
@@ -90,7 +113,14 @@ namespace BayWyn_Couriers.ViewModels
         private void JobsPage(object? obj)
         {
             CurrentSubView = new AdminJobs();
-            GetAllJobs(); // To display all jobs
+            //GetAllJobs(); // To display all jobs
+            // Display jobs using filtered collection
+            // Set the item source of the job status
+
+            // Populate the status filter
+            
+
+            FilterJobsByStatus("All");
         }
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
@@ -299,8 +329,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs",mySqlCon);
-                SqlCommand cmGetJobs = new SqlCommand("SELECT Jobs.*, Clients.Name FROM Jobs INNER JOIN Clients ON Jobs.ClientID = Clients.ClientID",mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID", mySqlCon);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -309,18 +338,31 @@ namespace BayWyn_Couriers.ViewModels
                     AllJobs.Clear();
                     while (listJobs.Read())
                     {
-                        AllJobs.Add(
+                       AllJobs.Add(
                             new Job
                             {
+                                //JobId = Convert.ToInt32(listJobs["JobId"]),
+                                //ClientId = Convert.ToInt32(listJobs["ClientId"]),
+                                //CourierId = listJobs["CourierId"] as int? ?? 0,
+                                //ClientName = listJobs["Name"].ToString(),
+                                ////CourierName = listJobs["CourierName"].ToString(),
+                                //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                //JobStatus = listJobs["JobStatus"].ToString(),
+                                //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+                                //Description = listJobs["Description"].ToString(),
+
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                CourierId = listJobs["CourierId"] as int? ?? 0,
-                                ClientName = listJobs["Name"].ToString(),
-                                //CourierName = listJobs["CourierName"].ToString(),
+                                ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
+
+                                // Handling potential NULLs for CourierID
+                                CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
+
                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
                                 JobStatus = listJobs["JobStatus"].ToString(),
                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
                                 Description = listJobs["Description"].ToString(),
+                                Cost = Convert.ToDouble(listJobs["Cost"])
                             }
                          );
                     }
@@ -339,8 +381,22 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-        public void GetPendingJobs()
+        // This method is used to update or filter the data grid source based on the selected job status
+        private void FilterJobsByStatus(string jobStatus)
         {
+            
+            if (jobStatus == null)
+            {
+                return; 
+            }
+
+            //If the status is "All", call show all jobs method
+            if (jobStatus == "All")
+            {
+                GetAllJobs();
+                return;
+            }
+
             // Going through the database to get all jobs status that are pending
             // Getting the database connection string
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -351,27 +407,41 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
-                cmGetJobs.Parameters.AddWithValue("@Status", "Pending");
+                //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status", mySqlCon);
+                cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // If a record is found, open the main application window
                 if (listJobs.HasRows)
                 {
-                    PendingJobs.Clear(); // Clearing the collection before adding to it to avoid duplicates
+                   AllJobs.Clear(); // Clearing the collection before adding to it to avoid duplicates
                     while (listJobs.Read()) // Reading through each record found
                     {
                         // Adding the jobs to the pending jobs collection so that the data grid in the admin clients page can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
-                        PendingJobs.Add(
+                       AllJobs.Add(
                             new Job  //For each record found, add it to the observable collection
                             {
+                                //JobId = Convert.ToInt32(listJobs["JobId"]),
+                                //ClientId = Convert.ToInt32(listJobs["ClientId"]),
+                                //CourierId = Convert.ToInt32(listJobs["CourierId"]),
+                                //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                //JobStatus = listJobs["JobStatus"].ToString(),
+                                //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
+                                //Description = listJobs["Description"].ToString(),
+
                                 JobId = Convert.ToInt32(listJobs["JobId"]),
                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                CourierId = Convert.ToInt32(listJobs["CourierId"]),
+                                ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
+
+                                // Handling potential NULLs for CourierID
+                                CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
+
                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
                                 JobStatus = listJobs["JobStatus"].ToString(),
                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
                                 Description = listJobs["Description"].ToString(),
+                                Cost = Convert.ToDouble(listJobs["Cost"])
                             }
                          );
                     }
@@ -386,7 +456,6 @@ namespace BayWyn_Couriers.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
                 MessageBox.Show(ex.Message);
                 mySqlCon.Close();
             }
