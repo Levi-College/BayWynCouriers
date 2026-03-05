@@ -6,11 +6,109 @@
              xmlns:local="clr-namespace:BayWyn_Couriers.Views.AdminSubViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="AntiqueWhite">
-        <TextBlock Text="Contracts Page" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Arial Black" FontSize="24" Margin="0,20,0,0"/>
-        <StackPanel Margin="50">
-            <TextBlock Text="This is where contract management features will be implemented." FontSize="16"/>
-            <!-- Placeholder for report management controls -->
-        </StackPanel>
+    <Grid Background="AntiqueWhite" Margin="5">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Structure to hold the edit window and the buttons-->
+
+        <!--Filter and date picker-->
+        <ComboBox Grid.Row="0" Grid.Column="0" 
+              ItemsSource="{Binding FilterStatus}"
+              SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
+              Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
+        </ComboBox>
+
+        <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+
+
+        <Button Content="New Job" Command="{Binding NewJobCommand}"
+            Grid.Row="0" Grid.Column="0" Margin="10" 
+            HorizontalAlignment="Right" Width="120"/>
+
+        <!--Header for the edit column-->
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+
+        <!--Data grid for the jobs to be displayed-->
+        <DataGrid AutoGenerateColumns="False"
+              ItemsSource="{Binding AllJobs}" 
+              SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
+              IsReadOnly="True"
+              Grid.Row="1" Grid.Column="0" x:Name="jobsList">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
+                <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}" Width="*"/>
+                <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+
+        <Grid Grid.Row="1" Grid.Column="1" Width="350">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+            <!-- Edit section for the selected job -->
+            <StackPanel Grid.Row="0">
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Job ID:"/>
+                    <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
+                </StackPanel>
+
+                <Label Content="Client Name:"/>
+                <!--<Label Content="{Binding SelectedJob.ClientName}"/>-->
+                <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
+                      DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewJob}"/>
+
+                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
+
+                <Label Content="Courier Name:"/>
+                <ComboBox ItemsSource="{Binding CouriersList}" 
+                      SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
+                      DisplayMemberPath="UserName" SelectedValuePath="UserId" />
+
+                <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
+
+                <Label Content="Date Created:"/>
+
+                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+
+
+                <Label Content="Delivery Address:"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="80"/>
+
+                <Label Content="Description:"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="75"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Status:"/>
+                    <ComboBox Width="150" 
+                          ItemsSource="{Binding StatusList}"
+                          SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
+                </StackPanel>
+
+
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="50" Margin="5" />
+                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="50" Margin="5"/>
+                <Button Content="Add" Command="{Binding AddJobCommand}" IsEnabled="{Binding EnableItemsForNewJob}" Width="50" Margin="5" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
