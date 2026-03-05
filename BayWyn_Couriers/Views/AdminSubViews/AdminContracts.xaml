@@ -68,38 +68,61 @@
                     <Label x:Name="txtContractID" Content="{Binding SelectedContract.ContractId, Mode=OneWay}" Width="50"/>
                 </StackPanel>
 
+                <!---->
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Company/Client:"/>
-                    <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
+                    <ComboBox Width="200" x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
                               DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewContract}"/>
                 </StackPanel>
                 
-                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedContract.ClientName, Mode=TwoWay}"/>-->
+                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedContract.ClientName, Mode=TwoWay}"/>
 
                 <Label Content="Courier Name:"/>
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                       SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
                       DisplayMemberPath="UserName" SelectedValuePath="UserId" />
+                -->
 
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedContract.CourierId, Mode=TwoWay}"/>-->
 
-                <Label Content="Contract Started:"/>
-                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedContract.StartDate, StringFormat=d, Mode=TwoWay}" />
-
-                <Label Content="Phone:"/>
-                <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.PhoneNumber, Mode=TwoWay}" Height="30"/>
-                
-                <Label Content="Address:"/>
-                <TextBox x:Name="txtCompanyAddress" Margin="0,0,0,10" Text="{Binding SelectedContract.Address, Mode=TwoWay}" Height="80"/>
-
-                <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedContract.Description, Mode=TwoWay}" Height="75"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Started Date:"/>
+                    <TextBox IsEnabled="{Binding EnableItemsForNewContract}" Width="100" Text="{Binding SelectedContract.StartDate, StringFormat=d, Mode=TwoWay}" />
+                </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Status:"/>
+                    <Label Content="End Date:     "/>
+                    <TextBox IsEnabled="{Binding EnableItemsForNewContract}" Width="100" Text="{Binding SelectedContract.EndDate, StringFormat=d, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Phone:"/>
+                    <TextBox Margin="0,0,0,10" Width="200" Text="{Binding SelectedContract.PhoneNumber, Mode=TwoWay}" Height="30"/>
+                </StackPanel>
+
+                <Label Content="Email:"/>
+                <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Email, Mode=TwoWay}" Height="31"/>
+
+                <Label Content="Address:"/>
+                <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Address, Mode=TwoWay}" Height="31"/>
+
+                <Label Content="Notes:"/>
+                <TextBox Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedContract.Notes, Mode=TwoWay}" Height="30"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Contract Status:"/>
                     <ComboBox Width="150" 
                           ItemsSource="{Binding ContractsStatusList}"
                           SelectedItem="{Binding SelectedContract.ContractStatus, Mode=TwoWay}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Monthly Cost"/>
+                    <Label Content="{Binding SelectedContract.MonthlyCost}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Cost Per Job"/>
+                    <Label Content="{Binding SelectedContract.CostPerJob}"/>
                 </StackPanel>
 
 
@@ -109,6 +132,7 @@
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Delete" Command="{Binding DeleteContractCommand}" Width="50" Margin="5" />
                 <Button Content="Update" Command="{Binding UpdateContractCommand}" Width="50" Margin="5"/>
+                <Button Content="Renew" Command="{Binding RenewContractCommand}"  Width="50" Margin="5"/>
                 <Button Content="Add" Command="{Binding AddContractCommand}" IsEnabled="{Binding EnableItemsForNewContract}" Width="50" Margin="5" />
             </StackPanel>
         </Grid>

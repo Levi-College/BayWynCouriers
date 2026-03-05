@@ -98,8 +98,10 @@ namespace BayWyn_Couriers.ViewModels
             // Getting the database connection string
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             SqlConnection mySqlCon = new SqlConnection(myCon);
-            // Opening the SQL connection
+#pragma warning restore CS0618 // Type or member is obsolete
+                              // Opening the SQL connection
             mySqlCon.Open();
 
             try

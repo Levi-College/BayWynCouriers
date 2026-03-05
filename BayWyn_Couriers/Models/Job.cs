@@ -21,7 +21,7 @@ namespace BayWyn_Couriers.Models
         public DateTime EndDate { get; set; }
 
         public string Description { get; set; }
-        public double Cost { get; set; }
+        public decimal Cost { get; set; }
         public string JobStatus { get; set; }
     }
 }

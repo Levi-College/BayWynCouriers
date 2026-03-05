@@ -85,16 +85,28 @@
                 
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
 
-                <Label Content="Date Created:"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Start Date:"/>
+                    <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+                </StackPanel>
 
-                <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="End Date:"/>
+                    <TextBox Margin="0,0,0,10" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Cost"/>
+                    <Label Content="{Binding SelectedJob.Cost}"/>
+                </StackPanel>
+                
 
 
                 <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="80"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="51"/>
 
                 <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="75"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="49"/>
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>

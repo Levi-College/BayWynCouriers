@@ -4,7 +4,6 @@ using BayWyn_Couriers.Views;
 using BayWyn_Couriers.Views.AdminSubViews;
 using System.Collections.ObjectModel;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
 using System.Windows.Input;
@@ -40,8 +39,8 @@ namespace BayWyn_Couriers.ViewModels
 
         // Used for the contracts page
         public ObservableCollection<Contract> AllContracts { get; set; } = new ObservableCollection<Contract>(); // To hold the list of contracts
-        public List<String> ContractsFilterList { get; } = new List<String> { "All", "Active", "Expired"}; // A list of string for the items in the job status combo box (item source)
-        public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired"};  // A list to show the conditions in the edit box
+        public List<String> ContractsFilterList { get; } = new List<String> { "All", "Active", "Expired" }; // A list of string for the items in the job status combo box (item source)
+        public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
 
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
@@ -167,12 +166,11 @@ namespace BayWyn_Couriers.ViewModels
 
                 // Updating the select courier (used to update the dropdown)
                 // If no job selected let the selected courier and client be null
-                //if (_selectedContract == null)
-                //{
-                //    SelectedCourier = null;
-                //    SelectedClient = null;
-                //    return;
-                //}
+                if (_selectedContract == null)
+                {
+                    SelectedClient = null;
+                    return;
+                }
 
                 //Matching the courier using the ID
                 //foreach (User courier in CouriersList)
@@ -185,15 +183,15 @@ namespace BayWyn_Couriers.ViewModels
                 //    }
                 //}
 
-                // Setting the client in the edit window (using the selected job client Id)
-                //foreach (Client client in ClientList)
-                //{
-                //    if (client.ClientId == _selectedJob.ClientId)
-                //    {
-                //        SelectedClient = client;
-                //        break;
-                //    }
-                //}
+                //Setting the client in the edit window(using the selected job client Id)
+                foreach (Client client in ClientList)
+                {
+                    if (client.ClientId == _selectedContract.ClientId)
+                    {
+                        SelectedClient = client;
+                        break;
+                    }
+                }
             }
         }
 
@@ -240,7 +238,6 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand AddJobCommand { get; }
         public ICommand DeleteJobCommand { get; }
         public ICommand UpdateJobCommand { get; }
-
         public ICommand NewJobCommand { get; }
 
 
@@ -248,7 +245,7 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand AddContractCommand { get; }
         public ICommand DeleteContractCommand { get; }
         public ICommand UpdateContractCommand { get; }
-
+        public ICommand RenewContractCommand { get; }
         public ICommand NewContractCommand { get; }
 
         // Admin couriers page commands
@@ -257,8 +254,6 @@ namespace BayWyn_Couriers.ViewModels
 
 
         // AdminVM logic
-
-
 
         // Property to get or set the current subview displayed in the admin dashboard.
         // This allows the admin dashboard to display different content based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
@@ -291,13 +286,13 @@ namespace BayWyn_Couriers.ViewModels
             CurrentSubView = new AdminContracts();
             RefreshPage(); // Refreshing the fields and the page
             //GetContracts(); // Populate the status filter
-            //GetClients(); // Populate the clients combo box
+            GetClients(); // Populate the clients combo box
             LoadContractsByStatus("All"); // Loads all the jobs initially 
             EnableItemsForNewContract = false; // Used to enable and disable buttons for the edit window
         }
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
-        
+
         private void ClientsPage(object? obj) => CurrentSubView = new AdminClients();
         private void CouriersPage(object? obj) => CurrentSubView = new AdminCouriers();
 
@@ -327,7 +322,18 @@ namespace BayWyn_Couriers.ViewModels
 
 
             // Setting up contracts commands
+            // Admin contracts page commands
+            AddContractCommand = new RelayCommand(AddNewContract);
+            DeleteContractCommand = new RelayCommand(
+                execute: obj => DeleteContract(obj),
+                canExecute: obj => SelectedContract != null // Logic: Disable if SelectedJob is null
+            );
+            RenewContractCommand = new RelayCommand(RenewContract);
+            UpdateContractCommand = new RelayCommand(UpdateContract);
+            NewContractCommand = new RelayCommand(NewContract);
 
+            // Update the database
+            // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
         }
 
 
@@ -420,9 +426,46 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        private decimal GetCostOfTheJob(int clientID)
+        {
+
+            decimal jobCost = 0; // Setting the variable
+
+            // Checking if the status of the client in the database is active
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                // Command setup to check the status of the client
+                SqlCommand cmdGetStatus = new SqlCommand("SELECT ContractStatus FROM Contracts WHERE ClientID = @ClientID", mySqlCon);
+                cmdGetStatus.Parameters.AddWithValue("@ClientID", clientID);
+                // cmdGetStatus.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
+
+                SqlDataReader reader = cmdGetStatus.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["ContractStatus"].ToString() == "Active")
+                        {
+                            return 2.5m;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
+            return 10m;
+        }
 
         // Admin Jobs CRUD
-        public void NewJob(object? obj) 
+        public void NewJob(object? obj)
         {
             // Refreshing the texboxes in the edit window
             GetAllJobs();
@@ -436,7 +479,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 StartDate = DateTime.Now.Date,
                 JobStatus = "Pending",
-                Cost = 2.5,
+                Cost = 2.5m,
             };
         }
 
@@ -450,6 +493,7 @@ namespace BayWyn_Couriers.ViewModels
             MessageBox.Show("Adding job");
             try
             {
+
                 // Setting up the sql command
                 SqlCommand cmAddJob = new SqlCommand("INSERT INTO Jobs (ClientID, DeliveryAddress, Description, Cost,  JobStatus) " +
                     "VALUES(@ClientID, @DeliveryAddress, @Description, @Cost, @JobStatus)", mySqlCon);
@@ -459,8 +503,15 @@ namespace BayWyn_Couriers.ViewModels
                 cmAddJob.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
                 cmAddJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
                 cmAddJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
-                cmAddJob.Parameters.AddWithValue("@Cost", SelectedJob.Cost);
+
+                // Logic to find out the price based on the client. If client contract status == active, cost of job is 2.5, else it is 10
+                cmAddJob.Parameters.AddWithValue("@Cost", GetCostOfTheJob(SelectedClient.ClientId));
+
+
                 cmAddJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+
+
+
 
                 cmAddJob.ExecuteReader();
                 MessageBox.Show("Job Added Successfully");
@@ -476,7 +527,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 mySqlCon.Close();
             }
-            GetAllJobs(); 
+            GetAllJobs();
         }
 
         public void UpdateJob(object? obj)
@@ -616,10 +667,12 @@ namespace BayWyn_Couriers.ViewModels
                                  CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
 
                                  StartDate = Convert.ToDateTime(listJobs["StartDate"]),
+                                 // If end date is null (it will be set as the start date)
+                                 EndDate = listJobs["EndDate"] == DBNull.Value ? Convert.ToDateTime(listJobs["StartDate"]) : Convert.ToDateTime(listJobs["EndDate"]),
                                  JobStatus = listJobs["JobStatus"].ToString(),
                                  DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
                                  Description = listJobs["Description"].ToString(),
-                                 Cost = Convert.ToDouble(listJobs["Cost"])
+                                 Cost = Convert.ToDecimal(listJobs["Cost"])
                              }
                           );
                     }
@@ -687,7 +740,7 @@ namespace BayWyn_Couriers.ViewModels
                                  JobStatus = drlistJobs["JobStatus"].ToString(),
                                  DeliveryAddress = drlistJobs["DeliveryAddress"].ToString(),
                                  Description = drlistJobs["Description"].ToString(),
-                                 Cost = Convert.ToDouble(drlistJobs["Cost"])
+                                 Cost = Convert.ToDecimal(drlistJobs["Cost"])
                              }
                           );
                     }
@@ -714,7 +767,6 @@ namespace BayWyn_Couriers.ViewModels
 
 
         // Admin contracts CRUD
-
 
         // This method is used to update or filter the data grid source based on the selected job status
         private void LoadContractsByStatus(string contractStatus)
@@ -784,11 +836,12 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-
         // Get all contracts
         public void GetAllContracts()
         {
             RefreshPage(); // Refreshing before updating the form
+
+            // Check the status (expiry date) // If contract past the date upadted the database  (status and price)
 
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -812,7 +865,7 @@ namespace BayWyn_Couriers.ViewModels
                              {
                                  ContractId = Convert.ToInt32(reader["ContractId"]),
                                  ClientId = Convert.ToInt32(reader["ClientId"]),
-                                 CompanyName = reader["CompanyName"].ToString(), // Now available from the JOIN
+                                 CompanyName = reader["ClientName"].ToString(), // Now available from the JOIN
                                  StartDate = (reader["StartDate"]) == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["StartDate"]),
                                  EndDate = (reader["EndDate"]) == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["EndDate"]),
                                  Notes = reader["Notes"] == DBNull.Value ? "No Notes" : reader["Notes"].ToString(),
@@ -847,15 +900,17 @@ namespace BayWyn_Couriers.ViewModels
             MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
 
             // Setting the boolean to show client list to true
-            EnableItemsForNewJob = true;
+            EnableItemsForNewContract = true;
 
             // Creating an empty SelectedJob so that the values can be used to add it to the database
-            //SelectedJob = new Job()
-            //{
-            //    StartDate = DateTime.Now.Date,
-            //    JobStatus = "Pending",
-            //    Cost = 2.5,
-            //};
+            SelectedContract = new Contract()
+            {
+                StartDate = DateTime.Now.Date,
+                EndDate = DateTime.Now.Date.AddMonths(1), // Contracts lasts for 1 month
+                ContractStatus = "Active",
+                MonthlyCost = 50m,
+                CostPerJob = 2.5m,
+            };
         }
 
         public void AddNewContract(object? obj)
@@ -865,47 +920,46 @@ namespace BayWyn_Couriers.ViewModels
             SqlConnection mySqlCon = new(myCon);
             mySqlCon.Open();
 
-            MessageBox.Show("Adding job");
             try
             {
-                // Start date of the contract is as provided. But the end date should be 1 month after the date.
-                // The price should also be based on the contract status
+                // Check if the client already has a contract
+                //MessageBox.Show("Client has a contract. Please update the existing contract, Set to active, etc")
 
+
+                // If no contracts
                 // Setting up the sql command
-                SqlCommand cmAddJob = new SqlCommand("INSERT INTO Jobs (ClientID, DeliveryAddress, Description, Cost,  JobStatus) " +
-                    "VALUES(@ClientID, @DeliveryAddress, @Description, @Cost, @JobStatus)", mySqlCon);
+                SqlCommand cmdAddContract = new SqlCommand("INSERT INTO Contracts (ClientID, Address, Phone, Email, Notes, ContractStatus, StartDate, EndDate, MonthlyCost, CostPerJob) " +
+                    "VALUES (@ClientID, @Address, @Phone, @Email, @Notes, @ContractStatus, @StartDate, @EndDate, @MonthlyCost, @CostPerJob)", mySqlCon);
 
 
-                // Use the ID to find the record, then set the new values
-                cmAddJob.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
-                cmAddJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
-                cmAddJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
-                cmAddJob.Parameters.AddWithValue("@Cost", SelectedJob.Cost);
-                cmAddJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+                cmdAddContract.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
+                cmdAddContract.Parameters.AddWithValue("@Address", SelectedContract.Address);
+                cmdAddContract.Parameters.AddWithValue("@Phone", SelectedContract.PhoneNumber);
+                cmdAddContract.Parameters.AddWithValue("@Email", SelectedContract.Email);
+                cmdAddContract.Parameters.AddWithValue("@Notes", (object)SelectedContract.Notes ?? DBNull.Value);
+                cmdAddContract.Parameters.AddWithValue("@ContractStatus", SelectedContract.ContractStatus);
+                cmdAddContract.Parameters.AddWithValue("@StartDate", SelectedContract.StartDate);
+                cmdAddContract.Parameters.AddWithValue("@EndDate", SelectedContract.EndDate);
+                cmdAddContract.Parameters.AddWithValue("@MonthlyCost", SelectedContract.MonthlyCost);
+                cmdAddContract.Parameters.AddWithValue("@CostPerJob", SelectedContract.CostPerJob);
 
-                cmAddJob.ExecuteReader();
-                MessageBox.Show("Job Added Successfully");
-
+                cmdAddContract.ExecuteNonQuery();
+                MessageBox.Show("Contract Added Successfully");
+                GetAllContracts(); // Refresh the list
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-                mySqlCon.Close();
+                MessageBox.Show("Error adding contract: " + ex.Message);
             }
 
-            finally
-            {
-                mySqlCon.Close();
-            }
-            GetAllContracts();
         }
 
         public void UpdateContract(object? obj)
         {
             //Checking if a job is selected
-            if (SelectedJob == null)
+            if (SelectedContract == null)
             {
-                MessageBox.Show("Please select a job to be update");
+                MessageBox.Show("Please select a contract to be update");
                 return;
             }
             else
@@ -923,20 +977,34 @@ namespace BayWyn_Couriers.ViewModels
                     try
                     {
                         // Setting up the sql command
-                        SqlCommand cmUpdateJob = new SqlCommand("UPDATE Jobs SET CourierID = @CourierID, " +
-                            "DeliveryAddress = @DeliveryAddress, " +
-                            "Description = @Description, JobStatus = @JobStatus " +
-                            "WHERE JobID = @JobID", mySqlCon);
+                        SqlCommand cmd = new SqlCommand("UPDATE Contracts SET ContractStatus = @ContractStatus, StartDate = @StartDate , EndDate = @EndDate , " +
+                            "Address = @Address, Phone = @Phone, MonthlyCost = @MonthlyCost , CostPerJob = @CostPerJob, " +
+                            "Email = @Email, Notes = @Notes WHERE ContractID = @ContractID", mySqlCon);
 
                         // Use the ID to find the record, then set the new values using the parameters
-                        cmUpdateJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
-                        cmUpdateJob.Parameters.AddWithValue("@CourierID", SelectedJob.CourierId);
-                        cmUpdateJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
-                        cmUpdateJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
-                        cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+                        cmd.Parameters.AddWithValue("@StartDate", SelectedContract.StartDate);
+                        cmd.Parameters.AddWithValue("@EndDate", SelectedContract.EndDate);
+                        cmd.Parameters.AddWithValue("@ContractID", SelectedContract.ContractId);
+                        cmd.Parameters.AddWithValue("@Address", SelectedContract.Address);
+                        cmd.Parameters.AddWithValue("@Phone", SelectedContract.PhoneNumber);
+                        cmd.Parameters.AddWithValue("@Email", SelectedContract.Email);
+                        cmd.Parameters.AddWithValue("@ContractStatus", SelectedContract.ContractStatus);
+                        cmd.Parameters.AddWithValue("@Notes", (object)SelectedContract.Notes ?? DBNull.Value);
 
-                        cmUpdateJob.ExecuteReader(); // Running the sql command to update the database
-                        MessageBox.Show("Job Updated Successfully");
+                        // Adjusting the price based on the status
+                        if (SelectedContract.ContractStatus == "Active")
+                        {
+                            cmd.Parameters.AddWithValue("@MonthlyCost", 50m);
+                            cmd.Parameters.AddWithValue("@CostPerJob", 2.5m);
+                        }
+                        else
+                        {
+                            cmd.Parameters.AddWithValue("@MonthlyCost", 0m);
+                            cmd.Parameters.AddWithValue("@CostPerJob", 2.5m);
+                        }
+
+                        cmd.ExecuteReader(); // Running the sql command to update the database
+                        MessageBox.Show("Contract Updated Successfully");
                     }
                     catch (Exception ex)
                     {
@@ -953,58 +1021,77 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-        public void DeleteContract(object? obj)
+        //Renews the contracts (extends by 1 month. No details can be changed. Only the dates change)
+        public void RenewContract(object? obj)
         {
-            //Checking if a job is selected
-            if (SelectedJob == null)
+            // Checking if a courier is selected
+            if (SelectedContract == null)
             {
-                MessageBox.Show("Please select a job to be deleted");
+                MessageBox.Show("Please Select a contract to renew");
                 return;
             }
-            else
+
+            // If Contract status is active, don't renew
+            if (SelectedContract.ContractStatus == "Active")
             {
-                // Confirming deletion
-                MessageBoxResult result = MessageBox.Show("Are you sure", "Deletion", MessageBoxButton.YesNo);
+                MessageBox.Show("This contract is already Active and does not need renewal yet.");
+                return;
+            }
 
-                if (result == MessageBoxResult.Yes)
-                {
-                    // Setting up sql connection
-                    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
-                    SqlConnection mySqlCon = new(myCon);
-                    mySqlCon.Open();
+            // 2. If contract status is expired, renew for 1 month
+            if (SelectedContract.ContractStatus == "Expired")
+            {
+                // Setting the new start and end date (today and 1 month)
+                SelectedContract.StartDate = DateTime.Now.Date;
+                SelectedContract.EndDate = DateTime.Now.Date.AddMonths(1);
 
-                    try
-                    {
-                        // Setting up the sql command
-                        SqlCommand cmDeleteJob = new SqlCommand("DELETE FROM Jobs WHERE JobID=@ID", mySqlCon);
-                        cmDeleteJob.Parameters.AddWithValue("@ID", SelectedJob.JobId);
-                        cmDeleteJob.ExecuteReader();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                        mySqlCon.Close();
-                    }
+                // Change status back to Active
+                SelectedContract.ContractStatus = "Active";
 
-                    finally
-                    {
-                        mySqlCon.Close();
-                    }
-                    GetAllContracts(); // Refresh and load
-                }
+                // 3. Notify the UI that these properties have changed
+                // This ensures the TextBoxes on your form update immediately
+                OnPropertyChanged(nameof(SelectedContract));
+
+                MessageBox.Show("Contract dates have been reset for 1 month. Click 'Update Contract' to save these changes to the database.");
+
             }
         }
 
+        public void DeleteContract(object? obj)
+        {
+            if (SelectedContract == null)
+            {
+                MessageBox.Show("Please select a contract to delete.");
+                return;
+            }
 
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this contract?", "Confirm Delete", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                using (SqlConnection con = new SqlConnection(myCon))
+                {
+                    try
+                    {
+                        con.Open();
+                        SqlCommand cmd = new SqlCommand("DELETE FROM Contracts WHERE ContractID = @ID", con);
+                        cmd.Parameters.AddWithValue("@ID", SelectedContract.ContractId);
 
-
-        // Get contracts based on status (filter)
-
-        // Add new contract
-
-        // Delete a contract
-
-        // Update a contract
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Contract Deleted.");
+                        GetAllContracts();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error deleting contract: " + ex.Message);
+                    }
+                    finally
+                    {
+                        con.Close();
+                    }
+                }
+            }
+        }
     }
 }
 
