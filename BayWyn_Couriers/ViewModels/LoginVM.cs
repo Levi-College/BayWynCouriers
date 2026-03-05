@@ -73,7 +73,7 @@ namespace BayWyn_Couriers.ViewModels
                     _navigationVM.CurrentView = new AdminVM(_navigationVM);
                 }else if (Role == "LC")
                 {
-                    // Placeholder
+                    _navigationVM.CurrentView = new LCVM(_navigationVM);
                 }
                 else if (Role == "Courier")
                 {
@@ -97,11 +97,7 @@ namespace BayWyn_Couriers.ViewModels
 
             // Getting the database connection string
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
-
-#pragma warning disable CS0618 // Type or member is obsolete
             SqlConnection mySqlCon = new SqlConnection(myCon);
-#pragma warning restore CS0618 // Type or member is obsolete
-                              // Opening the SQL connection
             mySqlCon.Open();
 
             try

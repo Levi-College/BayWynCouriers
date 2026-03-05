@@ -299,11 +299,10 @@ namespace BayWyn_Couriers.ViewModels
 
         public AdminVM(NavigationVM _nav)
         {
-            // Initializing the LogoutCommand with a new RelayCommand that executes the ExecuteLogout method when invoked
             // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
             // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
-            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning 
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning using Relay command 
 
             // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
             JobsCommand = new RelayCommand(JobsPage); // Giving the JobsCommand a meaning (when executed, it will call the JobsPage method to set the CurrentSubView to the AdminJobs view, allowing the admin user to see the pending jobs)
@@ -1069,28 +1068,28 @@ namespace BayWyn_Couriers.ViewModels
             if (result == MessageBoxResult.Yes)
             {
                 string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
-                using (SqlConnection con = new SqlConnection(myCon))
-                {
-                    try
-                    {
-                        con.Open();
-                        SqlCommand cmd = new SqlCommand("DELETE FROM Contracts WHERE ContractID = @ID", con);
-                        cmd.Parameters.AddWithValue("@ID", SelectedContract.ContractId);
+                SqlConnection mySqlCon = new(myCon);
+                mySqlCon.Open();
 
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Contract Deleted.");
-                        GetAllContracts();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error deleting contract: " + ex.Message);
-                    }
-                    finally
-                    {
-                        con.Close();
-                    }
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Contracts WHERE ContractID = @ID", mySqlCon);
+                    cmd.Parameters.AddWithValue("@ID", SelectedContract.ContractId);
+
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Contract Deleted.");
+                    GetAllContracts();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error deleting contract: " + ex.Message);
+                }
+                finally
+                {
+                    mySqlCon.Close();
                 }
             }
+
         }
     }
 }

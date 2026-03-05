@@ -9,13 +9,9 @@ namespace BayWyn_Couriers.ViewModels
         /// <summary>
         /// Represents the current view object being managed.  This field is intended for internal use only.
         /// </summary>
-        private object _currentView = null!;
-        //private int _windowWidth = 600;
-        //private int _windowHeight = 300;
-
-        // For testing changing the dimensions
-        private int _windowWidth = 1000;
-        private int _windowHeight = 800;
+        private object _currentView = null;
+        private int _windowWidth = 600;
+        private int _windowHeight = 300;
 
         /// <summary>
         /// Gets or sets the current view displayed in the application.
@@ -61,8 +57,8 @@ namespace BayWyn_Couriers.ViewModels
         // Can also be written as:
         private void Login(object? obj)
         {
-            //WindowHeight = 400; // Set the window height to 800 when navigating to the admin dashboard
-            //WindowWidth = 400; // Set the window width to 1200 when navigating to the admin dashboard
+            WindowHeight = 400; // Set the window height to 800 when navigating to the admin dashboard
+            WindowWidth = 400; // Set the window width to 1200 when navigating to the admin dashboard
             CurrentView = new LoginVM(this);
         }
 
@@ -74,7 +70,7 @@ namespace BayWyn_Couriers.ViewModels
         }
 
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
-        private void LCDashboard(object? obj) => CurrentView = new LCVM();
+        private void LCDashboard(object? obj) => CurrentView = new LCVM(this);
 
         //private void Logout(object? obj) => CurrentView = new LoginVM(this);\
 
@@ -105,10 +101,10 @@ namespace BayWyn_Couriers.ViewModels
             // LoginVM(this) is used to pass the reference of the NavigationVM to the LoginVM, allowing the LoginVM to navigate to other views based on the user's role after a successful login.
             // if (this) is not passed, the LoginVM will not have access to the NavigationVM and will not be able to change the current view after a successful login.
             // It was added to allow the LoginVM to call the methods in the NavigationVM to change the current view based on the user's role after a successful login.
-            //CurrentView = new LoginVM(this);
+            CurrentView = new LoginVM(this);
 
             // During Testing setting view as admin dashboard to bypass login
-            CurrentView = new AdminVM(this);
+            //CurrentView = new AdminVM(this);
         }
     }
 }

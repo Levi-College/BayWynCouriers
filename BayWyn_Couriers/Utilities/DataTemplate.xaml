@@ -13,4 +13,8 @@
         <view:Admin/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:LCVM}">
+        <view:LC/>
+    </DataTemplate>
+
 </ResourceDictionary>
