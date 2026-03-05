@@ -25,7 +25,7 @@
 
         <!--Filter and date picker-->
         <ComboBox Grid.Row="0" Grid.Column="0" 
-                  ItemsSource="{Binding FilterStatus}"
+                  ItemsSource="{Binding JobsFilterList}"
                   SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
@@ -99,7 +99,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
                     <ComboBox Width="150" 
-                              ItemsSource="{Binding StatusList}"
+                              ItemsSource="{Binding JobsStatusList}"
                               SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
                 </StackPanel>
 
