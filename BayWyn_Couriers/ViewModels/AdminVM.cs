@@ -13,6 +13,9 @@ namespace BayWyn_Couriers.ViewModels
 {
     public class AdminVM : ViewModelBase
     {
+
+        // Declaring variables (simple ones)
+
         // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
         private NavigationVM _navigationVM;
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
@@ -23,22 +26,14 @@ namespace BayWyn_Couriers.ViewModels
         private Client _selectedClient; // To hold the client details when adding a new job
         private bool _enableItemsForNewJob = false; // This is used to enable and disable items for adding new job (new job window)
 
-        public ObservableCollection<Job> FilteredJobs { get; set; } = new ObservableCollection<Job>();// Observable collection to hold the pending jobs
-        public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (irrespective of status)
-        public ObservableCollection<Contract> ContractsList { get; set; } // Observable collection to hold the list of contracts
+        // Lists and observable collections
+        public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
+        public ObservableCollection<Contract> ContractsList { get; set; } // To hold the list of contracts
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
-        public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)
+        public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)        
+        public List<String> FilterStatus { get; } = new List<String> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
+        public List<string> StatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box
 
-        // A list of string for the items in the job status combo box (item source)
-        public List<String> FilterStatus { get; } = new List<String> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
-
-        // A list to show the conditions in the edit box
-        public List<string> StatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };
-
-
-
-        // To hold the selected job from the observable collection of customers in the admin clients page
-        //public Job SelectedJob { get; set; }
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
@@ -59,8 +54,6 @@ namespace BayWyn_Couriers.ViewModels
                     return;
                 }
 
- 
-
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
                 {
@@ -72,6 +65,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
                 }
 
+                // Setting the client in the edit window (using the selected job client Id)
                 foreach (Client client in ClientList)
                 {
                     if (client.ClientId == _selectedJob.ClientId)
@@ -95,7 +89,7 @@ namespace BayWyn_Couriers.ViewModels
                     OnPropertyChanged();
 
                     // Filtering the jobs list based on the selected job status
-                    FilterJobsByStatus(value);
+                    LoadJobsByStatus(value);
                 }
             }
         }
@@ -170,18 +164,19 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand NewJobCommand { get; }
 
 
-        // Logout method
-        public void ExecuteLogout(object? obj)
-        {
-            _navigationVM.WindowWidth = 600;
-            _navigationVM.WindowHeight = 300;
-            // Code to handle logout logic, such as clearing user session and navigating to the login screen
-            // Navigating back to the login screen by setting the CurrentView of the navigation view model to a new instance of the LoginVM
-            _navigationVM.CurrentView = new LoginVM(_navigationVM);
-        }
+        // Admin contracts page commands
+
+        // Admin couriers page commands
+
+        // Admin reports page commands
 
 
-        // Property to get or set the current subview displayed in the admin dashboard. This allows the admin dashboard to display different content based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
+        // AdminVM logic
+
+        
+
+        // Property to get or set the current subview displayed in the admin dashboard.
+        // This allows the admin dashboard to display different content based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         public object CurrentSubView
         {
             get { return _currentSubView; }
@@ -192,25 +187,19 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        
+        // Page viewing logic (in the admin window)
+
         // Command to handle the action of viewing pending jobs. When executed, it will set the CurrentSubView to a new instance of the AdminJobs view, which will display the pending jobs to the admin user.
         private void JobsPage(object? obj)
         {
             CurrentSubView = new AdminJobs();
-            RefreshPage();
-            //GetAllJobs(); // To display all jobs
-            // Display jobs using filtered collection
-            // Set the item source of the job status
-
-            // Populate the status filter
-            GetCouriers();
-            // Populate the clients combo box
-            GetClients();
-
-            FilterJobsByStatus("All");
-
-            EnableItemsForNewJob = false;
+            RefreshPage(); // Refreshing the fields and the page
+            GetCouriers(); // Populate the status filter
+            GetClients(); // Populate the clients combo box
+            LoadJobsByStatus("All"); // Loads all the jobs initially 
+            EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
-
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
         private void ContractsPage(object? obj) => CurrentSubView = new AdminContracts();
@@ -233,7 +222,7 @@ namespace BayWyn_Couriers.ViewModels
             ClientsCommand = new RelayCommand(ClientsPage); // Giving the ClientsCommand a meaning (when executed, it will call the ClientsPage method to set the CurrentSubView to the AdminClients view, allowing the admin user to manage client information and interactions)
             CouriersCommand = new RelayCommand(CouriersPage); // Giving the CouriersCommand a meaning (when executed, it will call the CouriersPage method to set the CurrentSubView to the AdminCouriers view, allowing the admin user to manage courier information and interactions)
 
-            AddJobCommand = new RelayCommand(AddNewJob);
+            AddJobCommand = new RelayCommand(AddNewJob); // Establishes the logic of AddJobCommand
             DeleteJobCommand = new RelayCommand(
                 execute: obj => DeleteJob(obj),
                 canExecute: obj => SelectedJob != null // Logic: Disable if SelectedJob is null
@@ -243,12 +232,22 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
+        // Methods used
+
+        // Logout
+        public void ExecuteLogout(object? obj)
+        {
+            // Setting dimensions for the login screen
+            _navigationVM.WindowWidth = 600;
+            _navigationVM.WindowHeight = 300;
+            _navigationVM.CurrentView = new LoginVM(_navigationVM); // Updating the current view to a instance of LoginVM. _sending the view model to be used as well
+        }
+
+        // Refresh
         public void RefreshPage()
         {
-            // Clearing all the fields
-            SelectedJob = null;
-            // 2. Clear the dropdown selections
-            SelectedCourier = null;
+            SelectedJob = null; // Clearing all the fields   
+            SelectedCourier = null; // Clear the dropdown selections
             SelectedClient = null;
         }
 
@@ -277,7 +276,6 @@ namespace BayWyn_Couriers.ViewModels
                             });
                         }
                     }
-
                 }
             }
             catch (Exception ex)
@@ -286,6 +284,7 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        // To get the clients to store in the combo box item source
         private void GetClients()
         {
             // Setting up sql connection
@@ -323,7 +322,8 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-        public void NewJob(object? obj)
+        // Admin Jobs CRUD
+        public void NewJob(object? obj) 
         {
             // Refreshing the texboxes in the edit window
             GetAllJobs();
@@ -341,7 +341,6 @@ namespace BayWyn_Couriers.ViewModels
             };
         }
 
-        // Function to add job to the database
         public void AddNewJob(object? obj)
         {
             // Setting up sql connection
@@ -378,11 +377,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 mySqlCon.Close();
             }
-
-            // Refreshing the jobs data grid after deletion by calling get all jobs
-            GetAllJobs();
-
-
+            GetAllJobs(); 
         }
 
         public void UpdateJob(object? obj)
@@ -392,7 +387,6 @@ namespace BayWyn_Couriers.ViewModels
             {
                 MessageBox.Show("Please select a job to be update");
                 return;
-
             }
             else
             {
@@ -414,18 +408,15 @@ namespace BayWyn_Couriers.ViewModels
                             "Description = @Description, JobStatus = @JobStatus " +
                             "WHERE JobID = @JobID", mySqlCon);
 
-
-                        // Use the ID to find the record, then set the new values
+                        // Use the ID to find the record, then set the new values using the parameters
                         cmUpdateJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
                         cmUpdateJob.Parameters.AddWithValue("@CourierID", SelectedJob.CourierId);
                         cmUpdateJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
                         cmUpdateJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
                         cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
 
-                        cmUpdateJob.ExecuteReader();
+                        cmUpdateJob.ExecuteReader(); // Running the sql command to update the database
                         MessageBox.Show("Job Updated Successfully");
-                        // Refreshing the jobs data grid after deletion by calling get all jobs
-                        GetAllJobs();
                     }
                     catch (Exception ex)
                     {
@@ -437,6 +428,7 @@ namespace BayWyn_Couriers.ViewModels
                     {
                         mySqlCon.Close();
                     }
+                    GetAllJobs();
                 }
             }
         }
@@ -448,7 +440,6 @@ namespace BayWyn_Couriers.ViewModels
             {
                 MessageBox.Show("Please select a job to be deleted");
                 return;
-
             }
             else
             {
@@ -468,9 +459,6 @@ namespace BayWyn_Couriers.ViewModels
                         SqlCommand cmDeleteJob = new SqlCommand("DELETE FROM Jobs WHERE JobID=@ID", mySqlCon);
                         cmDeleteJob.Parameters.AddWithValue("@ID", SelectedJob.JobId);
                         cmDeleteJob.ExecuteReader();
-
-                        // Refreshing the jobs data grid after deletion by calling get all jobs
-                        GetAllJobs();
                     }
                     catch (Exception ex)
                     {
@@ -482,12 +470,15 @@ namespace BayWyn_Couriers.ViewModels
                     {
                         mySqlCon.Close();
                     }
+                    GetAllJobs(); // Refresh and load
                 }
             }
         }
 
         public void GetAllJobs()
         {
+            RefreshPage(); // Refreshing before updating the form
+
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
@@ -550,10 +541,9 @@ namespace BayWyn_Couriers.ViewModels
 
 
         // This method is used to update or filter the data grid source based on the selected job status
-        private void FilterJobsByStatus(string jobStatus)
+        private void LoadJobsByStatus(string jobStatus)
         {
-
-            if (jobStatus == null)
+            if (jobStatus == null) // Checking for null value
             {
                 return;
             }
@@ -578,35 +568,33 @@ namespace BayWyn_Couriers.ViewModels
                 //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
                 SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
-                SqlDataReader listJobs = cmGetJobs.ExecuteReader();
+                SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
 
                 // If a record is found, open the main application window
-                if (listJobs.HasRows)
+                if (drlistJobs.HasRows)
                 {
                     AllJobs.Clear(); // Clearing the collection before adding to it to avoid duplicates
-                    while (listJobs.Read()) // Reading through each record found
+                    while (drlistJobs.Read()) // Reading through each record found
                     {
                         // Adding the jobs to the pending jobs collection so that the data grid in the admin clients page can display the pending jobs to the admin user when they navigate to the Jobs page in the admin dashboard
                         AllJobs.Add(
                              new Job  //For each record found, add it to the observable collection
                              {
-                                 JobId = Convert.ToInt32(listJobs["JobId"]),
-                                 ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                 ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
-
-                                 // Handling potential NULLs for CourierID
-                                 CourierId = listJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(listJobs["CourierId"]),
-
-                                 StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                 JobStatus = listJobs["JobStatus"].ToString(),
-                                 DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                 Description = listJobs["Description"].ToString(),
-                                 Cost = Convert.ToDouble(listJobs["Cost"])
+                                 JobId = Convert.ToInt32(drlistJobs["JobId"]),
+                                 ClientId = Convert.ToInt32(drlistJobs["ClientId"]),
+                                 ClientName = drlistJobs["ClientName"].ToString(), // Now available from the JOIN
+                                 // Handling potential NULLs for CourierID (Ternary operation - if variable == (Null value) ? (execute this) : (if not execute this)
+                                 CourierId = drlistJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(drlistJobs["CourierId"]),
+                                 StartDate = Convert.ToDateTime(drlistJobs["StartDate"]),
+                                 JobStatus = drlistJobs["JobStatus"].ToString(),
+                                 DeliveryAddress = drlistJobs["DeliveryAddress"].ToString(),
+                                 Description = drlistJobs["Description"].ToString(),
+                                 Cost = Convert.ToDouble(drlistJobs["Cost"])
                              }
                           );
                     }
                     // Closing the data reader
-                    listJobs.Close();
+                    drlistJobs.Close();
                 }
                 else
                 {
@@ -619,14 +607,17 @@ namespace BayWyn_Couriers.ViewModels
                 MessageBox.Show(ex.Message);
                 mySqlCon.Close();
             }
-
             finally
             {
                 mySqlCon.Close();
             }
         }
 
-        // Method to get all contracts from the database
+        
+
+        // Admin contracts CRUD
+
+        // Get all contracts
         public ObservableCollection<Contract> GetAllContracts()
         {
             // Going through the database to get all jobs status that are pending
@@ -701,6 +692,14 @@ namespace BayWyn_Couriers.ViewModels
                 mySqlCon.Close();
             }
         }
+
+        // Get contracts based on status (filter)
+        
+        // Add new contract
+
+        // Delete a contract
+
+        // Update a contract
     }
 }
 
