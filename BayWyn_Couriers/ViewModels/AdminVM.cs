@@ -50,6 +50,8 @@ namespace BayWyn_Couriers.ViewModels
             get => _selectedJob;
             set
             {
+                // Do conditional checks
+
                 _selectedJob = value;
                 OnPropertyChanged();
 
