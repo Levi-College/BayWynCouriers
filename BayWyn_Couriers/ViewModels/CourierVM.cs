@@ -414,13 +414,14 @@ namespace BayWyn_Couriers.ViewModels
             mySqlCon.Open();
             try
             {
-                // Setting up the sql command
+                // Setting up the sql command to get the jobs for the day
                 SqlCommand cmGetJobs = new SqlCommand("SELECT j.JobID, j.CourierID, j.DeliveryAddress, j.Description, j.JobStatus, " +
                     "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
                     "FROM Jobs j INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
                     "WHERE ja.CourierID = @CourierID " +
-                    "AND j.JobStatus = 'Assigned' ", mySqlCon);
+                    "AND j.JobStatus = 'Assigned' " +
+                    "AND ja.DeliveryDate = CAST(GETDATE() AS DATE)", mySqlCon);
 
                 cmGetJobs.Parameters.AddWithValue("@CourierID", UserID); // Pass the ID here
 
