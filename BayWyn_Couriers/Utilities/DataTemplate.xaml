@@ -17,4 +17,9 @@
         <view:LC/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:CourierVM}">
+        <view:Courier/>
+    </DataTemplate>
+
+
 </ResourceDictionary>

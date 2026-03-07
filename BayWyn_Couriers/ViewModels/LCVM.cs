@@ -570,8 +570,9 @@ namespace BayWyn_Couriers.ViewModels
                         // 2. Update the main Jobs table status
                         string updateQuery = "UPDATE Jobs SET JobStatus = 'Assigned' WHERE JobID = @JobID";
 
-                        SqlCommand cmdUpdate = new SqlCommand("UPDATE Jobs SET JobStatus = 'Assigned' WHERE JobID = @JobID", mySqlCon);
+                        SqlCommand cmdUpdate = new SqlCommand("UPDATE Jobs SET JobStatus = 'Assigned', CourierID = @CourierID WHERE JobID = @JobID", mySqlCon);
                         cmdUpdate.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                        cmdUpdate.Parameters.AddWithValue("@CourierID", SelectedCourier.UserId);
 
                         cmdUpdate.ExecuteNonQuery();
 

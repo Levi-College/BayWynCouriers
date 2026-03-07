@@ -26,11 +26,13 @@ namespace BayWyn_Couriers.ViewModels
         private NavigationVM _navigationVM; 
 
 
+
         // To hold the current user information
-        public int UserId;
+        public string UserId;
         public string UserFName;
         public string UserLName;
         public string Role;
+
 
         public string UserName
         {
@@ -77,7 +79,8 @@ namespace BayWyn_Couriers.ViewModels
                 }
                 else if (Role == "Courier")
                 {
-                    // Placeholder
+                    // Get the user ID and send it to the VM
+                    _navigationVM.CurrentView = new CourierVM(_navigationVM, UserId);
                 }
                 else if (Role == "Owner")
                 {
@@ -115,7 +118,7 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     loginCheck.Read();
 
-                    UserId = Convert.ToInt32(loginCheck["UserId"]);
+                    UserId = loginCheck["UserId"].ToString();
                     //UserName = loginCheck"Username"].ToString();
                     Role = loginCheck["UserRole"].ToString();
                     loginCheck.Close();

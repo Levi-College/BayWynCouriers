@@ -1,19 +1,19 @@
-﻿<UserControl x:Class="BayWyn_Couriers.Views.LC"
+﻿<UserControl x:Class="BayWyn_Couriers.Views.Courier"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BayWyn_Couriers.Views" 
+             xmlns:local="clr-namespace:BayWyn_Couriers.Views"
              xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
-             d:DataContext="{d:DesignInstance Type=viewmodels:LCVM}"
+             d:DataContext="{d:DesignInstance Type=viewmodels:CourierVM}"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000">
+             d:DesignHeight="800" d:DesignWidth="1000">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="800"/>
         </Grid.ColumnDefinitions>
-
 
         <!-- Side Menu -->
         <Grid Grid.Column="0" Background="Aqua">
@@ -30,7 +30,8 @@
             <!--Side menu buttons-->
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
-                    <Button Content="Manage Jobs" Command="{Binding LCJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="All Jobs" Command="{Binding CourierJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Shift" Command="{Binding CourierShiftCommand }" Height="40" Margin="0,5,5,5"/>
                 </StackPanel>
             </Grid>
         </Grid>

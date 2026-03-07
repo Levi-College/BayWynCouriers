@@ -69,7 +69,7 @@ namespace BayWyn_Couriers.ViewModels
             CurrentView = new AdminVM(this);
         }
 
-        private void CourierDashboard(object? obj) => CurrentView = new CourierVM();
+        private void CourierDashboard(object? obj) => CurrentView = new CourierVM(this);
         private void LCDashboard(object? obj) => CurrentView = new LCVM(this);
 
         //private void Logout(object? obj) => CurrentView = new LoginVM(this);\
