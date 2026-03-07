@@ -63,7 +63,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // Setting dimensions
                 _navigationVM.WindowWidth = 1000;
-                _navigationVM.WindowHeight = 600;
+                _navigationVM.WindowHeight = 800;
 
                 // If the user is an admin, changing the view to the admindashboard, if the user is a courier, changing the view to the courier dashboard, if the user is an LC, changing the view to the LC dashboard
                 if (Role == "Admin")

@@ -367,6 +367,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
+                // Update this
                 SqlCommand cmd = new SqlCommand("SELECT UserID, Username FROM Users WHERE UserRole = 'Courier'", mySqlCon);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {

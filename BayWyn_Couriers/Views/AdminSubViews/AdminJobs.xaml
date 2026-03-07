@@ -81,7 +81,7 @@
                 <Label Content="Courier Name:"/>
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                           SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
-                          DisplayMemberPath="UserName" SelectedValuePath="UserId" />
+                          DisplayMemberPath="UserName" SelectedValuePath="UserId" IsEnabled="False" />
                 
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
 

@@ -18,7 +18,7 @@ namespace BayWyn_Couriers.Views.LCSubViews
     /// <summary>
     /// Interaction logic for LCJobs.xaml
     /// </summary>
-    public partial class LCJobs : Page
+    public partial class LCJobs : UserControl
     {
         public LCJobs()
         {
