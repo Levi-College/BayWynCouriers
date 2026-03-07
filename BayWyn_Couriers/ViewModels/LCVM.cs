@@ -1,9 +1,12 @@
 ﻿using BayWyn_Couriers.Models;
 using BayWyn_Couriers.Utilities;
 using BayWyn_Couriers.Views.LCSubViews;
+using Microsoft.VisualBasic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -20,6 +23,7 @@ namespace BayWyn_Couriers.ViewModels
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
             LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning }
             LCJobsCommand = new RelayCommand(LCJobsPage);
+            AssignJobCommand = new RelayCommand(AssignJob);
         }
 
 
@@ -85,6 +89,17 @@ namespace BayWyn_Couriers.ViewModels
                     OnPropertyChanged(nameof(IsEnabled));
                 }
             }
+
+            private bool _isSelected;
+            public bool IsSelected
+            {
+                get => _isSelected;
+                set
+                {
+                    _isSelected = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         // Objects
@@ -110,9 +125,10 @@ namespace BayWyn_Couriers.ViewModels
 
                 // As soon as the date changes, refresh the slot availability using the selectedcourierID
                 RefreshAvailableSlots(SelectedDeliveryDate, SelectedCourier.UserId);
-                //RefreshAvailableSlots();
             }
         }
+
+
 
         // Getting the selected job to display details
         public Job SelectedJob
@@ -222,8 +238,6 @@ namespace BayWyn_Couriers.ViewModels
             LoadJobsByStatus("All"); // Loads all the jobs initially 
             SetupSlotMap();
             InitializeTimeSlots();
-
-
         }
 
         // Logout
@@ -522,7 +536,7 @@ namespace BayWyn_Couriers.ViewModels
             //Checking if a job is selected
             if (SelectedJob == null)
             {
-                MessageBox.Show("Please select a job to be update");
+                MessageBox.Show("Please select a job to assign");
                 return;
             }
             else
@@ -532,6 +546,9 @@ namespace BayWyn_Couriers.ViewModels
 
                 if (result == MessageBoxResult.Yes)
                 {
+                    // Testing the time slot selected
+                   
+
                     // Setting up sql connection
                     string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
                     SqlConnection mySqlCon = new(myCon);
@@ -539,21 +556,31 @@ namespace BayWyn_Couriers.ViewModels
 
                     try
                     {
-                        // Setting up the sql command to add the job to the assignments database
+                        SqlCommand cmdAssign = new SqlCommand("INSERT INTO JobAssignments (JobID, CourierID, DeliveryDate, DeliverySlot) " +
+                            "VALUES(@JobID, @CourierID, @Date, @Slot)",mySqlCon);
 
-                        //SqlCommand cmUpdateJob = new SqlCommand("UPDATE Jobs SET CourierID = @CourierID, " +
-                        //    "DeliveryAddress = @DeliveryAddress, " +
-                        //    "Description = @Description, JobStatus = @JobStatus " +
-                        //    "WHERE JobID = @JobID", mySqlCon);
+                        cmdAssign.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                        cmdAssign.Parameters.AddWithValue("@CourierID", SelectedCourier.UserId);
+                        cmdAssign.Parameters.AddWithValue("@Date", SelectedDeliveryDate);
+                        // Get the SlotName (e.g., "S1") from the radio button the user clicked
+                        cmdAssign.Parameters.AddWithValue("@Slot", TimeSlots.FirstOrDefault(s => s.IsSelected).SlotName);
 
-                        //// Use the ID to find the record, then set the new values using the parameters
-                        //cmUpdateJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
-                        //cmUpdateJob.Parameters.AddWithValue("@CourierID", SelectedJob.CourierId);
-                        //cmUpdateJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
-                        //cmUpdateJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
-                        //cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+                        cmdAssign.ExecuteNonQuery();
 
-                        //cmUpdateJob.ExecuteReader(); // Running the sql command to update the database
+                        // 2. Update the main Jobs table status
+                        string updateQuery = "UPDATE Jobs SET JobStatus = 'Assigned' WHERE JobID = @JobID";
+
+                        SqlCommand cmdUpdate = new SqlCommand("UPDATE Jobs SET JobStatus = 'Assigned' WHERE JobID = @JobID", mySqlCon);
+                        cmdUpdate.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+
+                        cmdUpdate.ExecuteNonQuery();
+
+                        // Commit both changes to the database
+                        //transaction.Commit();
+                        MessageBox.Show("Job Assigned Successfully!");
+
+                        // Refresh the LC's list to remove the now-assigned job
+                        GetAllJobs();
                         MessageBox.Show("Job Updated Successfully");
                     }
                     catch (Exception ex)
