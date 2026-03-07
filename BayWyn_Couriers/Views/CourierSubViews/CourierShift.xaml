@@ -89,7 +89,7 @@
 
                                     <Button Grid.Column="2" Content="COMPLETE" 
                                         Style="{StaticResource RoundedButtonStyle}"
-                                        Command="{Binding DataContext.CompleteJobCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        Command="{Binding DataContext.CompleteDeliveryCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                         CommandParameter="{Binding}"
                                         Padding="15,5" VerticalAlignment="Center"/>
                                 </Grid>

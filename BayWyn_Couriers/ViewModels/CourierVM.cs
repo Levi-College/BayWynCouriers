@@ -25,7 +25,7 @@ namespace BayWyn_Couriers.ViewModels
             // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
             // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
-            _courierID = _userID;
+            UserID = _userID;
             LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning }
             CourierJobsCommand = new RelayCommand(CourierJobsPage);
             CourierShiftCommand = new RelayCommand(CourierShiftPage);
@@ -35,9 +35,9 @@ namespace BayWyn_Couriers.ViewModels
             RejectJobCommand = new RelayCommand(RejectSelectedJob);
 
             // Shift page commands
-            // Start shift
-            // End shift
-            // Completed delivery
+            StartShiftCommand = new RelayCommand(StartShift);
+            EndShiftCommand = new RelayCommand(EndShift);
+            CompleteDeliveryCommand = new RelayCommand(CompleteDelivery);
             // Not able to deliver
         }
 
@@ -52,8 +52,9 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand RejectJobCommand { get; }
 
         // Start shift
-        // End shift
-        // Completed delivery
+        public ICommand StartShiftCommand { get; }
+        public ICommand EndShiftCommand { get; }
+        public ICommand CompleteDeliveryCommand { get; }
         // Not able to deliver
 
 
@@ -68,6 +69,8 @@ namespace BayWyn_Couriers.ViewModels
         private string _courierID;
         private JobAssignment _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
         private string _selectedJobStatus = "All"; // Setting the private variable
+        private string _userID;
+
         //private User _selectedCourier; // To hold the selected courier for dropdown display
         //private bool _datePickerEnabled = false; // To disable the date picker unless a courier is selected
         //private bool _timePickerEnabled = false; // To disable timer pickers unless a date is picked
@@ -75,11 +78,13 @@ namespace BayWyn_Couriers.ViewModels
         //public List<String> LCJobsFilterList { get; } = new List<String> { "All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
         //public List<string> JobsStatusList { get; } = new List<string> { "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box        
         public ObservableCollection<JobAssignment> PendingJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the jobs (used for filtered list as well)
+        public ObservableCollection<JobAssignment> DailyJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
         //public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         //public Dictionary<string, string> SlotTimeMap { get; set; } //Dictionary to hold the time slot name and the time
         //public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
         //private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Holds the slot names for the break schedule
 
+    
 
 
 
@@ -168,6 +173,20 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        // Setting the UserID
+        public string UserID
+        {
+            get => _userID;
+            set
+            {
+                if (_userID != value)
+                {
+                    _userID = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         // To set and get the select job status (for filtering the data grid)
         //public string SelectedJobStatus
         //{
@@ -236,11 +255,14 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new CourierShift(); 
             RefreshPage(); // Refreshing the fields and the page
+            GetDailyJobs(UserID); 
             //GetCouriers(); // Populate the status filter
             //LoadJobsByStatus("All"); // Loads all the jobs initially 
             //SetupSlotMap();
             //InitializeTimeSlots();
         }
+
+        
 
         // Logout
         public void ExecuteLogout(object? obj)
@@ -317,10 +339,9 @@ namespace BayWyn_Couriers.ViewModels
 
         }
 
-
-
         public void GetPendingJobs()
         {
+
             RefreshPage(); // Refreshing before updating the form
 
             // Setting up sql connection
@@ -328,7 +349,6 @@ namespace BayWyn_Couriers.ViewModels
             SqlConnection mySqlCon = new(myCon);
             mySqlCon.Open();
 
-            
             try
             {
                 // Setting up the sql command
@@ -338,7 +358,7 @@ namespace BayWyn_Couriers.ViewModels
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
                     "WHERE ja.CourierID = @CourierID " +
                     "AND j.JobStatus = 'Assigned' ", mySqlCon);
-                cmGetJobs.Parameters.AddWithValue("@CourierID", _courierID); // Pass the ID here
+                cmGetJobs.Parameters.AddWithValue("@CourierID", UserID); // Pass the ID here
 
                 SqlDataReader reader  = cmGetJobs.ExecuteReader();
 
@@ -379,6 +399,102 @@ namespace BayWyn_Couriers.ViewModels
             {
                 mySqlCon.Close();
             }
-        }       
+        }
+
+
+
+        // Gets the jobs for the current day for the couriers shift
+        private void GetDailyJobs(string userID)
+        {
+            RefreshPage(); // Refreshing before updating the form
+
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+            try
+            {
+                // Setting up the sql command
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.JobID, j.CourierID, j.DeliveryAddress, j.Description, j.JobStatus, " +
+                    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
+                    "FROM Jobs j INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
+                    "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
+                    "WHERE ja.CourierID = @CourierID " +
+                    "AND j.JobStatus = 'Assigned' ", mySqlCon);
+
+                cmGetJobs.Parameters.AddWithValue("@CourierID", UserID); // Pass the ID here
+
+                SqlDataReader reader = cmGetJobs.ExecuteReader();
+
+                // Looping through the data reader and adding them to the list
+                if (reader.HasRows)
+                {
+                    DailyJobs.Clear();
+                    while (reader.Read())
+                    {
+                        DailyJobs.Add(
+                             new JobAssignment
+                             {
+                                 //AssignmentID
+                                 JobId = Convert.ToInt32(reader["JobId"]),
+                                 // Handling potential NULLs for CourierID
+                                 CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
+                                 ClientId = Convert.ToInt32(reader["ClientId"]),
+                                 ClientName = reader["ClientName"].ToString(), // Now available from the JOIN
+                                 DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                                 Description = reader["Description"].ToString(),
+                                 JobStatus = reader["JobStatus"].ToString(),
+
+                                 DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
+                             }
+                          );
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                mySqlCon.Close();
+            }
+
+            finally
+            {
+                mySqlCon.Close();
+            }
+        }
+
+        //Start shift methods
+        private void StartShift(object? obj)
+        {
+            // Start the timer
+
+            // Add the start time to the database (if a shifts table is there)
+        }
+
+        private void EndShift(object? obj)
+        {
+            // End the timer
+
+            // Add the end time to the database (if a shifts table is there)
+
+            // Update all the jobs that are not completed today to incomplete
+            // These can be set to approved (not assigned) so that the LC can assign the jobs to other couriers
+            // Maybe add the details (of the courier who had the job, any reason for not delivering, etc)
+
+
+        }
+
+        private void CompleteDelivery(object? obj)
+        {
+            // Update the status of the job assignment in the jobs table
+            // Make sure the courier deta
+
+            // Could delete it from the jobs assignment table
+
+            // 
+        }
+
     }
 }
