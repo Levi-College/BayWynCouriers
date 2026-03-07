@@ -6,7 +6,98 @@
              xmlns:local="clr-namespace:BayWyn_Couriers.Views.CourierSubViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+
+    <UserControl.Resources>
+        <!-- Style to allow rounded corners on buttons -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#007BFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="8" 
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Padding="20">
+        <!-- This acts as the margin for the whole view -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Timer & Controls -->
+                <RowDefinition Height="*"/>
+                <!-- Job List -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. Shift Controls & Timer -->
+            <Border Grid.Row="0" Background="#F8F9FA" Padding="15">
+                <StackPanel HorizontalAlignment="Center">
+
+                    <!-- The Timer Display -->
+                    <TextBlock Text="{Binding ShiftTimerDisplay}" 
+                           FontSize="32" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,0,0,10" 
+                           Foreground="#333"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="START SHIFT" 
+                            Command="{Binding StartShiftCommand}" 
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Background="#28A745" 
+                            Padding="20,10" Margin="10,0"/>
+
+                        <Button Content="END SHIFT" 
+                            Command="{Binding EndShiftCommand}" 
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Background="#DC3545" 
+                            Padding="20,10" Margin="10,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- 2. Daily Jobs Timeline -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                <ItemsControl ItemsSource="{Binding DailyJobs}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E0E0E0" BorderThickness="1,1,1,4" Margin="0,5,5,10" Background="White">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DeliverySlot}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Slot" FontSize="10" Foreground="Gray" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Margin="15,0">
+                                        <TextBlock Text="{Binding ClientName}" FontSize="16" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Margin="0,4"/>
+                                    </StackPanel>
+
+                                    <Button Grid.Column="2" Content="COMPLETE" 
+                                        Style="{StaticResource RoundedButtonStyle}"
+                                        Command="{Binding DataContext.CompleteJobCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Padding="15,5" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </UserControl>
