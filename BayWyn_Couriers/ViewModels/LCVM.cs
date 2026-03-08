@@ -22,17 +22,20 @@ namespace BayWyn_Couriers.ViewModels
             // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
             LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning }
-            LCJobsCommand = new RelayCommand(LCJobsPage);
+            LCApprovedJobsCommand = new RelayCommand(LCApprovedJobs);
+            LCCompletedJobsCommand = new RelayCommand(LCCompletedJobsPage);
+            LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
             AssignJobCommand = new RelayCommand(AssignJob);
         }
 
 
         // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
-        public ICommand LCJobsCommand { get; }
-
+        public ICommand LCApprovedJobsCommand { get; }
+        public ICommand LCAssignedJobsCommand { get; }
+        public ICommand LCCompletedJobsCommand { get; }
         public ICommand AssignJobCommand { get; }
-
+       
 
 
 
@@ -228,6 +231,34 @@ namespace BayWyn_Couriers.ViewModels
         }
 
         // Methods
+        private void LCApprovedJobs(object? obj)
+        {
+            CurrentSubView = new LCApprovedJobs();
+            RefreshPage(); // Refreshing the fields and the page
+            GetCouriers(); // Populate the status filter
+            LoadJobsByStatus("Approved"); // Loads all the jobs for the page
+            SetupSlotMap();
+            InitializeTimeSlots();
+        }
+
+        private void LCAssignedJobsPage(object? obj)
+        {
+            CurrentSubView = new LCAssignedJobs();
+            RefreshPage(); // Refreshing the fields and the page
+            GetCouriers(); // Populate the status filter
+            LoadJobsByStatus("Assigned"); // Loads all the jobs for the page
+            SetupSlotMap();
+            InitializeTimeSlots();
+        }
+
+        private void LCCompletedJobsPage(object? obj)
+        {
+            CurrentSubView = new LCCompletedJobs();
+            RefreshPage(); // Refreshing the fields and the page
+            GetCouriers(); // Populate the status filter
+            LoadJobsByStatus("Completed"); // Loads all the jobs initially 
+        }
+
         private void LCJobsPage(object? obj)
         {
             CurrentSubView = new LCJobs();
@@ -454,6 +485,7 @@ namespace BayWyn_Couriers.ViewModels
                 mySqlCon.Close();
             }
         }
+
 
         // This method is used to update or filter the data grid source based on the selected job status
         private void LoadJobsByStatus(string jobStatus)
