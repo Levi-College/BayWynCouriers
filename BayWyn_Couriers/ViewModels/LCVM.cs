@@ -45,7 +45,7 @@ namespace BayWyn_Couriers.ViewModels
         private NavigationVM _navigationVM;
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
-        private DateTime _selectedDeliveryDate = DateTime.Today;
+        private DateTime _selectedDeliveryDate = GetDay(DateTime.Today.AddDays(1));
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
         private string _selectedJobStatus = "All"; // Setting the private variable
         private User _selectedCourier; // To hold the selected courier for dropdown display
@@ -123,14 +123,34 @@ namespace BayWyn_Couriers.ViewModels
             get => _selectedDeliveryDate;
             set
             {
+                // Only allow future dates
+                if (value.Date <= DateTime.Today)
+                {
+                    MessageBox.Show("Please select a future date. Same-day booking is not permitted.");
+                    // Reset to the next available weekday or just don't update
+                    return;
+                }
+
+                // Ignore weekends (only Mon-Fri allowed)
+                if (value.DayOfWeek == DayOfWeek.Saturday || value.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    MessageBox.Show("BayWyn Couriers operates Monday to Friday only. Please select a weekday.");
+                    return;
+                }
+
+                // Change value only if conditions are passed
                 _selectedDeliveryDate = value;
                 OnPropertyChanged(nameof(SelectedDeliveryDate));
-
-                // As soon as the date changes, refresh the slot availability using the selectedcourierID
-                RefreshAvailableSlots(SelectedDeliveryDate, SelectedCourier.UserId);
+                
+                // 4. Refresh slots (added a null check for SelectedCourier to prevent crashes)
+                if (SelectedCourier != null)
+                {
+                    // As soon as the date changes, refresh the slot availability using the selectedcourierID
+                    RefreshAvailableSlots(SelectedDeliveryDate, SelectedCourier.UserId);
+                    TimePickerEnabled = true; //After refreshing the slots, the items control is enabled
+                }   
             }
         }
-
 
 
         // Getting the selected job to display details
@@ -212,9 +232,11 @@ namespace BayWyn_Couriers.ViewModels
                         SelectedJob.CourierId = value.UserId;
                     }
 
-                    // Enabling the date and time picker
+                    // Resetting the date to today
+                    SelectedDeliveryDate = GetDay(DateTime.Today.AddDays(1));
+                    // Enabling the date picker but disabling the time picker
                     DatePickerEnabled = true;
-
+                    TimePickerEnabled = false; // Only enabled when a date is selected
                 }
             }
         }
@@ -223,11 +245,14 @@ namespace BayWyn_Couriers.ViewModels
         public bool DatePickerEnabled
         {
             get => _datePickerEnabled;
-            set
-            {
-                _datePickerEnabled = value;
-                OnPropertyChanged();
-            }
+            set { _datePickerEnabled = value; OnPropertyChanged();}
+        }
+
+        // To update the binding for the items control used to display the slots
+        public bool TimePickerEnabled
+        {
+            get => _timePickerEnabled;
+            set { _timePickerEnabled = value; OnPropertyChanged(); }
         }
 
         // Methods
@@ -278,6 +303,17 @@ namespace BayWyn_Couriers.ViewModels
             _navigationVM.CurrentView = new LoginVM(_navigationVM); // Updating the current view to a instance of LoginVM. _sending the view model to be used as well
         }
 
+
+        // To get a valid date for the variable
+        private static DateTime GetDay(DateTime date)
+        {
+            // Keep adding days until we hit a day that isn't Sat or Sun
+            while (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                date = date.AddDays(1);
+            }
+            return date;
+        }
 
         // Refresh
         public void RefreshPage()

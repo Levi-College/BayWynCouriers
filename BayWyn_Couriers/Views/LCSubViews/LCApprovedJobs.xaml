@@ -77,8 +77,8 @@
 
                 <Label Content="Select Time:"/>
                 <!--Items control with radio button-->
-                <Expander Header="Select Delivery Time Slot" Background="White" BorderBrush="Gray" BorderThickness="1">
-                    <ItemsControl ItemsSource="{Binding TimeSlots}">
+                <Expander Header="Select Delivery Time Slot" Background="White" BorderBrush="Gray" BorderThickness="1" IsEnabled="{Binding TimePickerEnabled}">
+                    <ItemsControl ItemsSource="{Binding TimeSlots}" IsEnabled="{Binding TimePickerEnabled }">
                         <!-- Use a UniformGrid to make 4 slots per row (1 row per hour) -->
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
