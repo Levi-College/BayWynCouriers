@@ -20,9 +20,10 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
-        private string _selectedJobStatus = "All"; // Setting the private variable
+        private string _selectedJobStatus = "Pending"; // Setting the private variable
         private User _selectedCourier; // To hold the selected courier for dropdown display
         private Client _selectedClient; // To hold the client details when adding a new job
+        private decimal _costOfJob = 10m; // To update the price of the job (when creating a new one)
         private bool _enableItemsForNewJob = false; // This is used to enable and disable items for adding new job (new job window)
 
         private Contract _selectedContract; // Hold contract details
@@ -53,6 +54,7 @@ namespace BayWyn_Couriers.ViewModels
                 // Do conditional checks
 
                 _selectedJob = value;
+                
                 OnPropertyChanged();
 
                 // Updating the select courier (used to update the dropdown)
@@ -63,6 +65,8 @@ namespace BayWyn_Couriers.ViewModels
                     SelectedClient = null;
                     return;
                 }
+ 
+                CostOfJob = _selectedJob.Cost;
 
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
@@ -84,6 +88,17 @@ namespace BayWyn_Couriers.ViewModels
                         break;
                     }
                 }
+            }
+        }
+
+        // To update the cost of the job based on the selected courier
+        public decimal CostOfJob
+        {
+            get => _costOfJob;
+            set
+            {
+                _costOfJob = value;
+                OnPropertyChanged();
             }
         }
 
@@ -136,12 +151,17 @@ namespace BayWyn_Couriers.ViewModels
                     _selectedClient = value;
                     OnPropertyChanged();
 
-                    // Updating the courierId of the Job based on the selected new courier
-                    if (_selectedCourier != null)
+                    // Setting the client id
+                    if (_selectedClient != null)
                     {
                         SelectedJob.ClientId = value.ClientId;
+                        CostOfJob = GetCostOfTheJob(value.ClientId);
                     }
+                    // Updating the cost based on if the client is in the contract table or the contracts is expired
+                    //CostOfJob = GetCostOfTheJob(SelectedJob.ClientId);
                 }
+
+                
             }
         }
 
@@ -241,6 +261,7 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand DeleteJobCommand { get; }
         public ICommand UpdateJobCommand { get; }
         public ICommand NewJobCommand { get; }
+        public ICommand RefreshJobsCommand {  get; }
 
 
         // Admin contracts page commands
@@ -279,7 +300,7 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
-            LoadJobsByStatus("All"); // Loads all the jobs initially 
+            LoadJobsByStatus("Pending"); // Loads all the jobs initially 
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
 
@@ -320,6 +341,7 @@ namespace BayWyn_Couriers.ViewModels
             );
             UpdateJobCommand = new RelayCommand(UpdateJob);
             NewJobCommand = new RelayCommand(NewJob);
+            RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
 
 
             // Setting up contracts commands
@@ -335,6 +357,9 @@ namespace BayWyn_Couriers.ViewModels
 
             // Update the database
             // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
+
+            // Setting the start page as the jobs page
+            JobsPage(null);
         }
 
 
@@ -355,6 +380,12 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJob = null; // Clearing all the fields   
             SelectedCourier = null; // Clear the dropdown selections
             SelectedClient = null;
+
+            //RefreshPage(); // Refreshing the fields and the page
+            GetCouriers(); // Populate the status filter
+            GetClients(); // Populate the clients combo box
+            //LoadJobsByStatus("Pending"); // Loads all the jobs initially 
+            EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
 
         //To get all the couriers with their ID and to add it to the list of couriers. Used for combo box dropdown
@@ -444,7 +475,6 @@ namespace BayWyn_Couriers.ViewModels
                 // Command setup to check the status of the client
                 SqlCommand cmdGetStatus = new SqlCommand("SELECT ContractStatus FROM Contracts WHERE ClientID = @ClientID", mySqlCon);
                 cmdGetStatus.Parameters.AddWithValue("@ClientID", clientID);
-                // cmdGetStatus.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
 
                 SqlDataReader reader = cmdGetStatus.ExecuteReader();
 
@@ -462,8 +492,15 @@ namespace BayWyn_Couriers.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error");
+                return 10m;
             }
             return 10m;
+        }
+
+
+        public void RefreshJobsPage(object? obj)
+        {
+            RefreshPage();
         }
 
         // Admin Jobs CRUD
@@ -481,7 +518,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 StartDate = DateTime.Now.Date,
                 JobStatus = "Pending",
-                Cost = 2.5m,
+                Cost = 0
             };
         }
 
@@ -555,17 +592,27 @@ namespace BayWyn_Couriers.ViewModels
                     try
                     {
                         // Setting up the sql command
-                        SqlCommand cmUpdateJob = new SqlCommand("UPDATE Jobs SET CourierID = @CourierID, " +
+                        SqlCommand cmUpdateJob = new SqlCommand("UPDATE Jobs SET " +
                             "DeliveryAddress = @DeliveryAddress, " +
                             "Description = @Description, JobStatus = @JobStatus " +
                             "WHERE JobID = @JobID", mySqlCon);
 
                         // Use the ID to find the record, then set the new values using the parameters
                         cmUpdateJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
-                        cmUpdateJob.Parameters.AddWithValue("@CourierID", SelectedJob.CourierId);
                         cmUpdateJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
                         cmUpdateJob.Parameters.AddWithValue("@Description", SelectedJob.Description);
-                        cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+
+                        // Setting the status.
+                        // If status is pending, approve it, else keep the status
+                        if (SelectedJob.JobStatus == "Pending")
+                        {
+                            cmUpdateJob.Parameters.AddWithValue("@JobStatus", "Approved");
+                        }
+                        else
+                        {
+                            cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
+                        }
+                        
 
                         cmUpdateJob.ExecuteReader(); // Running the sql command to update the database
                         MessageBox.Show("Job Updated Successfully");

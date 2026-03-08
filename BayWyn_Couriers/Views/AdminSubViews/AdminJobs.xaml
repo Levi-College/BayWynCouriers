@@ -33,9 +33,12 @@
         <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
 
 
-        <Button Content="New Job" Command="{Binding NewJobCommand}"
-                Grid.Row="0" Grid.Column="0" Margin="10" 
-                HorizontalAlignment="Right" Width="120"/>
+        <Button Content="Refresh" Command="{Binding RefreshJobsCommand}"
+        Grid.Row="0" Margin="0,17,0,0" 
+        HorizontalAlignment="Center" Width="120" VerticalAlignment="Top"/>
+
+        <Button Content="New Job" Command="{Binding NewJobCommand}" Grid.Column="0" Margin="270,18,0,0" 
+                HorizontalAlignment="Left" Width="120" VerticalAlignment="Top"/>
 
         <!--Header for the edit column-->
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
@@ -49,7 +52,7 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
-                <DataGridTextColumn Header="Client ID" Binding="{Binding ClientId}" Width="*"/>
+                <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="*"/>
                 <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
             </DataGrid.Columns>
@@ -82,24 +85,24 @@
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                           SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
                           DisplayMemberPath="UserName" SelectedValuePath="UserId" IsEnabled="False" />
-                
+
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Start Date:"/>
-                    <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+                    <TextBox x:Name="txtDateCreated" IsEnabled="False" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="End Date:"/>
-                    <TextBox Margin="0,0,0,10" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
+                    <TextBox Margin="0,0,0,10" IsEnabled="False" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Cost"/>
-                    <Label Content="{Binding SelectedJob.Cost}"/>
+                    <Label Content="{Binding CostOfJob}"/>
                 </StackPanel>
-                
+
 
 
                 <Label Content="Delivery Address:"/>
@@ -110,19 +113,19 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
+                    <Label Content="{Binding SelectedJob.JobStatus}"/>
+                    <!--
                     <ComboBox Width="150" 
                               ItemsSource="{Binding JobsStatusList}"
                               SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
+                    -->
                 </StackPanel>
-
-
-
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="50" Margin="5" />
-                <Button Content="Update" Command="{Binding UpdateJobCommand}" Width="50" Margin="5"/>
-                <Button Content="Add" Command="{Binding AddJobCommand}" IsEnabled="{Binding EnableItemsForNewJob}" Width="50" Margin="5" />
+                <Button Content="Delete" Command="{Binding DeleteJobCommand}" Width="100" Margin="5" />
+                <Button Content="Update/Approve" Command="{Binding UpdateJobCommand}" Width="100" Margin="5"/>
+                <Button Content="Add" Command="{Binding AddJobCommand}" IsEnabled="{Binding EnableItemsForNewJob}" Width="100" Margin="5" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -34,14 +34,53 @@
                 <Label Content="BayWyn Couriers" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="20"/>
             </Grid>
 
-            <!--Side menu buttons-->
+            <!--Side menu buttons
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
-                    <Button Content="Manage Jobs" Command="{Binding JobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Manage Jobs" Command="{Binding JobsCommand }" IsDefault="True" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Reports" Command="{Binding ReportsCommand}" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Contracts" Command="{Binding ContractsCommand}" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Clients" Command="{Binding ClientsCommand}" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Couriers" Command="{Binding CouriersCommand}" Height="40" Margin="0,5,5,5"/>
+                </StackPanel>
+            </Grid>
+            -->
+
+            <Grid Grid.Row="1">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel.Resources>
+                        <!-- A style that makes RadioButtons look like Menu Buttons -->
+                        <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                            <Setter Property="Height" Value="40"/>
+                            <Setter Property="Margin" Value="0,5,5,5"/>
+                            <Setter Property="Background" Value="#F0F0F0"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="RadioButton">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <!-- Highlighting the selected menu item -->
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Background" Value="#007BFF"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <!-- Use IsChecked="True" on the first one to select it by default -->
+                    <RadioButton Content="Manage Jobs" Command="{Binding JobsCommand}" IsChecked="True"/>
+                    <RadioButton Content="Reports" Command="{Binding ReportsCommand}"/>
+                    <RadioButton Content="Contracts" Command="{Binding ContractsCommand}"/>
+                    <RadioButton Content="Clients" Command="{Binding ClientsCommand}"/>
+                    <RadioButton Content="Couriers" Command="{Binding CouriersCommand}"/>
                 </StackPanel>
             </Grid>
         </Grid>
