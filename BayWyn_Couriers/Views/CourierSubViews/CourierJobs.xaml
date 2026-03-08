@@ -47,9 +47,9 @@
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                <Button Content="Accept" Command="{Binding DataContext.AcceptCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                <Button Content="Accept" Command="{Binding DataContext.AcceptJobCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                                 CommandParameter="{Binding}" Background="Green" Foreground="White" Width="80" Margin="5"/>
-                                <Button Content="Reject" Command="{Binding DataContext.RejectCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                <Button Content="Reject" Command="{Binding DataContext.RejectJobCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
                                 CommandParameter="{Binding}" Background="Red" Foreground="White" Width="80" Margin="5"/>
                             </StackPanel>
                         </Grid>

@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Transactions;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -302,56 +303,97 @@ namespace BayWyn_Couriers.ViewModels
         //Accept the selected job (using selectedJob object and properties)
         private void AcceptSelectedJob(object? obj)
         {
+            //Returning if the obj is null
+            if (obj == null) {return; }
+
+            // Casting the object as a job
+            SelectedJob = (JobAssignment)obj;
+
+            // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
 
-            using (SqlConnection con = new SqlConnection(myCon))
+            try
             {
-                con.Open();
-                string query = "UPDATE Jobs SET JobStatus = 'Confirmed' WHERE JobID = @JobID";
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                SqlCommand cmdAcceptJob = new SqlCommand("UPDATE Jobs SET JobStatus = 'Accepted' WHERE JobID = @JobID", mySqlCon);
+                cmdAcceptJob.Parameters.AddWithValue("@JobID",SelectedJob.JobId);
+                cmdAcceptJob.ExecuteNonQuery();
 
-                if (cmd.ExecuteNonQuery() > 0)
-                {
-                    PendingJobs.Remove(SelectedJob);
-                    MessageBox.Show("Job Accepted! Check your Shift view for details.");
-                }
+                // Removing the jobs from the list 
+                PendingJobs.Remove(SelectedJob);
+    
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         //Reject the selected job 
         private void RejectSelectedJob(object? obj)
         {
-            
+            //Returning if the obj is null
+            if (obj == null) { return; }
+
+            // Casting the object as a jobassignment : job
+            SelectedJob = (JobAssignment)obj;
+
+            // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
 
-            using (SqlConnection con = new SqlConnection(myCon))
+            try
             {
-                con.Open();
-                SqlTransaction trans = con.BeginTransaction();
+                // Delete the assignment record from the job assignment table
+                SqlCommand cmdDel = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID", mySqlCon);
+                cmdDel.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                cmdDel.ExecuteNonQuery();
 
-                try
-                {
-                    // 1. Delete the assignment record to free the slot
-                    SqlCommand cmdDel = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID", con, trans);
-                    cmdDel.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
-                    cmdDel.ExecuteNonQuery();
+                // Set Job status back to 'Approved' so LC can see it again
+                SqlCommand cmdUpd = new SqlCommand("UPDATE Jobs SET JobStatus = 'Approved' WHERE JobID = @JobID",mySqlCon);
+                cmdUpd.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                cmdUpd.ExecuteNonQuery();
 
-                    // 2. Set Job status back to 'Approved' so LC can see it again
-                    SqlCommand cmdUpd = new SqlCommand("UPDATE Jobs SET JobStatus = 'Approved' WHERE JobID = @JobID", con, trans);
-                    cmdUpd.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
-                    cmdUpd.ExecuteNonQuery();
-
-                    trans.Commit();
-                    PendingJobs.Remove(SelectedJob);
-                    MessageBox.Show("Job Rejected. It has been sent back to the Logistics Coordinator.");
-                }
-                catch
-                {
-                    trans.Rollback();
-                    MessageBox.Show("Failed to reject job.");
-                }
+                PendingJobs.Remove(SelectedJob);
+                MessageBox.Show("Job Rejected. It has been sent back to the Logistics Coordinator.");
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            //string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+
+            //using (SqlConnection con = new SqlConnection(myCon))
+            //{
+            //    con.Open();
+            //    SqlTransaction trans = con.BeginTransaction();
+
+            //    try
+            //    {
+            //        // 1. Delete the assignment record to free the slot
+            //        SqlCommand cmdDel = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID", con, trans);
+            //        cmdDel.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+            //        cmdDel.ExecuteNonQuery();
+
+            //        // 2. Set Job status back to 'Approved' so LC can see it again
+            //        SqlCommand cmdUpd = new SqlCommand("UPDATE Jobs SET JobStatus = 'Approved' WHERE JobID = @JobID", con, trans);
+            //        cmdUpd.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+            //        cmdUpd.ExecuteNonQuery();
+
+            //        trans.Commit();
+            //        PendingJobs.Remove(SelectedJob);
+            //        MessageBox.Show("Job Rejected. It has been sent back to the Logistics Coordinator.");
+            //    }
+            //    catch
+            //    {
+            //        trans.Rollback();
+            //        MessageBox.Show("Failed to reject job.");
+            //    }
+            //}
 
         }
 
