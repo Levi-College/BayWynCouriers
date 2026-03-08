@@ -7,11 +7,13 @@ using Microsoft.VisualBasic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BayWyn_Couriers.ViewModels
@@ -70,6 +72,11 @@ namespace BayWyn_Couriers.ViewModels
         private JobAssignment _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
         private string _selectedJobStatus = "All"; // Setting the private variable
         private string _userID;
+
+        private DispatcherTimer _timer;
+        private Stopwatch _stopwatch;
+        private string _shiftTimerDisplay = "00:00:00";
+
 
         //private User _selectedCourier; // To hold the selected courier for dropdown display
         //private bool _datePickerEnabled = false; // To disable the date picker unless a courier is selected
@@ -185,6 +192,15 @@ namespace BayWyn_Couriers.ViewModels
                     OnPropertyChanged();
                 }
             }
+        }
+
+        // To update tht timer displayed in the shift page
+        public string ShiftTimerDisplay
+        {
+            get => _shiftTimerDisplay;
+            set { 
+                _shiftTimerDisplay = value; 
+                OnPropertyChanged(); }
         }
 
         // To set and get the select job status (for filtering the data grid)
@@ -472,6 +488,16 @@ namespace BayWyn_Couriers.ViewModels
             // Start the timer
 
             // Add the start time to the database (if a shifts table is there)
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
+
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            _timer.Tick += (s, e) =>
+            {
+                ShiftTimerDisplay = _stopwatch.Elapsed.ToString(@"hh\:mm\:ss");
+            };
+            _timer.Start();
         }
 
         private void EndShift(object? obj)
@@ -483,6 +509,8 @@ namespace BayWyn_Couriers.ViewModels
             // Update all the jobs that are not completed today to incomplete
             // These can be set to approved (not assigned) so that the LC can assign the jobs to other couriers
             // Maybe add the details (of the courier who had the job, any reason for not delivering, etc)
+            _stopwatch?.Stop();
+            _timer.Stop();
 
 
         }
