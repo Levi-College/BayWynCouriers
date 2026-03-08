@@ -236,7 +236,7 @@ namespace BayWyn_Couriers.ViewModels
                     SelectedDeliveryDate = GetDay(DateTime.Today.AddDays(1));
                     // Enabling the date picker but disabling the time picker
                     DatePickerEnabled = true;
-                    TimePickerEnabled = false; // Only enabled when a date is selected
+                    TimePickerEnabled = true; // Only enabled when a date is selected
                 }
             }
         }
@@ -645,10 +645,6 @@ namespace BayWyn_Couriers.ViewModels
                         // Commit both changes to the database
                         //transaction.Commit();
                         MessageBox.Show("Job Assigned Successfully!");
-
-                        // Refresh the LC's list to remove the now-assigned job
-                        GetAllJobs();
-                        MessageBox.Show("Job Updated Successfully");
                     }
                     catch (Exception ex)
                     {
@@ -660,7 +656,9 @@ namespace BayWyn_Couriers.ViewModels
                     {
                         mySqlCon.Close();
                     }
-                    GetAllJobs();
+
+                    // Refresh the LC's list to remove the now-assigned job and only show the approved (pending to be assigned)
+                    LoadJobsByStatus("Approved");
                 }
             }
         }

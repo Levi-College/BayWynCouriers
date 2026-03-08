@@ -31,8 +31,10 @@
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
                     <Button Content="Pending Assignment" Command="{Binding LCApprovedJobsCommand }" Height="40" Margin="0,5,5,5"/>
-                    <Button Content="Manage Assigned Jobs" Command="{Binding LCAssignedJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Assigned Jobs" Command="{Binding LCAssignedJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    
                     <Button Content="Completed Jobs" Command="{Binding LCCompletedJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                   
                 </StackPanel>
             </Grid>
         </Grid>
