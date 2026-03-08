@@ -144,26 +144,24 @@ namespace BayWyn_Couriers.ViewModels
                 }
 
 
-
                 // Updating the select courier (used to update the dropdown)
                 // If no job selected let the selected courier and client be null
-                //if (_selectedJob == null)
+                if (_selectedJob == null)
                 {
-                    //SelectedCourier = null;
-                    //SelectedClient = null;
-                    //return;
+                    SelectedCourier = null;
+                    return;
                 }
 
                 //Matching the courier using the ID
-                //foreach (User courier in CouriersList)
-                //{
-                //    if (courier.UserId == _selectedJob.CourierId)
-                //    {
-                //        // Update the selected courier
-                //        SelectedCourier = courier;
-                //        break;
-                //    }
-                //}
+                foreach (User courier in CouriersList)
+                {
+                    if (courier.UserId == _selectedJob.CourierId)
+                    {
+                        // Update the selected courier
+                        SelectedCourier = courier;
+                        break;
+                    }
+                }
 
                 // Setting the client in the edit window (using the selected job client Id)
                 //foreach (Client client in ClientList)
