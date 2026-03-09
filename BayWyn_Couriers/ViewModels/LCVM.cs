@@ -51,6 +51,7 @@ namespace BayWyn_Couriers.ViewModels
         private User _selectedCourier; // To hold the selected courier for dropdown display
         private bool _datePickerEnabled = false; // To disable the date picker unless a courier is selected
         private bool _timePickerEnabled = false; // To disable timer pickers unless a date is picked
+        private bool _enableCourierSelection = false; // Disables the courier dropdown by default
 
         public List<String> LCJobsFilterList { get; } = new List<String> { "All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
         public List<string> JobsStatusList { get; } = new List<string> { "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box        
@@ -58,8 +59,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         public Dictionary<string, string> SlotTimeMap { get; set; } //Dictionary to hold the time slot name and the time
         public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
-        private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Holds the slot names for the break schedule
-
+        private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Break slots
 
 
 
@@ -160,20 +160,16 @@ namespace BayWyn_Couriers.ViewModels
             set
             {
                 // Do conditional checks
-                if (_selectedJob != value)
-                {
-                    _selectedJob = value;
-                    OnPropertyChanged();
-                }
+                if (_selectedJob != value){_selectedJob = value; OnPropertyChanged();}
 
 
                 // Updating the select courier (used to update the dropdown)
                 // If no job selected let the selected courier and client be null
-                if (_selectedJob == null)
-                {
-                    SelectedCourier = null;
-                    return;
-                }
+                // Also the courier selection is set to false
+                if (_selectedJob == null){SelectedCourier = null; EnableCourierSelection = false; return;}
+
+                //Enabling the courier selection in the edit window
+                EnableCourierSelection = true;
 
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
@@ -185,6 +181,8 @@ namespace BayWyn_Couriers.ViewModels
                         break;
                     }
                 }
+
+                
 
                 // Setting the client in the edit window (using the selected job client Id)
                 //foreach (Client client in ClientList)
@@ -255,6 +253,21 @@ namespace BayWyn_Couriers.ViewModels
             set { _timePickerEnabled = value; OnPropertyChanged(); }
         }
 
+        public bool EnableCourierSelection
+        {
+            get => _enableCourierSelection;
+            set
+            {
+                if (SelectedJob != null) { 
+                    _enableCourierSelection = value; 
+                    OnPropertyChanged();
+                    return;
+                }
+                _enableCourierSelection = false;
+                OnPropertyChanged();
+
+            }
+        }
         // Methods
         private void LCApprovedJobs(object? obj)
         {
@@ -321,6 +334,7 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJob = null; // Clearing all the fields   
             SelectedCourier = null; // Clear the dropdown selections
             DatePickerEnabled = false;
+            EnableCourierSelection = false;
         }
 
         // Sets up the dictionary 
@@ -629,6 +643,7 @@ namespace BayWyn_Couriers.ViewModels
                         cmdAssign.Parameters.AddWithValue("@CourierID", SelectedCourier.UserId);
                         cmdAssign.Parameters.AddWithValue("@Date", SelectedDeliveryDate);
                         // Get the SlotName (e.g., "S1") from the radio button the user clicked
+                        // It gets the first matching value (s.IsSelected.SlotName)
                         cmdAssign.Parameters.AddWithValue("@Slot", TimeSlots.FirstOrDefault(s => s.IsSelected).SlotName);
 
                         cmdAssign.ExecuteNonQuery();
@@ -641,9 +656,6 @@ namespace BayWyn_Couriers.ViewModels
                         cmdUpdate.Parameters.AddWithValue("@CourierID", SelectedCourier.UserId);
 
                         cmdUpdate.ExecuteNonQuery();
-
-                        // Commit both changes to the database
-                        //transaction.Commit();
                         MessageBox.Show("Job Assigned Successfully!");
                     }
                     catch (Exception ex)

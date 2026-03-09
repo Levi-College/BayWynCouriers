@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BayWyn_Couriers.Views.LCSubViews"
+             xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:LCVM}"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid Background="AntiqueWhite" Margin="5">
@@ -66,7 +68,7 @@
                 <Label Content="Courier Name:"/>
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                   SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
-                  DisplayMemberPath="UserName" SelectedValuePath="UserId" />
+                  DisplayMemberPath="UserName" IsEnabled="{Binding EnableCourierSelection}" SelectedValuePath="UserId" />
 
 
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
