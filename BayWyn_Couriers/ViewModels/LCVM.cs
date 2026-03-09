@@ -62,6 +62,8 @@ namespace BayWyn_Couriers.ViewModels
         private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Break slots
 
 
+        //public ObservableCollection<JobAssignment> { get; set; }
+
 
         // Setting up classes
         // Class used for setting up the timeslot for the couriers
@@ -159,7 +161,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // Change value only if conditions are passed
                 _selectedDeliverySlot = value;
-                OnPropertyChanged(nameof(SelectedDeliveryDate));
+                OnPropertyChanged();
 
             }
         }
@@ -177,11 +179,15 @@ namespace BayWyn_Couriers.ViewModels
                 // Updating the select courier (used to update the dropdown)
                 // If no job selected let the selected courier and client be null
                 // Also the courier selection is set to false
-                if (_selectedJob == null) { SelectedCourier = null; EnableCourierSelection = false; return; }
+                if (_selectedJob == null) { SelectedCourier = null; EnableCourierSelection = false; SelectedDeliverySlot = "No slot booked"; return; }
 
                 //Enabling the courier selection in the edit window
                 EnableCourierSelection = true;
+
+                //string slotCode = 
                 
+
+                // Getting the slot time from the selected job
                 
 
                 //Matching the courier using the ID
