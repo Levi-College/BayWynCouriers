@@ -58,7 +58,7 @@
             <Grid Grid.Row="0" Margin="0,0,0,15">
                 <Button Content="Refresh List" DockPanel.Dock="Right" Style="{StaticResource CyanButtonStyle}" 
                         Command="{Binding RefreshClientsCommand}" Width="120" Margin="196,6,131,-2" RenderTransformOrigin="0.175,0.751"/>
-                <Button Content="New Job" Command="{Binding NewJobCommand}" Margin="328,12,0,0" 
+                <Button Content="New Client" Command="{Binding NewClientCommand}" Margin="328,12,0,0" 
         HorizontalAlignment="Left" Width="120" VerticalAlignment="Top"/>
 
                 <!--
@@ -165,7 +165,7 @@
                             Command="{Binding UpdateClientCommand}" />
 
                     <Button Content="Add New" Style="{StaticResource CyanButtonStyle}" 
-                            Command="{Binding AddClientCommand}" FontWeight="Bold"/>
+                            Command="{Binding AddClientCommand}" IsEnabled="{Binding EnableItemsForNewClient}" FontWeight="Bold"/>
                 </UniformGrid>
             </Grid>
         </Border>

@@ -31,20 +31,21 @@ namespace BayWyn_Couriers.ViewModels
         private bool _enableItemsForNewContract = false;
 
         private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
+        private bool _enableItemsForNewClient = false;
 
         // Lists and observable collections
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)        
         public List<String> JobsFilterList { get; } = new List<String> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
-        public List<string> JobsStatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box
+        //public List<string> JobsStatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box
 
 
         // Used for the contracts page
         public ObservableCollection<Contract> AllContracts { get; set; } = new ObservableCollection<Contract>(); // To hold the list of contracts
         public List<String> ContractsFilterList { get; } = new List<String> { "All", "Active", "Expired" }; // A list of string for the items in the job status combo box (item source)
         public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
-        public List<string> ClientsFilterList { get; } = new List<string> { "All","Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
+        public List<string> ClientsFilterList { get; } = new List<string> { "All", "Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
@@ -56,7 +57,7 @@ namespace BayWyn_Couriers.ViewModels
                 // Do conditional checks
 
                 _selectedJob = value;
-                
+
                 OnPropertyChanged();
 
                 // Updating the select courier (used to update the dropdown)
@@ -67,7 +68,7 @@ namespace BayWyn_Couriers.ViewModels
                     SelectedClient = null;
                     return;
                 }
- 
+
                 CostOfJob = _selectedJob.Cost;
 
                 //Matching the courier using the ID
@@ -162,11 +163,11 @@ namespace BayWyn_Couriers.ViewModels
                             SelectedJob.ClientId = value.ClientId;
                             CostOfJob = GetCostOfTheJob(value.ClientId);
                         }
-                        
+
                     }
                     // Updating the cost based on if the client is in the contract table or the contracts is expired
                     //CostOfJob = GetCostOfTheJob(SelectedJob.ClientId);
-                }                
+                }
             }
         }
 
@@ -184,6 +185,16 @@ namespace BayWyn_Couriers.ViewModels
                     // Filtering the jobs list based on the selected job status
                     LoadClientsByStatus(value);
                 }
+            }
+        }
+
+        public bool EnableItemsForNewClient
+        {
+            get => _enableItemsForNewClient;
+            set
+            {
+                _enableItemsForNewClient = value;
+                OnPropertyChanged();
             }
         }
 
@@ -283,7 +294,7 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand DeleteJobCommand { get; }
         public ICommand UpdateJobCommand { get; }
         public ICommand NewJobCommand { get; }
-        public ICommand RefreshJobsCommand {  get; }
+        public ICommand RefreshJobsCommand { get; }
 
 
         // Admin contracts page commands
@@ -296,6 +307,13 @@ namespace BayWyn_Couriers.ViewModels
         // Admin couriers page commands
 
         // Admin reports page commands
+
+        // Admin clients page
+        public ICommand AddClientCommand { get; }
+        public ICommand DeleteClientCommand { get; }
+        public ICommand UpdateClientCommand { get; }
+        public ICommand NewClientCommand { get; }
+        public ICommand RefreshClientsCommand { get; }
 
 
         // AdminVM logic
@@ -342,7 +360,7 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminClients();
             GetClients(); //Updates the clients observable collection
-        } 
+        }
 
         private void CouriersPage(object? obj) => CurrentSubView = new AdminCouriers();
 
@@ -382,6 +400,14 @@ namespace BayWyn_Couriers.ViewModels
             UpdateContractCommand = new RelayCommand(UpdateContract);
             NewContractCommand = new RelayCommand(NewContract);
 
+
+            //Client page commands
+            AddClientCommand = new RelayCommand(AddNewClient);
+            DeleteClientCommand = new RelayCommand(execute: obj => DeleteClient(obj), canExecute: obj => SelectedClient != null);
+            UpdateClientCommand = new RelayCommand(UpdateClient);
+            NewClientCommand = new RelayCommand(NewClient);
+            RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
+
             // Update the database
             // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
 
@@ -413,6 +439,7 @@ namespace BayWyn_Couriers.ViewModels
             GetClients(); // Populate the clients combo box
             //LoadJobsByStatus("Pending"); // Loads all the jobs initially 
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
+            EnableItemsForNewClient = false;
         }
 
         //To get all the couriers with their ID and to add it to the list of couriers. Used for combo box dropdown
@@ -493,7 +520,7 @@ namespace BayWyn_Couriers.ViewModels
         {
             if (string.IsNullOrEmpty(status)) return;
             ClientList.Clear();
-            if (status == "All"){ GetClients();return; }
+            if (status == "All") { GetClients(); return; }
 
             // Sql setup
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -523,8 +550,8 @@ namespace BayWyn_Couriers.ViewModels
                         }
                     }
 
-                } 
-                else if(status == "No Contract/Expired")
+                }
+                else if (status == "No Contract/Expired")
                 {
                     SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus IS NULL OR co.ContractStatus = 'Expired'", mySqlCon);
                     SqlDataReader reader = cmdGetClients.ExecuteReader();
@@ -544,10 +571,10 @@ namespace BayWyn_Couriers.ViewModels
                     }
                 }
                 else { MessageBox.Show("No Clients to display"); return; }
-                
+
             }
-            catch (Exception ex){ MessageBox.Show(ex.Message); }
-            finally { mySqlCon.Close(); }         
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         private decimal GetCostOfTheJob(int clientID)
@@ -703,7 +730,7 @@ namespace BayWyn_Couriers.ViewModels
                         {
                             cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
                         }
-                        
+
 
                         cmUpdateJob.ExecuteReader(); // Running the sql command to update the database
                         MessageBox.Show("Job Updated Successfully");
@@ -1229,6 +1256,108 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     mySqlCon.Close();
                 }
+            }
+
+        }
+
+
+        //Admin  clients CRUD
+        public void RefreshClientsPage(object? obj)
+        {
+            RefreshPage();
+        }
+        public void NewClient(object? obj)
+        {
+            RefreshPage();
+            GetClients();
+            MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
+            EnableItemsForNewClient = true;
+            SelectedClient = new Client();
+        }
+        public void AddNewClient(object? obj)
+        {
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                // If no contracts
+                // Setting up the sql command
+                SqlCommand cmdAddContract = new SqlCommand("INSERT INTO Clients (Name, ClientAddress, Phone, Email) " +
+                    "VALUES (@Name, @Address, @Phone, @Email)", mySqlCon);
+
+                cmdAddContract.Parameters.AddWithValue("@Name", SelectedClient.Name);
+                cmdAddContract.Parameters.AddWithValue("@Address", SelectedClient.ClientAddress);
+                cmdAddContract.Parameters.AddWithValue("@Phone", SelectedClient.Phone);
+                cmdAddContract.Parameters.AddWithValue("@Email", SelectedClient.Email);
+
+
+                cmdAddContract.ExecuteNonQuery();
+                MessageBox.Show("Client Added");
+                RefreshPage();
+                GetClients(); // Refresh the list
+            }
+            catch (Exception ex) { MessageBox.Show("Error adding the client: " + ex.Message); }
+            finally { mySqlCon.Close(); }
+        }
+        public void UpdateClient(object? obj)
+        {
+            if (SelectedClient == null){MessageBox.Show("Please select a Client to be update");return;}
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("Confirm Update", "Update", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Setting up sql connection
+                    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                    SqlConnection mySqlCon = new(myCon);
+                    mySqlCon.Open();
+
+                    try
+                    {
+                        // Setting up the sql command
+                        SqlCommand cmd = new SqlCommand("UPDATE Clients SET Name = @Name, Email = @Email, Phone = @Phone, ClientAddress = @ClientAddress WHERE ClientID = @ClientID", mySqlCon);
+
+                        // Adding parameter values
+                        cmd.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
+                        cmd.Parameters.AddWithValue("@Name", SelectedClient.Name);
+                        cmd.Parameters.AddWithValue("@Email", SelectedClient.Email);
+                        cmd.Parameters.AddWithValue("@Phone", SelectedClient.Phone);
+                        cmd.Parameters.AddWithValue("@ClientAddress", SelectedClient.ClientAddress);
+                        cmd.ExecuteReader(); 
+                        MessageBox.Show("Client details updated");
+                    }
+                    catch (Exception ex){MessageBox.Show(ex.Message); mySqlCon.Close();}
+                    finally{mySqlCon.Close();}
+                    GetClients();
+                }
+            }
+        }
+        public void DeleteClient(object? obj)
+        {
+            if (SelectedClient == null){MessageBox.Show("Please select a Client to delete.");return;}
+
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this Client?", "Confirm Delete", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                SqlConnection mySqlCon = new(myCon);
+                mySqlCon.Open();
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Clients WHERE ClientID = @ID", mySqlCon);
+                    cmd.Parameters.AddWithValue("@ID", SelectedClient.ClientId);
+
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Client Deleted.");
+                    GetClients();
+                }
+                catch (Exception ex){MessageBox.Show("Error deleting Client: " + ex.Message);}
+                finally{mySqlCon.Close();}
             }
 
         }
