@@ -29,8 +29,8 @@
 
         <!--Data grid for the jobs to be displayed-->
         <DataGrid AutoGenerateColumns="False"
-        ItemsSource="{Binding AllJobs}" 
-        SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
+        ItemsSource="{Binding AllJobAssignments}" 
+        SelectedItem="{Binding Path=SelectedJobAssignment, Mode=TwoWay}"
         IsReadOnly="True"
         Grid.Row="1" Grid.Column="0">
 
@@ -55,7 +55,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Job ID:"/>
-                    <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
+                    <Label x:Name="txtJobID" Content="{Binding SelectedJobAssignment.JobId, Mode=OneWay}" Width="50"/>
                 </StackPanel>
 
                 <!--
@@ -63,34 +63,26 @@
           <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
                 DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewJob}"/>
           -->
-                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
+                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJobAssignmentAssignment.ClientName, Mode=TwoWay}"/>-->
 
                 <Label Content="Courier Name:"/>
                 <Label Content="{Binding SelectedCourier.UserName}"/>
-                <!--
-                <ComboBox ItemsSource="{Binding CouriersList}" 
-                SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
-                DisplayMemberPath="UserName" SelectedValuePath="UserId" />
-                -->
-
-
-                <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
-
+                
                 <Label Content="Delivery Date:"/>
-                <Label Content="{Binding SelectedDeliveryDate}"/>
+                <Label Content="{Binding SelectedJobAssignment.DeliveryDate}"/>
 
                 <Label Content="Delivery Slot/Time:"/>
-                <Label Content="{Binding SelectedDeliverySlot}"/>
+                <Label Content="{Binding SelectedJobAssignment.DeliverySlot}"/>
 
                 <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="51"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJobAssignment.DeliveryAddress, Mode=TwoWay}" Height="51"/>
 
                 <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="49"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJobAssignment.Description, Mode=TwoWay}" Height="49"/>
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
-                    <Label Content="{Binding SelectedJob.JobStatus}"/>
+                    <Label Content="{Binding SelectedJobAssignment.JobStatus}"/>
                 </StackPanel>
             </StackPanel>
 

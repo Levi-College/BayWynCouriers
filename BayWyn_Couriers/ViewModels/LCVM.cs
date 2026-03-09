@@ -45,8 +45,8 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
         private DateTime _selectedDeliveryDate = GetDay(DateTime.Today.AddDays(1));
-        private string _selectedDeliverySlot;
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
+        private JobAssignment _selectedJobAssignment;
         private string _selectedJobStatus = "All"; // Setting the private variable
         private User _selectedCourier; // To hold the selected courier for dropdown display
         private bool _datePickerEnabled = false; // To disable the date picker unless a courier is selected
@@ -56,14 +56,11 @@ namespace BayWyn_Couriers.ViewModels
         public List<String> LCJobsFilterList { get; } = new List<String> { "All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
         public List<string> JobsStatusList { get; } = new List<string> { "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box        
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
+        public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new ObservableCollection<JobAssignment>();
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         public Dictionary<string, string> SlotTimeMap { get; set; } //Dictionary to hold the time slot name and the time
         public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
         private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Break slots
-
-
-        //public ObservableCollection<JobAssignment> { get; set; }
-
 
         // Setting up classes
         // Class used for setting up the timeslot for the couriers
@@ -154,17 +151,6 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-        public string SelectedDeliverySlot
-        {
-            get => _selectedDeliverySlot;
-            set
-            {
-                // Change value only if conditions are passed
-                _selectedDeliverySlot = value;
-                OnPropertyChanged();
-
-            }
-        }
 
         // Getting the selected job to display details
         public Job SelectedJob
@@ -179,16 +165,10 @@ namespace BayWyn_Couriers.ViewModels
                 // Updating the select courier (used to update the dropdown)
                 // If no job selected let the selected courier and client be null
                 // Also the courier selection is set to false
-                if (_selectedJob == null) { SelectedCourier = null; EnableCourierSelection = false; SelectedDeliverySlot = "No slot booked"; return; }
+                if (_selectedJob == null) { SelectedCourier = null; EnableCourierSelection = false; return; }
 
                 //Enabling the courier selection in the edit window
                 EnableCourierSelection = true;
-
-                //string slotCode = 
-                
-
-                // Getting the slot time from the selected job
-                
 
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
@@ -212,6 +192,32 @@ namespace BayWyn_Couriers.ViewModels
                 //        break;
                 //    }
                 //}
+            }
+        }
+
+        public JobAssignment SelectedJobAssignment {
+            get => _selectedJobAssignment;
+            set
+            {
+                // Do conditional checks
+                if (_selectedJobAssignment != value) { _selectedJobAssignment = value; OnPropertyChanged(); }
+
+
+                // Updating the select courier (used to update the dropdown)
+                // If no job selected let the selected courier and client be null
+                // Also the courier selection is set to false
+                if (_selectedJobAssignment == null) { SelectedCourier = null; return; }
+
+                //Matching the courier using the ID
+                foreach (User courier in CouriersList)
+                {
+                    if (courier.UserId == _selectedJobAssignment.CourierId)
+                    {
+                        // Update the selected courier
+                        SelectedCourier = courier;
+                        break;
+                    }
+                }
             }
         }
 
@@ -304,7 +310,8 @@ namespace BayWyn_Couriers.ViewModels
             CurrentSubView = new LCAssignedJobs();
             RefreshPage(); // Refreshing the fields and the page
             GetCouriers(); // Populate the status filter
-            LoadJobsByStatus("Assigned"); // Loads all the jobs for the page
+            //LoadJobsByStatus("Assigned"); // Loads all the jobs for the page
+            GetAllAssignedJobs();
             SetupSlotMap();
             InitializeTimeSlots();
         }
@@ -560,6 +567,56 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        public void GetAllAssignedJobs()
+        {
+            RefreshPage(); // Refreshing before updating the form
+
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                // Setting up the sql command
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, ja.* FROM Jobs j INNER JOIN JobAssignments ja ON j.JobID = ja.JobID WHERE JobStatus IN ('Assigned','Accepted')", mySqlCon);
+                SqlDataReader reader = cmGetJobs.ExecuteReader();
+
+                // Looping through the data reader and adding them to the list
+                if (reader.HasRows)
+                {
+                    AllJobAssignments.Clear();
+                    while (reader.Read())
+                    {
+                        AllJobAssignments.Add(
+                             new JobAssignment
+                             {
+                                 JobId = Convert.ToInt32(reader["JobId"]),
+                                 ClientId = Convert.ToInt32(reader["ClientId"]),
+                                 
+                                 // Handling potential NULLs for CourierID
+                                 CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
+
+                                 StartDate = Convert.ToDateTime(reader["StartDate"]),
+                                 // If end date is null (it will be set as the start date)
+                                 EndDate = reader["EndDate"] == DBNull.Value ? Convert.ToDateTime(reader["StartDate"]) : Convert.ToDateTime(reader["EndDate"]),
+                                 JobStatus = reader["JobStatus"].ToString(),
+                                 DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                                 Description = reader["Description"].ToString(),
+                                 Cost = Convert.ToDecimal(reader["Cost"]),
+                                 DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"]),
+
+                                 //Getting the time from the slot
+                                 DeliverySlot = SlotTimeMap[reader["DeliverySlot"].ToString()]
+                             }
+                          );
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex){MessageBox.Show(ex.Message);mySqlCon.Close();}
+            finally{mySqlCon.Close();}
+        }
 
         // This method is used to update or filter the data grid source based on the selected job status
         private void LoadJobsByStatus(string jobStatus)
