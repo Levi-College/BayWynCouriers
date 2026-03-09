@@ -25,8 +25,8 @@
 
         <!--Filter-->
         <ComboBox Grid.Row="0" Grid.Column="0" 
-                  ItemsSource="{Binding ClientsFilterList}"
-                  SelectedItem="{Binding SelectedClientStatus, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding JobsFilterList}"
+                  SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 

@@ -44,7 +44,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<Contract> AllContracts { get; set; } = new ObservableCollection<Contract>(); // To hold the list of contracts
         public List<String> ContractsFilterList { get; } = new List<String> { "All", "Active", "Expired" }; // A list of string for the items in the job status combo box (item source)
         public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
-        public List<string> ClientsFilterList { get; } = new List<string> { "Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
+        public List<string> ClientsFilterList { get; } = new List<string> { "All","Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
@@ -322,7 +322,7 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
-            LoadJobsByStatus("Pending"); // Loads all the jobs initially 
+            LoadJobsByStatus("Pending"); // Loads all the pending approval jobs
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
 
@@ -491,56 +491,61 @@ namespace BayWyn_Couriers.ViewModels
 
         private void LoadClientsByStatus(string status)
         {
-            if (!string.IsNullOrEmpty(status))
+            if (string.IsNullOrEmpty(status)) return;
+
+            ClientList.Clear();
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
             {
-                ClientList.Clear();
-
-                // Setting up sql connection
-                string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
-                SqlConnection mySqlCon = new(myCon);
-                mySqlCon.Open();
-
-                try
+                if (status == "Contract")
                 {
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    // Command setup to check the status of the client for all active contract clients
+                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c INNER JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus = 'Active'", mySqlCon);
+                    SqlDataReader reader = cmdGetClients.ExecuteReader();
+
+                    if (reader.HasRows)
                     {
-                        if (reader.HasRows)
+                        while (reader.Read())
                         {
-                            ClientList.Clear();
-                            while (reader.Read())
+                            ClientList.Add(new Client
                             {
-                                ClientList.Add(new Client
-                                {
-                                    ClientId = Convert.ToInt32(reader["ClientID"]),
-                                    Name = reader["Name"].ToString(),
-                                    Email = reader["Email"].ToString(),
-                                    ClientAddress = reader["ClientAddress"].ToString(),
-                                    Phone = reader["Phone"].ToString()
-                                });
-                            }
+                                ClientId = Convert.ToInt32(reader["ClientID"]),
+                                Name = reader["Name"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                ClientAddress = reader["ClientAddress"].ToString(),
+                                Phone = reader["Phone"].ToString()
+                            });
                         }
-                        else
+                    }
+
+                } 
+                else if(status == "No Contract/Expired")
+                {
+                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus IS NULL OR co.ContractStatus = 'Expired'", mySqlCon);
+                    SqlDataReader reader = cmdGetClients.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
                         {
-                            MessageBox.Show("Reader has no rows");
+                            ClientList.Add(new Client
+                            {
+                                ClientId = Convert.ToInt32(reader["ClientID"]),
+                                Name = reader["Name"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                ClientAddress = reader["ClientAddress"].ToString(),
+                                Phone = reader["Phone"].ToString()
+                            });
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                //For active contracts
-
-
-                // For expired or no contract clients
-
+                else { MessageBox.Show("No Clients to display"); return; }
+                
             }
-            else
-            {
-                return;
-            }
-
+            catch (Exception ex){ MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }         
         }
 
         private decimal GetCostOfTheJob(int clientID)
