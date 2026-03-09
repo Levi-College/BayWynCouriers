@@ -36,7 +36,17 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
-                <DataGridTextColumn Header="Address" Binding="{Binding DeliveryAddress}" Width="*"/>
+                <DataGridTextColumn Header="Courier" Binding="{Binding CourierId}"/>
+
+                <!-- <DataGridTextColumn Header="Address" Binding="{Binding DeliveryAddress}" Width="*"/>-->
+    
+                <DataGridTemplateColumn Header="Delivery Address" Width="3*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Padding="5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
             </DataGrid.Columns>
