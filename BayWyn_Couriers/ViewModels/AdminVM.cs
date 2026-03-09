@@ -492,8 +492,10 @@ namespace BayWyn_Couriers.ViewModels
         private void LoadClientsByStatus(string status)
         {
             if (string.IsNullOrEmpty(status)) return;
-
             ClientList.Clear();
+            if (status == "All"){ GetClients();return; }
+
+            // Sql setup
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
             mySqlCon.Open();
