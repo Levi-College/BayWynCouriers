@@ -334,7 +334,10 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJob = null; // Clearing all the fields   
             SelectedCourier = null; // Clear the dropdown selections
             DatePickerEnabled = false;
+            TimePickerEnabled = false;
             EnableCourierSelection = false;
+            SetupSlotMap();
+            InitializeTimeSlots(); // Resetting the time slots
         }
 
         // Sets up the dictionary 
@@ -404,7 +407,6 @@ namespace BayWyn_Couriers.ViewModels
 
             }
         }
-
 
 
         // Gets the slots already booked for the courier
@@ -669,6 +671,7 @@ namespace BayWyn_Couriers.ViewModels
                         mySqlCon.Close();
                     }
 
+                    RefreshPage();
                     // Refresh the LC's list to remove the now-assigned job and only show the approved (pending to be assigned)
                     LoadJobsByStatus("Approved");
                 }

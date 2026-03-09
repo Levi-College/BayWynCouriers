@@ -137,9 +137,12 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
+                    <Label Content="{Binding SelectedJob.JobStatus}"/>
+                    <!--
                     <ComboBox Width="150" 
                       ItemsSource="{Binding JobsStatusList}"
                       SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
+                    -->
                 </StackPanel>
 
 
