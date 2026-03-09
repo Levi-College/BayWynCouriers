@@ -23,10 +23,10 @@
 
         <!-- Structure to hold the edit window and the buttons-->
 
-        <!--Filter and date picker-->
+        <!--Filter-->
         <ComboBox Grid.Row="0" Grid.Column="0" 
-                  ItemsSource="{Binding JobsFilterList}"
-                  SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding ClientsFilterList}"
+                  SelectedItem="{Binding SelectedClientStatus, UpdateSourceTrigger=PropertyChanged}"
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 

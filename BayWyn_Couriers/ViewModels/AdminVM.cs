@@ -30,6 +30,8 @@ namespace BayWyn_Couriers.ViewModels
         private string _selectedContractStatus = "All"; //Default status for the contracts list
         private bool _enableItemsForNewContract = false;
 
+        private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
+
         // Lists and observable collections
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
@@ -42,7 +44,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<Contract> AllContracts { get; set; } = new ObservableCollection<Contract>(); // To hold the list of contracts
         public List<String> ContractsFilterList { get; } = new List<String> { "All", "Active", "Expired" }; // A list of string for the items in the job status combo box (item source)
         public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
-
+        public List<string> ClientsFilterList { get; } = new List<string> { "Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
@@ -154,14 +156,34 @@ namespace BayWyn_Couriers.ViewModels
                     // Setting the client id
                     if (_selectedClient != null)
                     {
-                        SelectedJob.ClientId = value.ClientId;
-                        CostOfJob = GetCostOfTheJob(value.ClientId);
+                        // Only if a job is selected as this property is also used in the clients page
+                        if (_selectedJob != null)
+                        {
+                            SelectedJob.ClientId = value.ClientId;
+                            CostOfJob = GetCostOfTheJob(value.ClientId);
+                        }
+                        
                     }
                     // Updating the cost based on if the client is in the contract table or the contracts is expired
                     //CostOfJob = GetCostOfTheJob(SelectedJob.ClientId);
-                }
+                }                
+            }
+        }
 
-                
+        // To set and get the select job status (for filtering the data grid)
+        public string SelectedClientStatus
+        {
+            get => _selectedClientStatus;
+            set
+            {
+                if (_selectedClientStatus != value)
+                {
+                    _selectedClientStatus = value;
+                    OnPropertyChanged();
+
+                    // Filtering the jobs list based on the selected job status
+                    LoadClientsByStatus(value);
+                }
             }
         }
 
@@ -316,7 +338,12 @@ namespace BayWyn_Couriers.ViewModels
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
 
-        private void ClientsPage(object? obj) => CurrentSubView = new AdminClients();
+        private void ClientsPage(object? obj)
+        {
+            CurrentSubView = new AdminClients();
+            GetClients(); //Updates the clients observable collection
+        } 
+
         private void CouriersPage(object? obj) => CurrentSubView = new AdminCouriers();
 
 
@@ -432,7 +459,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT ClientID, Name FROM Clients", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -444,6 +471,9 @@ namespace BayWyn_Couriers.ViewModels
                             {
                                 ClientId = Convert.ToInt32(reader["ClientID"]),
                                 Name = reader["Name"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                ClientAddress = reader["ClientAddress"].ToString(),
+                                Phone = reader["Phone"].ToString()
                             });
                         }
                     }
@@ -457,6 +487,60 @@ namespace BayWyn_Couriers.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void LoadClientsByStatus(string status)
+        {
+            if (!string.IsNullOrEmpty(status))
+            {
+                ClientList.Clear();
+
+                // Setting up sql connection
+                string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                SqlConnection mySqlCon = new(myCon);
+                mySqlCon.Open();
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            ClientList.Clear();
+                            while (reader.Read())
+                            {
+                                ClientList.Add(new Client
+                                {
+                                    ClientId = Convert.ToInt32(reader["ClientID"]),
+                                    Name = reader["Name"].ToString(),
+                                    Email = reader["Email"].ToString(),
+                                    ClientAddress = reader["ClientAddress"].ToString(),
+                                    Phone = reader["Phone"].ToString()
+                                });
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Reader has no rows");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                //For active contracts
+
+
+                // For expired or no contract clients
+
+            }
+            else
+            {
+                return;
+            }
+
         }
 
         private decimal GetCostOfTheJob(int clientID)
