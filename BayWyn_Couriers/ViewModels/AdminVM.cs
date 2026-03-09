@@ -136,7 +136,7 @@ namespace BayWyn_Couriers.ViewModels
                     // Updating the courierId of the Job based on the selected new courier
                     if (_selectedCourier != null)
                     {
-                        SelectedJob.CourierId = value.UserId;
+                        if (SelectedJob != null) { SelectedJob.CourierId = value.UserId; }
                     }
                 }
             }
@@ -315,6 +315,12 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand NewClientCommand { get; }
         public ICommand RefreshClientsCommand { get; }
 
+        // Admin couriers page
+        //public ICommand AddCourierCommand { get; }
+        public ICommand DeleteCourierCommand { get; }
+        public ICommand UpdateCourierCommand { get; }
+        //public ICommand NewCourierCommand { get; }
+        public ICommand RefreshCouriersCommand { get; }
 
         // AdminVM logic
 
@@ -362,7 +368,10 @@ namespace BayWyn_Couriers.ViewModels
             GetClients(); //Updates the clients observable collection
         }
 
-        private void CouriersPage(object? obj) => CurrentSubView = new AdminCouriers();
+        private void CouriersPage(object? obj) {
+            CurrentSubView = new AdminCouriers();
+            GetCouriers();
+        }
 
 
         public AdminVM(NavigationVM _nav)
@@ -372,6 +381,7 @@ namespace BayWyn_Couriers.ViewModels
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
             LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning using Relay command 
 
+            // Admin jobs page commands
             // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
             JobsCommand = new RelayCommand(JobsPage); // Giving the JobsCommand a meaning (when executed, it will call the JobsPage method to set the CurrentSubView to the AdminJobs view, allowing the admin user to see the pending jobs)
             ReportsCommand = new RelayCommand(ReportsPage); // Giving the ReportsCommand a meaning (when executed, it will call the ReportsPage method to set the CurrentSubView to the AdminReports view, allowing the admin user to see various reports related to the courier service)
@@ -384,29 +394,33 @@ namespace BayWyn_Couriers.ViewModels
                 execute: obj => DeleteJob(obj),
                 canExecute: obj => SelectedJob != null // Logic: Disable if SelectedJob is null
             );
-            UpdateJobCommand = new RelayCommand(UpdateJob);
+            UpdateJobCommand = new RelayCommand(execute: obj => UpdateJob(obj), canExecute: obj => SelectedClient != null);
             NewJobCommand = new RelayCommand(NewJob);
             RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
 
-
-            // Setting up contracts commands
             // Admin contracts page commands
             AddContractCommand = new RelayCommand(AddNewContract);
-            DeleteContractCommand = new RelayCommand(
-                execute: obj => DeleteContract(obj),
-                canExecute: obj => SelectedContract != null // Logic: Disable if SelectedJob is null
-            );
+            DeleteContractCommand = new RelayCommand(execute: obj => DeleteContract(obj), canExecute: obj => SelectedClient != null);
             RenewContractCommand = new RelayCommand(RenewContract);
-            UpdateContractCommand = new RelayCommand(UpdateContract);
+            UpdateContractCommand = new RelayCommand(execute: obj => UpdateContract(obj), canExecute: obj => SelectedClient != null);
             NewContractCommand = new RelayCommand(NewContract);
 
 
             //Client page commands
             AddClientCommand = new RelayCommand(AddNewClient);
             DeleteClientCommand = new RelayCommand(execute: obj => DeleteClient(obj), canExecute: obj => SelectedClient != null);
-            UpdateClientCommand = new RelayCommand(UpdateClient);
+            UpdateClientCommand = new RelayCommand(execute: obj => UpdateClient(obj), canExecute: obj => SelectedClient != null);
             NewClientCommand = new RelayCommand(NewClient);
             RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
+
+            //Courier page commands
+            //AddCourierCommand = new RelayCommand(AddNewCourier);
+            DeleteCourierCommand = new RelayCommand(execute: obj => DeleteCourier(obj), canExecute: obj => SelectedCourier != null);
+            UpdateCourierCommand = new RelayCommand(execute: obj => UpdateCourier(obj), canExecute: obj => SelectedCourier != null);
+            //NewCourierCommand = new RelayCommand(NewCourier);
+            RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
+
+
 
             // Update the database
             // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
@@ -453,7 +467,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Update this
-                SqlCommand cmd = new SqlCommand("SELECT UserID, Username FROM Users WHERE UserRole = 'Courier'", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier'", mySqlCon);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -465,15 +479,17 @@ namespace BayWyn_Couriers.ViewModels
                             {
                                 UserId = Convert.ToInt32(reader["UserID"]),
                                 UserName = reader["UserName"].ToString(),
+                                Name = reader["Name"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["Phone"].ToString(),   
+                                Address = reader["UserAddress"].ToString()
                             });
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex){MessageBox.Show(ex.Message);}
+            finally { mySqlCon.Close(); }
         }
 
         // To get the clients to store in the combo box item source
@@ -1170,7 +1186,7 @@ namespace BayWyn_Couriers.ViewModels
                             cmd.Parameters.AddWithValue("@CostPerJob", 2.5m);
                         }
 
-                        cmd.ExecuteReader(); // Running the sql command to update the database
+                        cmd.ExecuteNonQuery(); // Running the sql command to update the database
                         MessageBox.Show("Contract Updated Successfully");
                     }
                     catch (Exception ex)
@@ -1327,7 +1343,7 @@ namespace BayWyn_Couriers.ViewModels
                         cmd.Parameters.AddWithValue("@Email", SelectedClient.Email);
                         cmd.Parameters.AddWithValue("@Phone", SelectedClient.Phone);
                         cmd.Parameters.AddWithValue("@ClientAddress", SelectedClient.ClientAddress);
-                        cmd.ExecuteReader(); 
+                        cmd.ExecuteNonQuery(); 
                         MessageBox.Show("Client details updated");
                     }
                     catch (Exception ex){MessageBox.Show(ex.Message); mySqlCon.Close();}
@@ -1360,6 +1376,121 @@ namespace BayWyn_Couriers.ViewModels
                 finally{mySqlCon.Close();}
             }
 
+        }
+
+        //Admin Couriers CRUD
+
+        public void RefreshCouriersPage(object? obj)
+        {
+            RefreshPage();
+        }
+
+        //public void NewCourier(object? obj)
+        //{
+        //    RefreshPage();
+        //    GetCouriers();
+        //    MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
+        //    SelectedCourier = new User();
+        //}
+
+        //public void AddNewCourier(object? obj)
+        //{
+        //    // Setting up sql connection
+        //    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+        //    SqlConnection mySqlCon = new(myCon);
+        //    mySqlCon.Open();
+
+        //    try
+        //    {
+        //        // Setting up the sql command
+        //        SqlCommand cmdAddCourier = new SqlCommand("INSERT INTO Users (Username, Name, LoginPassword, Email, Phone, UserAddress, UserRole) " +
+        //            "VALUES (@Username, @Name, @LoginPassword, @Email, @Phone, @UserAddress, 'Courier')", mySqlCon);
+
+        //        cmdAddCourier.Parameters.AddWithValue("@Username", SelectedCourier.UserName);
+        //        cmdAddCourier.Parameters.AddWithValue("@Name", SelectedCourier.Name);
+        //        //cmdAddCourier.Parameters.AddWithValue("@LoginPassword", SelectedCourier.LoginPassword);
+        //        cmdAddCourier.Parameters.AddWithValue("@Email", SelectedCourier.Email);
+        //        cmdAddCourier.Parameters.AddWithValue("@Phone", SelectedCourier.PhoneNumber);
+        //        cmdAddCourier.Parameters.AddWithValue("@UserAddress", SelectedCourier.Address);
+
+        //        cmdAddCourier.ExecuteNonQuery();
+        //        MessageBox.Show("Courier Added");
+        //        RefreshPage();
+        //        GetCouriers(); // Refresh the list
+        //    }
+        //    catch (Exception ex) { MessageBox.Show("Error adding the courier: " + ex.Message); }
+        //    finally { mySqlCon.Close(); }
+        //}
+
+        public void UpdateCourier(object? obj)
+        {
+            if (SelectedCourier == null)
+            {
+                MessageBox.Show("Please select a Courier to be update");
+                return;
+            }
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("Confirm Update", "Update", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    // Setting up sql connection
+                    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                    SqlConnection mySqlCon = new(myCon);
+                    mySqlCon.Open();
+
+                    try
+                    {
+                        // Setting up the sql command
+                        SqlCommand cmd = new SqlCommand("UPDATE Users SET Username = @Username, Name = @Name, Email = @Email, Phone = @Phone, UserAddress = @UserAddress WHERE UserID = @UserID", mySqlCon);
+
+                        // Adding parameter values
+                        cmd.Parameters.AddWithValue("@UserID", SelectedCourier.UserId);
+                        cmd.Parameters.AddWithValue("@Username", SelectedCourier.UserName);
+                        cmd.Parameters.AddWithValue("@Name", SelectedCourier.Name);
+                        cmd.Parameters.AddWithValue("@Email", SelectedCourier.Email);
+                        cmd.Parameters.AddWithValue("@Phone", SelectedCourier.PhoneNumber);
+                        cmd.Parameters.AddWithValue("@UserAddress", SelectedCourier.Address);
+
+                        cmd.ExecuteReader();
+                        MessageBox.Show("Courier details updated");
+                    }
+                    catch (Exception ex) { MessageBox.Show(ex.Message); mySqlCon.Close(); }
+                    finally { mySqlCon.Close(); }
+
+                    GetCouriers();
+                }
+            }
+        }
+
+        public void DeleteCourier(object? obj)
+        {
+            if (SelectedCourier == null)
+            {
+                MessageBox.Show("Please select a Courier to delete.");
+                return;
+            }
+
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this Courier?", "Confirm Delete", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
+            {
+                string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                SqlConnection mySqlCon = new(myCon);
+                mySqlCon.Open();
+
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("DELETE FROM Users WHERE UserID = @ID", mySqlCon);
+                    cmd.Parameters.AddWithValue("@ID", SelectedCourier.UserId);
+
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Courier Deleted.");
+                    GetCouriers();
+                }
+                catch (Exception ex) { MessageBox.Show("Error deleting Courier: " + ex.Message); }
+                finally { mySqlCon.Close(); }
+            }
         }
     }
 }
