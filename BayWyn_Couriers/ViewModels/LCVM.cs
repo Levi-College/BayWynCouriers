@@ -1,12 +1,9 @@
 ﻿using BayWyn_Couriers.Models;
 using BayWyn_Couriers.Utilities;
 using BayWyn_Couriers.Views.LCSubViews;
-using Microsoft.VisualBasic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Security.Cryptography;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -26,6 +23,7 @@ namespace BayWyn_Couriers.ViewModels
             LCCompletedJobsCommand = new RelayCommand(LCCompletedJobsPage);
             LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
             AssignJobCommand = new RelayCommand(AssignJob);
+            UnAssignJobCommand = new RelayCommand(UnAssignJob);
         }
 
 
@@ -35,7 +33,8 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand LCAssignedJobsCommand { get; }
         public ICommand LCCompletedJobsCommand { get; }
         public ICommand AssignJobCommand { get; }
-       
+        public ICommand UnAssignJobCommand { get; }
+
 
 
 
@@ -46,6 +45,7 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private object _currentSubView;
         private DateTime _selectedDeliveryDate = GetDay(DateTime.Today.AddDays(1));
+        private string _selectedDeliverySlot;
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
         private string _selectedJobStatus = "All"; // Setting the private variable
         private User _selectedCourier; // To hold the selected courier for dropdown display
@@ -80,7 +80,7 @@ namespace BayWyn_Couriers.ViewModels
                     _displayName = value;
                     OnPropertyChanged();
                 }
-            } 
+            }
 
             private bool _isEnabled;
             public bool IsEnabled
@@ -141,17 +141,28 @@ namespace BayWyn_Couriers.ViewModels
                 // Change value only if conditions are passed
                 _selectedDeliveryDate = value;
                 OnPropertyChanged(nameof(SelectedDeliveryDate));
-                
+
                 // 4. Refresh slots (added a null check for SelectedCourier to prevent crashes)
                 if (SelectedCourier != null)
                 {
                     // As soon as the date changes, refresh the slot availability using the selectedcourierID
                     RefreshAvailableSlots(SelectedDeliveryDate, SelectedCourier.UserId);
                     TimePickerEnabled = true; //After refreshing the slots, the items control is enabled
-                }   
+                }
             }
         }
 
+        public string SelectedDeliverySlot
+        {
+            get => _selectedDeliverySlot;
+            set
+            {
+                // Change value only if conditions are passed
+                _selectedDeliverySlot = value;
+                OnPropertyChanged(nameof(SelectedDeliveryDate));
+
+            }
+        }
 
         // Getting the selected job to display details
         public Job SelectedJob
@@ -160,16 +171,18 @@ namespace BayWyn_Couriers.ViewModels
             set
             {
                 // Do conditional checks
-                if (_selectedJob != value){_selectedJob = value; OnPropertyChanged();}
+                if (_selectedJob != value) { _selectedJob = value; OnPropertyChanged(); }
 
 
                 // Updating the select courier (used to update the dropdown)
                 // If no job selected let the selected courier and client be null
                 // Also the courier selection is set to false
-                if (_selectedJob == null){SelectedCourier = null; EnableCourierSelection = false; return;}
+                if (_selectedJob == null) { SelectedCourier = null; EnableCourierSelection = false; return; }
 
                 //Enabling the courier selection in the edit window
                 EnableCourierSelection = true;
+                
+                
 
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
@@ -182,7 +195,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
                 }
 
-                
+
 
                 // Setting the client in the edit window (using the selected job client Id)
                 //foreach (Client client in ClientList)
@@ -243,7 +256,7 @@ namespace BayWyn_Couriers.ViewModels
         public bool DatePickerEnabled
         {
             get => _datePickerEnabled;
-            set { _datePickerEnabled = value; OnPropertyChanged();}
+            set { _datePickerEnabled = value; OnPropertyChanged(); }
         }
 
         // To update the binding for the items control used to display the slots
@@ -258,8 +271,9 @@ namespace BayWyn_Couriers.ViewModels
             get => _enableCourierSelection;
             set
             {
-                if (SelectedJob != null) { 
-                    _enableCourierSelection = value; 
+                if (SelectedJob != null)
+                {
+                    _enableCourierSelection = value;
                     OnPropertyChanged();
                     return;
                 }
@@ -376,6 +390,8 @@ namespace BayWyn_Couriers.ViewModels
             }
             TimeSlots = slots;
         }
+
+        //private void GetDeliverySlot (string slotCode){ Deliv }
 
         public void RefreshAvailableSlots(DateTime selectedDate, int courierId)
         {
@@ -629,7 +645,7 @@ namespace BayWyn_Couriers.ViewModels
                 if (result == MessageBoxResult.Yes)
                 {
                     // Testing the time slot selected
-                   
+
 
                     // Setting up sql connection
                     string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -639,7 +655,7 @@ namespace BayWyn_Couriers.ViewModels
                     try
                     {
                         SqlCommand cmdAssign = new SqlCommand("INSERT INTO JobAssignments (JobID, CourierID, DeliveryDate, DeliverySlot) " +
-                            "VALUES(@JobID, @CourierID, @Date, @Slot)",mySqlCon);
+                            "VALUES(@JobID, @CourierID, @Date, @Slot)", mySqlCon);
 
                         cmdAssign.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
                         cmdAssign.Parameters.AddWithValue("@CourierID", SelectedCourier.UserId);
@@ -660,21 +676,51 @@ namespace BayWyn_Couriers.ViewModels
                         cmdUpdate.ExecuteNonQuery();
                         MessageBox.Show("Job Assigned Successfully!");
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                        mySqlCon.Close();
-                    }
-
-                    finally
-                    {
-                        mySqlCon.Close();
-                    }
+                    catch (Exception ex) { MessageBox.Show(ex.Message); }
+                    finally { mySqlCon.Close(); }
 
                     RefreshPage();
                     // Refresh the LC's list to remove the now-assigned job and only show the approved (pending to be assigned)
                     LoadJobsByStatus("Approved");
                 }
+            }
+        }
+
+
+        // Unassign the job selected from the courier
+        private void UnAssignJob(object? obj)
+        {
+            // 1. Validation check
+            if (SelectedJob == null) { MessageBox.Show("Please select a job to unassign"); return; }
+
+            // 2. Confirmation Check
+            MessageBoxResult result = MessageBox.Show("Confirm Unassignment. To assign to another courier, go to pending assignment page", "Unassign", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                // Setting up sql connection
+                string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+                SqlConnection mySqlCon = new SqlConnection(myCon);
+                mySqlCon.Open();
+
+                try
+                {
+                    SqlCommand cmdDelete = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID", mySqlCon);
+                    cmdDelete.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                    cmdDelete.ExecuteNonQuery();
+
+                    SqlCommand cmdUpdate = new SqlCommand("UPDATE Jobs SET JobStatus = 'Approved', CourierID = NULL WHERE JobID = @JobID", mySqlCon);
+                    cmdUpdate.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                    cmdUpdate.ExecuteNonQuery();
+
+                    MessageBox.Show("Job successfully unassigned. It is now back in the pending assignment list.");
+
+                    RefreshPage(); // Calling your method to refresh the UI and lists
+                    LoadJobsByStatus("Assigned");
+                }
+                catch (Exception ex) { MessageBox.Show(ex.Message); }
+                finally { mySqlCon.Close(); }
+
             }
         }
     }

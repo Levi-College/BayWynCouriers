@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BayWyn_Couriers.Views.LCSubViews"
+             xmlns:local="clr-namespace:BayWyn_Couriers.Views.LCSubViews" 
+             xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:LCVM}"
              mc:Ignorable="d" 
                        d:DesignHeight="600" d:DesignWidth="800">
     <Grid Background="AntiqueWhite" Margin="5">
@@ -64,6 +66,7 @@
                 <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
 
                 <Label Content="Courier Name:"/>
+                <Label Content="{Binding SelectedCourier}"/>
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                 SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
                 DisplayMemberPath="UserName" SelectedValuePath="UserId" />
@@ -71,61 +74,11 @@
 
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
 
-                <Label Content="Select Date:"/>
-                <!--Only weekdays-->
-                <DatePicker SelectedDate="{Binding SelectedDeliveryDate, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding DatePickerEnabled}"/>
+                <Label Content="Delivery Date:"/>
+                <Label Content="{Binding SelectedDeliveryDate}"/>
 
-                <Label Content="Select Time:"/>
-                <!--Items control with radio button-->
-                <Expander Header="Select Delivery Time Slot" Background="White" BorderBrush="Gray" BorderThickness="1">
-                    <ItemsControl ItemsSource="{Binding TimeSlots}">
-                        <!-- Use a UniformGrid to make 4 slots per row (1 row per hour) -->
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Columns="4" Margin="5"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-
-                        <!-- What each individual Slot looks like -->
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <RadioButton Content="{Binding DisplayName}"
-                                       GroupName="Slots"
-                                       IsChecked="{Binding IsSelected}"
-                                       IsEnabled="{Binding IsEnabled}"
-                                       Style="{StaticResource {x:Type ToggleButton}}" 
-                                       Margin="2" Padding="5"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </Expander>
-                <!--<ComboBox ItemsSource="{Binding CouriersList}" 
-SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
-DisplayMemberPath="UserName" SelectedValuePath="UserId" />
-          -->
-
-                <!--
-          
-          <StackPanel Orientation="Horizontal">
-              <Label Content="Start Date:"/>
-              <TextBox x:Name="txtDateCreated" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
-          </StackPanel>
-
-          <StackPanel Orientation="Horizontal">
-              <Label Content="End Date:"/>
-              <TextBox Margin="0,0,0,10" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
-          </StackPanel>
-          -->
-
-
-                <!--
-          <StackPanel Orientation="Horizontal">
-              <Label Content="Cost"/>
-              <Label Content="{Binding SelectedJob.Cost}"/>
-          </StackPanel>
-          -->
-
-
+                <Label Content="Delivery Slot/Time:"/>
+                <Label Content="{Binding SelectedDeliveryTime}"/>
 
                 <Label Content="Delivery Address:"/>
                 <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="51"/>
@@ -135,17 +88,12 @@ DisplayMemberPath="UserName" SelectedValuePath="UserId" />
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
-                    <ComboBox Width="150" 
-                    ItemsSource="{Binding JobsStatusList}"
-                    SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
+                    <Label Content="{Binding SelectedJob.JobStatus}"/>
                 </StackPanel>
-
-
-
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Update" Command="{Binding AssignJobCommand}" Width="100" Margin="5"/>
+                <Button Content="UnAssign" Command="{Binding UnAssignJobCommand}" Width="100" Margin="5"/>
             </StackPanel>
         </Grid>
     </Grid>
