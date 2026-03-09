@@ -66,10 +66,12 @@
                 <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
 
                 <Label Content="Courier Name:"/>
-                <Label Content="{Binding SelectedCourier}"/>
+                <Label Content="{Binding SelectedCourier.UserName}"/>
+                <!--
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                 SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
                 DisplayMemberPath="UserName" SelectedValuePath="UserId" />
+                -->
 
 
                 <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
@@ -78,7 +80,7 @@
                 <Label Content="{Binding SelectedDeliveryDate}"/>
 
                 <Label Content="Delivery Slot/Time:"/>
-                <Label Content="{Binding SelectedDeliveryTime}"/>
+                <Label Content="{Binding SelectedDeliverySlot}"/>
 
                 <Label Content="Delivery Address:"/>
                 <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="51"/>
