@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace BayWyn_Couriers.Views.CourierSubViews
 {
     /// <summary>
-    /// Interaction logic for CourierJobs.xaml
+    /// Interaction logic for CourierAcceptedJobs.xaml
     /// </summary>
-    public partial class CourierJobs : UserControl
+    public partial class CourierAcceptedJobs : UserControl
     {
-        public CourierJobs()
+        public CourierAcceptedJobs()
         {
             InitializeComponent();
         }
