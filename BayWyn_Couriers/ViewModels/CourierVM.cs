@@ -472,16 +472,21 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                SqlCommand cmdCompleteJob = new SqlCommand("UPDATE Jobs SET JobStatus = 'Completed' WHERE JobID = @JobID", mySqlCon);
+               
+                SqlCommand cmdCompleteJob = new SqlCommand("UPDATE Jobs SET JobStatus = 'Completed', EndDate = @EndDate WHERE JobID = @JobID", mySqlCon);
                 cmdCompleteJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                cmdCompleteJob.Parameters.AddWithValue("@EndDate",DateTime.Now);
                 cmdCompleteJob.ExecuteNonQuery();
 
                 SqlCommand cmdRemoveAssignment = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID",mySqlCon);
+                cmdRemoveAssignment.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                cmdRemoveAssignment.ExecuteNonQuery();
 
-                // Removing the jobs from the list 
+                // Removing the jobs from the lists 
                 AcceptedJobs.Remove(SelectedJob);
                 DailyJobs.Remove(SelectedJob);
 
+                MessageBox.Show("Delivery completed");
             }
             catch (Exception ex)
             {
