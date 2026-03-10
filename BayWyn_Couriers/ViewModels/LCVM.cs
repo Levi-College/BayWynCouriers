@@ -754,7 +754,7 @@ namespace BayWyn_Couriers.ViewModels
         private void UnAssignJob(object? obj)
         {
             // 1. Validation check
-            if (SelectedJob == null) { MessageBox.Show("Please select a job to unassign"); return; }
+            if (SelectedJobAssignment == null) { MessageBox.Show("Please select a job to unassign"); return; }
 
             // 2. Confirmation Check
             MessageBoxResult result = MessageBox.Show("Confirm Unassignment. To assign to another courier, go to pending assignment page", "Unassign", MessageBoxButton.YesNo);
