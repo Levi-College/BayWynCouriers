@@ -375,7 +375,7 @@ namespace BayWyn_Couriers.ViewModels
             EnableItemsForNewContract = false; // Used to enable and disable buttons for the edit window
         }
 
-        private void ReportsPage(object? obj) => CurrentSubView = new ManagerReports();
+        private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
 
         private void ManagerClientsPage(object? obj)
         {

@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BayWyn_Couriers.Views"
+             xmlns:local="clr-namespace:BayWyn_Couriers.Views" 
+             xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:ManagerVM}"
              mc:Ignorable="d" 
-                      d:DesignHeight="800" d:DesignWidth="1000">
+             d:DesignHeight="800" d:DesignWidth="1000">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -55,11 +57,11 @@
                     </StackPanel.Resources>
 
                     <!-- Use IsChecked="True" on the first one to select it by default -->
-                    <RadioButton Content="View Jobs" Command="{Binding JobsCommand}" IsChecked="True"/>
+                    <RadioButton Content="View Jobs" Command="{Binding ManagerJobsCommand}" IsChecked="True"/>
                     <RadioButton Content="View Reports" Command="{Binding ReportsCommand}"/>
-                    <RadioButton Content="View Contracts" Command="{Binding ContractsCommand}"/>
-                    <RadioButton Content="View Clients" Command="{Binding ClientsCommand}"/>
-                    <RadioButton Content="View Couriers" Command="{Binding CouriersCommand}"/>
+                    <RadioButton Content="View Contracts" Command="{Binding ManagerContractsCommand}"/>
+                    <RadioButton Content="View Clients" Command="{Binding ManagerClientsCommand}"/>
+                    <RadioButton Content="View Couriers" Command="{Binding ManagerCouriersCommand}"/>
                 </StackPanel>
             </Grid>
         </Grid>
