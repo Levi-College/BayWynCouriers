@@ -1,14 +1,11 @@
-﻿<UserControl x:Class="BayWyn_Couriers.Views.Admin"
+﻿<UserControl x:Class="BayWyn_Couriers.Views.Manager"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BayWyn_Couriers.Views"
-             xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1000">
-
-    
+                      d:DesignHeight="800" d:DesignWidth="1000">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -27,18 +24,6 @@
             <Grid Grid.Row="0" Background="Beige">
                 <Label Content="BayWyn Couriers" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="20"/>
             </Grid>
-
-            <!--Side menu buttons
-            <Grid Grid.Row="1">
-                <StackPanel Orientation="Vertical">
-                    <Button Content="Manage Jobs" Command="{Binding JobsCommand }" IsDefault="True" Height="40" Margin="0,5,5,5"/>
-                    <Button Content="Reports" Command="{Binding ReportsCommand}" Height="40" Margin="0,5,5,5"/>
-                    <Button Content="Contracts" Command="{Binding ContractsCommand}" Height="40" Margin="0,5,5,5"/>
-                    <Button Content="Clients" Command="{Binding ClientsCommand}" Height="40" Margin="0,5,5,5"/>
-                    <Button Content="Couriers" Command="{Binding CouriersCommand}" Height="40" Margin="0,5,5,5"/>
-                </StackPanel>
-            </Grid>
-            -->
 
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
@@ -70,11 +55,11 @@
                     </StackPanel.Resources>
 
                     <!-- Use IsChecked="True" on the first one to select it by default -->
-                    <RadioButton Content="Manage Jobs" Command="{Binding JobsCommand}" IsChecked="True"/>
-                    <RadioButton Content="Reports" Command="{Binding ReportsCommand}"/>
-                    <RadioButton Content="Contracts" Command="{Binding ContractsCommand}"/>
-                    <RadioButton Content="Clients" Command="{Binding ClientsCommand}"/>
-                    <RadioButton Content="Couriers" Command="{Binding CouriersCommand}"/>
+                    <RadioButton Content="View Jobs" Command="{Binding JobsCommand}" IsChecked="True"/>
+                    <RadioButton Content="View Reports" Command="{Binding ReportsCommand}"/>
+                    <RadioButton Content="View Contracts" Command="{Binding ContractsCommand}"/>
+                    <RadioButton Content="View Clients" Command="{Binding ClientsCommand}"/>
+                    <RadioButton Content="View Couriers" Command="{Binding CouriersCommand}"/>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -94,12 +79,12 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    <Label Content="Welcome Admin" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
+                    <Label Content="Welcome Manager" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
                 </Grid>
 
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
-                        <Label Content="Admin Name" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
+                        <Label Content="Manager" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
                         <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>
                     </StackPanel>
                 </Grid>
@@ -110,9 +95,7 @@
             <Grid Grid.Row="1" Background="White">
                 <ContentControl Content="{Binding CurrentSubView}" />
             </Grid>
-          
+
         </Grid>
     </Grid>
-
-    
 </UserControl>

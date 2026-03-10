@@ -82,9 +82,9 @@ namespace BayWyn_Couriers.ViewModels
                     // Get the user ID and send it to the VM
                     _navigationVM.CurrentView = new CourierVM(_navigationVM, UserId);
                 }
-                else if (Role == "Owner")
+                else if (Role == "Owner" || Role == "Manager")
                 {
-                    // Placeholder
+                    _navigationVM.CurrentView = new ManagerVM(_navigationVM);
 
                 }
 
@@ -131,16 +131,8 @@ namespace BayWyn_Couriers.ViewModels
                     MessageBox.Show("Invalid credentials");
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                mySqlCon.Close();
-
-            }
-            finally
-            {
-                mySqlCon.Close();
-            }
+            catch (Exception ex){MessageBox.Show(ex.Message);mySqlCon.Close();}
+            finally{mySqlCon.Close();}
             return false;
 
 

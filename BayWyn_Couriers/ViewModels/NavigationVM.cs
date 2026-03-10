@@ -45,7 +45,7 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand AdminCommand { get; set; } = null!;   // Command for navigating to the admin dashboard page
         public ICommand CourierCommand { get; set; } = null!;   // Command for navigating to the courier dashboard page
         public ICommand LCCommand { get; set; } = null!;   // Command for navigating to the logistics coordinator dashboard page
-
+        public ICommand ManagerCommand { get; set;} = null!;  
         public ICommand LogoutCommand { get; set; } = null!;   // Command for logging out and navigating back to the login page
 
         /// <summary>
@@ -71,6 +71,7 @@ namespace BayWyn_Couriers.ViewModels
 
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM(this);
         private void LCDashboard(object? obj) => CurrentView = new LCVM(this);
+        private void ManagerDashboard(object? obj) => CurrentView = new ManagerVM(this);
 
         //private void Logout(object? obj) => CurrentView = new LoginVM(this);\
 
@@ -95,6 +96,7 @@ namespace BayWyn_Couriers.ViewModels
             AdminCommand = new RelayCommand(AdminDashboard);
             CourierCommand = new RelayCommand(CourierDashboard);
             LCCommand = new RelayCommand(LCDashboard);
+            ManagerCommand = new RelayCommand(ManagerDashboard);
             LogoutCommand = new RelayCommand(Logout);
 
             // Startup Page. This sets the initial view to the login page when the application starts every time.

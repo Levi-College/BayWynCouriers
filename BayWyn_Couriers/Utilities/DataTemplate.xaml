@@ -9,6 +9,10 @@
         <view:Login/>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type vm:ManagerVM}">
+        <view:Manager/>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type vm:AdminVM}">
         <view:Admin/>
     </DataTemplate>
