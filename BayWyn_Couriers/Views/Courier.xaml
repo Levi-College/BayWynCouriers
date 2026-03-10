@@ -30,7 +30,8 @@
             <!--Side menu buttons-->
             <Grid Grid.Row="1">
                 <StackPanel Orientation="Vertical">
-                    <Button Content="All Jobs" Command="{Binding CourierJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Pending Acceptance" Command="{Binding CourierPendingJobsCommand }" Height="40" Margin="0,5,5,5"/>
+                    <Button Content="Accepted Jobs" Command="{Binding CourierAcceptedJobsCommand }" Height="40" Margin="0,5,5,5"/>
                     <Button Content="Shift" Command="{Binding CourierShiftCommand }" Height="40" Margin="0,5,5,5"/>
                 </StackPanel>
             </Grid>

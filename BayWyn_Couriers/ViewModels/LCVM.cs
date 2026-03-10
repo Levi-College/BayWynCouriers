@@ -58,7 +58,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
         public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new ObservableCollection<JobAssignment>();
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
-        public Dictionary<string, string> SlotTimeMap { get; set; } //Dictionary to hold the time slot name and the time
+        public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
         public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
         private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Break slots
 
@@ -370,7 +370,7 @@ namespace BayWyn_Couriers.ViewModels
         // Sets up the dictionary 
         private void SetupSlotMap()
         {
-            SlotTimeMap = new Dictionary<string, string>();
+            SlotsDictionary = new Dictionary<string, string>();
             DateTime startTime = DateTime.Today.AddHours(8).AddMinutes(30); // 08:30 AM
 
             //32 slots
@@ -381,7 +381,7 @@ namespace BayWyn_Couriers.ViewModels
                 string timeDisplay = startTime.ToString("HH:mm");
 
                 // Adding the slot code (S1,S2,S3) and their display names (Time)
-                SlotTimeMap.Add(slotCode, timeDisplay);
+                SlotsDictionary.Add(slotCode, timeDisplay);
 
                 // Increment by 15 minutes for the next slot
                 startTime = startTime.AddMinutes(15);
@@ -392,7 +392,7 @@ namespace BayWyn_Couriers.ViewModels
         private void InitializeTimeSlots()
         {
             var slots = new ObservableCollection<TimeSlot>();
-            foreach (var entry in SlotTimeMap)
+            foreach (var entry in SlotsDictionary)
             {
                 slots.Add(new TimeSlot
                 {
@@ -607,7 +607,7 @@ namespace BayWyn_Couriers.ViewModels
                                  DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"]),
 
                                  //Getting the time from the slot
-                                 DeliverySlot = SlotTimeMap[reader["DeliverySlot"].ToString()]
+                                 DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()]
                              }
                           );
                     }

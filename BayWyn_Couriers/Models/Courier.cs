@@ -10,7 +10,8 @@ namespace BayWyn_Couriers.Models
     public class Courier : User
     {
         // Additional properties specific to Courier can be added here in the future
-        public string DriverLicenseNumber { get; set; }
-        public string ShiftStatus { get; set; } // e.g., "Available", "On Delivery", "Off Duty"
+        //public string DriverLicenseNumber { get; set; }
+        //public string ShiftStatus { get; set; } // e.g., "Available", "On Delivery", "Off Duty"
+        public string BreakSlot { get; set; }
     }
 }
