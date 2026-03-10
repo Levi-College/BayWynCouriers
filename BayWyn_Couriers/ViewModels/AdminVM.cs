@@ -71,16 +71,21 @@ namespace BayWyn_Couriers.ViewModels
 
                 CostOfJob = _selectedJob.Cost;
 
-                //Matching the courier using the ID
-                foreach (User courier in CouriersList)
+                // Only if the job has a valid courier ID
+                if (_selectedJob.CourierId != 0)
                 {
-                    if (courier.UserId == _selectedJob.CourierId)
+                    //Matching the courier using the ID
+                    foreach (User courier in CouriersList)
                     {
-                        // Update the selected courier
-                        SelectedCourier = courier;
-                        break;
+                        if (courier.UserId == _selectedJob.CourierId)
+                        {
+                            // Update the selected courier
+                            SelectedCourier = courier;
+                            break;
+                        }
                     }
                 }
+                else { SelectedCourier = null; }
 
                 // Setting the client in the edit window (using the selected job client Id)
                 foreach (Client client in ClientList)

@@ -89,16 +89,22 @@ namespace BayWyn_Couriers.ViewModels
 
                 CostOfJob = _selectedJob.Cost;
 
-                //Matching the courier using the ID
-                foreach (User courier in CouriersList)
+                // Only if the job has a valid courier ID
+                if (_selectedJob.CourierId != 0)
                 {
-                    if (courier.UserId == _selectedJob.CourierId)
+                    //Matching the courier using the ID
+                    foreach (User courier in CouriersList)
                     {
-                        // Update the selected courier
-                        SelectedCourier = courier;
-                        break;
+                        if (courier.UserId == _selectedJob.CourierId)
+                        {
+                            // Update the selected courier
+                            SelectedCourier = courier;
+                            break;
+                        }
                     }
                 }
+                else{SelectedCourier = null;}
+               
 
                 // Setting the client in the edit window (using the selected job client Id)
                 foreach (Client client in ClientList)
@@ -183,8 +189,6 @@ namespace BayWyn_Couriers.ViewModels
                         }
 
                     }
-                    // Updating the cost based on if the client is in the contract table or the contracts is expired
-                    //CostOfJob = GetCostOfTheJob(SelectedJob.ClientId);
                 }
             }
         }
@@ -205,28 +209,6 @@ namespace BayWyn_Couriers.ViewModels
                 }
             }
         }
-
-        public bool EnableItemsForNewClient
-        {
-            get => _enableItemsForNewClient;
-            set
-            {
-                _enableItemsForNewClient = value;
-                OnPropertyChanged();
-            }
-        }
-
-        // To update the boolean in UI when it is updated in code
-        public bool EnableItemsForNewJob
-        {
-            get => _enableItemsForNewJob;
-            set
-            {
-                _enableItemsForNewJob = value;
-                OnPropertyChanged();
-            }
-        }
-
 
         // Contracts page 
         public Contract SelectedContract
@@ -285,18 +267,6 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-        // To update the boolean in UI when it is updated in code
-        public bool EnableItemsForNewContract
-        {
-            get => _enableItemsForNewContract;
-            set
-            {
-                _enableItemsForNewContract = value;
-                OnPropertyChanged();
-            }
-        }
-
-
 
         // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
@@ -305,42 +275,10 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand ManagerClientsCommand { get; }
         public ICommand ManagerCouriersCommand { get; }
         public ICommand ReportsCommand { get; }
-
-
-        // Admin jobs commands
-        //public ICommand AddJobCommand { get; }
-        //public ICommand DeleteJobCommand { get; }
-        //public ICommand UpdateJobCommand { get; }
-        //public ICommand NewJobCommand { get; }
         public ICommand RefreshJobsCommand { get; }
-
-
-        // Admin contracts page commands
-        //public ICommand AddContractCommand { get; }
-        //public ICommand DeleteContractCommand { get; }
-        //public ICommand UpdateContractCommand { get; }
-        //public ICommand RenewContractCommand { get; }
-        //public ICommand NewContractCommand { get; }
-
-        // Admin couriers page commands
-
-        // Admin reports page commands
-
-        // Admin clients page
-        //public ICommand AddClientCommand { get; }
-        //public ICommand DeleteClientCommand { get; }
-        //public ICommand UpdateClientCommand { get; }
-        //public ICommand NewClientCommand { get; }
         public ICommand RefreshClientsCommand { get; }
-
-        // Admin couriers page
-        //public ICommand AddCourierCommand { get; }
-        //public ICommand DeleteCourierCommand { get; }
-        //public ICommand UpdateCourierCommand { get; }
-        //public ICommand NewCourierCommand { get; }
         public ICommand RefreshCouriersCommand { get; }
 
-        // AdminVM logic
 
         // Property to get or set the current subview displayed in the admin dashboard.
         // This allows the admin dashboard to display different content based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
@@ -352,8 +290,6 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-        // Page viewing logic (in the admin window)
-
         // Command to handle the action of viewing pending jobs. When executed, it will set the CurrentSubView to a new instance of the AdminJobs view, which will display the pending jobs to the admin user.
         private void ManagerJobsPage(object? obj)
         {
@@ -362,7 +298,6 @@ namespace BayWyn_Couriers.ViewModels
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             GetAllJobs();
-            EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
 
         private void ManagerContractsPage(object? obj)
@@ -372,7 +307,6 @@ namespace BayWyn_Couriers.ViewModels
             //GetContracts(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             LoadContractsByStatus("All"); // Loads all the jobs initially 
-            EnableItemsForNewContract = false; // Used to enable and disable buttons for the edit window
         }
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
@@ -387,9 +321,7 @@ namespace BayWyn_Couriers.ViewModels
             CurrentSubView = new ManagerCouriers();
             GetCouriers();
         }
-
-
-       
+              
 
         // Methods used
 
@@ -411,8 +343,6 @@ namespace BayWyn_Couriers.ViewModels
 
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
-            EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
-            EnableItemsForNewClient = false;
         }
 
         //To get all the couriers with their ID and to add it to the list of couriers. Used for combo box dropdown

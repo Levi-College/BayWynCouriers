@@ -31,9 +31,8 @@
               Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <Button Content="Refresh" Command="{Binding RefreshJobsCommand}"
-    Grid.Row="0" Margin="0,17,0,0" 
-    HorizontalAlignment="Center" Width="120" VerticalAlignment="Top"/>
+        <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" 
+    HorizontalAlignment="Left" Width="126" Height="23" Margin="249,15,0,0" VerticalAlignment="Top"/>
 
         <!--Header for the edit column-->
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Details" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
@@ -69,23 +68,16 @@
                     <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
                 </StackPanel>
 
-                <StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <Label Content="Client Name:"/>
-                    <Label Content="{Binding SelectedClient.Name}"/>
+                    <Label Content="{Binding SelectedJob.ClientName}"/>
                 </StackPanel>
 
-                <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
-                      DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewJob}"/>
 
-
-                <StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <Label Content="Courier Name:"/>
-                    <Label Content="{Binding SelectedCourier.Name}"/>
+                    <Label Content="{Binding SelectedCourier.UserName}"/>
                 </StackPanel>
-
-                <ComboBox ItemsSource="{Binding CouriersList}" 
-                      SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
-                      DisplayMemberPath="UserName" SelectedValuePath="UserId" IsEnabled="False" />
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Start Date:"/>
@@ -98,17 +90,17 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Cost"/>
+                    <Label Content="Cost: £"/>
                     <Label Content="{Binding CostOfJob}"/>
                 </StackPanel>
 
 
 
                 <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="51"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}" IsReadOnly="True" Height="51"/>
 
                 <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="49"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description}" IsReadOnly="True" Height="49"/>
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
