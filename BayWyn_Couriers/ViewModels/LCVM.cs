@@ -664,6 +664,7 @@ namespace BayWyn_Couriers.ViewModels
                                  // Handling potential NULLs for CourierID (Ternary operation - if variable == (Null value) ? (execute this) : (if not execute this)
                                  CourierId = drlistJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(drlistJobs["CourierId"]),
                                  StartDate = Convert.ToDateTime(drlistJobs["StartDate"]),
+                                 EndDate = drlistJobs["EndDate"] == DBNull.Value ? Convert.ToDateTime(drlistJobs["StartDate"]) : Convert.ToDateTime(drlistJobs["EndDate"]),
                                  JobStatus = drlistJobs["JobStatus"].ToString(),
                                  DeliveryAddress = drlistJobs["DeliveryAddress"].ToString(),
                                  Description = drlistJobs["Description"].ToString(),
