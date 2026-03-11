@@ -36,7 +36,9 @@ d:DataContext="{d:DesignInstance Type=viewmodels:ManagerVM}"
             <Setter Property="BorderBrush" Value="LightGray"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="IsReadOnly" Value="True"/>
         </Style>
+
     </UserControl.Resources>
 
     <Grid Margin="15" Background="AntiqueWhite">
@@ -58,20 +60,10 @@ d:DataContext="{d:DesignInstance Type=viewmodels:ManagerVM}"
 
             <Grid Grid.Row="0" Margin="0,0,0,15">
                 <Button Content="Refresh List" DockPanel.Dock="Right" Style="{StaticResource CyanButtonStyle}" 
-                    Command="{Binding RefreshClientsCommand}" Width="120" Margin="196,6,131,-2" RenderTransformOrigin="0.175,0.751"/>
-                <Button Content="New Client" Command="{Binding NewClientCommand}" Margin="328,12,0,0" 
-    HorizontalAlignment="Left" Width="120" VerticalAlignment="Top"/>
+                    Command="{Binding RefreshClientsCommand}" Width="120" Margin="324,9,3,-4" RenderTransformOrigin="0.175,0.751"/>
+    
 
-                <!--
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Search Clients:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Bold"/>
-                    <TextBox Width="300" 
-                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                         VerticalAlignment="Center"/>
-                
-                </StackPanel>
-                -->
             </Grid>
 
             <DataGrid Grid.Row="1" 
@@ -143,31 +135,11 @@ d:DataContext="{d:DesignInstance Type=viewmodels:ManagerVM}"
                              Height="80" VerticalContentAlignment="Top" 
                              TextWrapping="Wrap" AcceptsReturn="True"/>
 
-                        <!--
-                        <Label Content="Internal Account Notes / Special Instructions:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding ClientForm.Notes, Mode=TwoWay}" 
-                             Height="100" VerticalContentAlignment="Top" 
-                             TextWrapping="Wrap" AcceptsReturn="True"/>
-                        -->
+     
                     </StackPanel>
                 </ScrollViewer>
 
-                <UniformGrid Grid.Row="2" Rows="1" Columns="3" Margin="0,20,0,0">
-                    <!--
-                    <Button Content="Clear Form" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding NewClientCommand}" />
-                    -->
-
-                    <Button Content="Delete" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding DeleteClientCommand}" 
-                        Foreground="Red" FontWeight="Bold"/>
-
-                    <Button Content="Update" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding UpdateClientCommand}" />
-
-                    <Button Content="Add New" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding AddClientCommand}" IsEnabled="{Binding EnableItemsForNewClient}" FontWeight="Bold"/>
-                </UniformGrid>
+              
             </Grid>
         </Border>
     </Grid>

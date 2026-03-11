@@ -1,6 +1,5 @@
 ﻿using BayWyn_Couriers.Models;
 using BayWyn_Couriers.Utilities;
-using BayWyn_Couriers.Views;
 using BayWyn_Couriers.Views.AdminSubViews;
 using BayWyn_Couriers.Views.ManagerSubViews;
 using System.Collections.ObjectModel;
@@ -13,7 +12,7 @@ namespace BayWyn_Couriers.ViewModels
 {
     public class ManagerVM : ViewModelBase
     {
-        
+
         private NavigationVM _navigationVM; // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
         private object _currentSubView; // A private field to hold the reference to the current subview (used to change the pages/user controls)
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
@@ -64,7 +63,6 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
         public Job SelectedJob
@@ -103,8 +101,8 @@ namespace BayWyn_Couriers.ViewModels
                         }
                     }
                 }
-                else{SelectedCourier = null;}
-               
+                else { SelectedCourier = null; }
+
 
                 // Setting the client in the edit window (using the selected job client Id)
                 foreach (Client client in ClientList)
@@ -227,17 +225,6 @@ namespace BayWyn_Couriers.ViewModels
                     return;
                 }
 
-                //Matching the courier using the ID
-                //foreach (User courier in CouriersList)
-                //{
-                //    if (courier.UserId == _selectedJob.CourierId)
-                //    {
-                //        // Update the selected courier
-                //        SelectedCourier = courier;
-                //        break;
-                //    }
-                //}
-
                 //Setting the client in the edit window(using the selected job client Id)
                 foreach (Client client in ClientList)
                 {
@@ -286,7 +273,7 @@ namespace BayWyn_Couriers.ViewModels
         public object CurrentSubView
         {
             get { return _currentSubView; }
-            set {_currentSubView = value;OnPropertyChanged(nameof(CurrentSubView));}
+            set { _currentSubView = value; OnPropertyChanged(nameof(CurrentSubView)); }
         }
 
 
@@ -306,7 +293,8 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             //GetContracts(); // Populate the status filter
             GetClients(); // Populate the clients combo box
-            LoadContractsByStatus("All"); // Loads all the jobs initially 
+            GetAllContracts();
+            //LoadContractsByStatus("All"); // Loads all the jobs initially 
         }
 
         private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
@@ -317,11 +305,12 @@ namespace BayWyn_Couriers.ViewModels
             GetClients(); //Updates the clients observable collection
         }
 
-        private void ManagerCouriersPage(object? obj) {
+        private void ManagerCouriersPage(object? obj)
+        {
             CurrentSubView = new ManagerCouriers();
             GetCouriers();
         }
-              
+
 
         // Methods used
 
@@ -370,14 +359,14 @@ namespace BayWyn_Couriers.ViewModels
                                 UserName = reader["UserName"].ToString(),
                                 Name = reader["Name"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["Phone"].ToString(),   
+                                PhoneNumber = reader["Phone"].ToString(),
                                 Address = reader["UserAddress"].ToString()
                             });
                         }
                     }
                 }
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);}
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
         }
 
@@ -425,7 +414,7 @@ namespace BayWyn_Couriers.ViewModels
         {
             if (string.IsNullOrEmpty(status)) return;
             if (status == "All") { GetClients(); return; }
-            
+
             // Sql setup
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
@@ -596,7 +585,7 @@ namespace BayWyn_Couriers.ViewModels
                              {
                                  ContractId = Convert.ToInt32(reader["ContractId"]),
                                  ClientId = Convert.ToInt32(reader["ClientId"]),
-                                 CompanyName = reader["CompanyName"].ToString(), // Now available from the JOIN
+                                 CompanyName = reader["ClientName"].ToString(), // Now available from the JOIN
                                  StartDate = (reader["StartDate"]) == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["StartDate"]),
                                  EndDate = (reader["EndDate"]) == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["EndDate"]),
                                  Notes = reader["Notes"] == DBNull.Value ? "No Notes" : reader["Notes"].ToString(),
@@ -604,24 +593,16 @@ namespace BayWyn_Couriers.ViewModels
                                  Address = reader["Address"].ToString(),
                                  Email = reader["Email"].ToString(),
                                  PhoneNumber = reader["Phone"].ToString(),
-                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MonthlyCost"]),
-                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CostPerJob"])
+                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["MonthlyCost"]),
+                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["CostPerJob"])
                              }
                           );
                     }
                     reader.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                mySqlCon.Close();
-            }
-
-            finally
-            {
-                mySqlCon.Close();
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         private decimal GetCostOfTheJob(int clientID)
@@ -662,7 +643,7 @@ namespace BayWyn_Couriers.ViewModels
             return 10m;
         }
 
-        public void RefreshJobsPage(object? obj){RefreshPage();}
+        public void RefreshJobsPage(object? obj) { RefreshPage(); }
         public void RefreshClientsPage(object? obj) { RefreshPage(); }
         public void RefreshCouriersPage(object? obj) { RefreshPage(); }
 
@@ -690,16 +671,6 @@ namespace BayWyn_Couriers.ViewModels
                         AllJobs.Add(
                              new Job
                              {
-                                 //JobId = Convert.ToInt32(listJobs["JobId"]),
-                                 //ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                 //CourierId = listJobs["CourierId"] as int? ?? 0,
-                                 //ClientName = listJobs["Name"].ToString(),
-                                 ////CourierName = listJobs["CourierName"].ToString(),
-                                 //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                 //JobStatus = listJobs["JobStatus"].ToString(),
-                                 //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                 //Description = listJobs["Description"].ToString(),
-
                                  JobId = Convert.ToInt32(listJobs["JobId"]),
                                  ClientId = Convert.ToInt32(listJobs["ClientId"]),
                                  ClientName = listJobs["ClientName"].ToString(), // Now available from the JOIN
@@ -767,8 +738,8 @@ namespace BayWyn_Couriers.ViewModels
                                  Address = reader["Address"].ToString(),
                                  Email = reader["Email"].ToString(),
                                  PhoneNumber = reader["Phone"].ToString(),
-                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MonthlyCost"]),
-                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CostPerJob"])
+                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["MonthlyCost"]),
+                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["CostPerJob"])
                              }
                           );
                     }
@@ -788,7 +759,7 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-       
+
     }
 }
 

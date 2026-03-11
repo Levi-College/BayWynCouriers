@@ -996,7 +996,7 @@ namespace BayWyn_Couriers.ViewModels
                              {
                                  ContractId = Convert.ToInt32(reader["ContractId"]),
                                  ClientId = Convert.ToInt32(reader["ClientId"]),
-                                 CompanyName = reader["CompanyName"].ToString(), // Now available from the JOIN
+                                 CompanyName = reader["ClientName"].ToString(), // Now available from the JOIN
                                  StartDate = (reader["StartDate"]) == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["StartDate"]),
                                  EndDate = (reader["EndDate"]) == DBNull.Value ? DateTime.Now : Convert.ToDateTime(reader["EndDate"]),
                                  Notes = reader["Notes"] == DBNull.Value ? "No Notes" : reader["Notes"].ToString(),
@@ -1004,8 +1004,8 @@ namespace BayWyn_Couriers.ViewModels
                                  Address = reader["Address"].ToString(),
                                  Email = reader["Email"].ToString(),
                                  PhoneNumber = reader["Phone"].ToString(),
-                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MonthlyCost"]),
-                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CostPerJob"])
+                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["MonthlyCost"]),
+                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["CostPerJob"])
                              }
                           );
                     }
@@ -1061,8 +1061,8 @@ namespace BayWyn_Couriers.ViewModels
                                  Address = reader["Address"].ToString(),
                                  Email = reader["Email"].ToString(),
                                  PhoneNumber = reader["Phone"].ToString(),
-                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToInt32(reader["MonthlyCost"]),
-                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CostPerJob"])
+                                 MonthlyCost = reader["MonthlyCost"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["MonthlyCost"]),
+                                 CostPerJob = reader["CostPerJob"] == DBNull.Value ? 0 : Convert.ToDecimal(reader["CostPerJob"])
                              }
                           );
                     }
