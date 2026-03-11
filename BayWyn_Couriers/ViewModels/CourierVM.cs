@@ -35,6 +35,9 @@ namespace BayWyn_Couriers.ViewModels
             EndShiftCommand = new RelayCommand(EndShift);
             CompleteDeliveryCommand = new RelayCommand(CompleteDelivery);
             // Not able to deliver
+
+            // Setting up the time slot dictionary (used to get the time from the slot)
+            SetupSlotMap();
         }
 
 
@@ -84,6 +87,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<JobAssignment> PendingJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the jobs waiting to be accepted
         public ObservableCollection<JobAssignment> AcceptedJobs { get; set; } = new ObservableCollection<JobAssignment>();
         public ObservableCollection<JobAssignment> DailyJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
+        public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
         //public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         //public Dictionary<string, string> SlotTimeMap { get; set; } //Dictionary to hold the time slot name and the time
         //public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
@@ -175,6 +179,25 @@ namespace BayWyn_Couriers.ViewModels
             _navigationVM.CurrentView = new LoginVM(_navigationVM); // Updating the current view to a instance of LoginVM. _sending the view model to be used as well
         }
 
+        private void SetupSlotMap()
+        {
+            SlotsDictionary = new Dictionary<string, string>();
+            DateTime startTime = DateTime.Today.AddHours(8).AddMinutes(30); // 08:30 AM
+
+            //32 slots
+            for (int i = 1; i <= 32; i++)
+            {
+                string slotCode = $"S{i}";
+                // Format as 08:30, 08:45, etc.
+                string timeDisplay = startTime.ToString("HH:mm");
+
+                // Adding the slot code (S1,S2,S3) and their display names (Time)
+                SlotsDictionary.Add(slotCode, timeDisplay);
+
+                // Increment by 15 minutes for the next slot
+                startTime = startTime.AddMinutes(15);
+            }
+        }
 
         // Refresh
         public void RefreshPage()
@@ -289,7 +312,8 @@ namespace BayWyn_Couriers.ViewModels
                                  Description = reader["Description"].ToString(),
                                  JobStatus = reader["JobStatus"].ToString(),
 
-                                 DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 //DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
                                  DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
                              }
                           );
@@ -350,7 +374,8 @@ namespace BayWyn_Couriers.ViewModels
                                  Description = reader["Description"].ToString(),
                                  JobStatus = reader["JobStatus"].ToString(),
 
-                                 DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 //DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
                                  DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
                              }
                           );
@@ -407,7 +432,9 @@ namespace BayWyn_Couriers.ViewModels
                                  Description = reader["Description"].ToString(),
                                  JobStatus = reader["JobStatus"].ToString(),
 
-                                 DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 //DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 // Gets the time of delivery (using the slot from the database)
+                                 DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
                                  DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
                              }
                           );
@@ -492,13 +519,6 @@ namespace BayWyn_Couriers.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-
-            // Update the status of the job assignment in the jobs table
-            // Make sure the courier deta
-
-            // Could delete it from the jobs assignment table
-
-            // 
         }
 
     }
