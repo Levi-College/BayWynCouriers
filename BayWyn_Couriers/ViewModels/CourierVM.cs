@@ -407,7 +407,8 @@ namespace BayWyn_Couriers.ViewModels
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
                     "WHERE ja.CourierID = @CourierID " +
                     "AND j.JobStatus = 'Accepted' " +
-                    "AND ja.DeliveryDate = CAST(GETDATE() AS DATE)", mySqlCon);
+                    "AND ja.DeliveryDate = CAST(GETDATE() AS DATE)" +
+                    "ORDER BY ja.DeliverySlot DESC", mySqlCon);
 
                 cmGetJobs.Parameters.AddWithValue("@CourierID", UserID); // Pass the ID here
 
