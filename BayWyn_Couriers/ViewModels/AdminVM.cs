@@ -12,6 +12,62 @@ namespace BayWyn_Couriers.ViewModels
 {
     public class AdminVM : ViewModelBase
     {
+        public AdminVM(NavigationVM _nav)
+        {
+            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
+            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
+            _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning using Relay command 
+
+            // Admin jobs page commands
+            // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
+            JobsCommand = new RelayCommand(JobsPage); // Giving the JobsCommand a meaning (when executed, it will call the JobsPage method to set the CurrentSubView to the AdminJobs view, allowing the admin user to see the pending jobs)
+            ReportsCommand = new RelayCommand(ReportsPage); // Giving the ReportsCommand a meaning (when executed, it will call the ReportsPage method to set the CurrentSubView to the AdminReports view, allowing the admin user to see various reports related to the courier service)
+            ContractsCommand = new RelayCommand(ContractsPage); // Giving the ContractsCommand a meaning (when executed, it will call the ContractsPage method to set the CurrentSubView to the AdminContracts view, allowing the admin user to manage contracts with clients)
+            ClientsCommand = new RelayCommand(ClientsPage); // Giving the ClientsCommand a meaning (when executed, it will call the ClientsPage method to set the CurrentSubView to the AdminClients view, allowing the admin user to manage client information and interactions)
+            CouriersCommand = new RelayCommand(CouriersPage); // Giving the CouriersCommand a meaning (when executed, it will call the CouriersPage method to set the CurrentSubView to the AdminCouriers view, allowing the admin user to manage courier information and interactions)
+
+            AddJobCommand = new RelayCommand(AddNewJob); // Establishes the logic of AddJobCommand
+            DeleteJobCommand = new RelayCommand(execute: obj => DeleteJob(obj), canExecute: obj => SelectedJob != null);// Logic: Disable if SelectedJob is null
+            UpdateJobCommand = new RelayCommand(execute: obj => UpdateJob(obj), canExecute: obj => SelectedClient != null);
+            NewJobCommand = new RelayCommand(NewJob);
+            RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
+
+            // Admin contracts page commands
+            AddContractCommand = new RelayCommand(AddNewContract);
+            DeleteContractCommand = new RelayCommand(execute: obj => DeleteContract(obj), canExecute: obj => SelectedClient != null);
+            RenewContractCommand = new RelayCommand(RenewContract);
+            UpdateContractCommand = new RelayCommand(execute: obj => UpdateContract(obj), canExecute: obj => SelectedClient != null);
+            NewContractCommand = new RelayCommand(NewContract);
+
+
+            //Client page commands
+            AddClientCommand = new RelayCommand(AddNewClient);
+            DeleteClientCommand = new RelayCommand(execute: obj => DeleteClient(obj), canExecute: obj => SelectedClient != null);
+            UpdateClientCommand = new RelayCommand(execute: obj => UpdateClient(obj), canExecute: obj => SelectedClient != null);
+            NewClientCommand = new RelayCommand(NewClient);
+            RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
+
+            //Courier page commands
+            //AddCourierCommand = new RelayCommand(AddNewCourier);
+            DeleteCourierCommand = new RelayCommand(execute: obj => DeleteCourier(obj), canExecute: obj => SelectedCourier != null);
+            UpdateCourierCommand = new RelayCommand(execute: obj => UpdateCourier(obj), canExecute: obj => SelectedCourier != null);
+            //NewCourierCommand = new RelayCommand(NewCourier);
+            RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
+
+            DayJobsReportCommand = new RelayCommand(ShowDayReport);
+            MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
+            ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
+            ClientsValueReportCommand = new RelayCommand(ShowClientValueReport);
+
+            // Calling commonly used methods
+            GetCouriers();
+            // Update the database
+            // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
+
+            // Setting the start page as the jobs page
+            JobsPage(null);
+        }
 
         // Declaring variables (simple ones)
 
@@ -38,11 +94,14 @@ namespace BayWyn_Couriers.ViewModels
         private string _allJobsReportVisibility = "Hidden";
         private string _monthlyValueReportVisbility = "Hidden";
 
+        private DateTime _dateForDayJobReport = DateTime.Today;
+
         // Lists and observable collections
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)        
-        public List<String> JobsFilterList { get; } = new List<String> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
+        public List<string> JobsFilterList { get; } = new List<string> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
+        public ObservableCollection<JobAssignment> DailyReportJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
         //public List<string> JobsStatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box
 
 
@@ -51,6 +110,7 @@ namespace BayWyn_Couriers.ViewModels
         public List<String> ContractsFilterList { get; } = new List<String> { "All", "Active", "Expired" }; // A list of string for the items in the job status combo box (item source)
         public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
         public List<string> ClientsFilterList { get; } = new List<string> { "All", "Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
+        public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
@@ -147,8 +207,40 @@ namespace BayWyn_Couriers.ViewModels
                     if (_selectedCourier != null)
                     {
                         if (SelectedJob != null) { SelectedJob.CourierId = value.UserId; }
+                        GetDailyReportJobs(SelectedCourier.UserId.ToString());
                     }
                 }
+            }
+        }
+
+        public DateTime DateForDayJobReport
+        {
+            get => _dateForDayJobReport;
+            set
+            {
+                _dateForDayJobReport = value;
+                OnPropertyChanged(nameof(DateForDayJobReport));
+                GetDailyReportJobs(SelectedCourier.UserId.ToString());
+            }
+        }
+
+        private void SetupSlotMap()
+        {
+            SlotsDictionary = new Dictionary<string, string>();
+            DateTime startTime = DateTime.Today.AddHours(8).AddMinutes(30); // 08:30 AM
+
+            //32 slots
+            for (int i = 1; i <= 32; i++)
+            {
+                string slotCode = $"S{i}";
+                // Format as 08:30, 08:45, etc.
+                string timeDisplay = startTime.ToString("HH:mm");
+
+                // Adding the slot code (S1,S2,S3) and their display names (Time)
+                SlotsDictionary.Add(slotCode, timeDisplay);
+
+                // Increment by 15 minutes for the next slot
+                startTime = startTime.AddMinutes(15);
             }
         }
 
@@ -180,6 +272,8 @@ namespace BayWyn_Couriers.ViewModels
                 }
             }
         }
+
+
 
         // To set and get the select job status (for filtering the data grid)
         public string SelectedClientStatus
@@ -312,7 +406,6 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-
         // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
         public ICommand JobsCommand { get; }
@@ -383,7 +476,7 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminJobs();
             RefreshPage(); // Refreshing the fields and the page
-            GetCouriers(); // Populate the status filter
+            //GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             LoadJobsByStatus("Pending"); // Loads all the pending approval jobs
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
@@ -399,7 +492,11 @@ namespace BayWyn_Couriers.ViewModels
             EnableItemsForNewContract = false; // Used to enable and disable buttons for the edit window
         }
 
-        private void ReportsPage(object? obj) => CurrentSubView = new AdminReports();
+        private void ReportsPage(object? obj)
+        {
+            CurrentSubView = new AdminReports();
+            SetupSlotMap();// Setting up the slot map (t;
+        }
 
         private void ClientsPage(object? obj)
         {
@@ -410,67 +507,9 @@ namespace BayWyn_Couriers.ViewModels
         private void CouriersPage(object? obj)
         {
             CurrentSubView = new AdminCouriers();
-            GetCouriers();
+            //GetCouriers();
         }
 
-
-        public AdminVM(NavigationVM _nav)
-        {
-            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
-            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
-            _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
-            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning using Relay command 
-
-            // Admin jobs page commands
-            // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
-            JobsCommand = new RelayCommand(JobsPage); // Giving the JobsCommand a meaning (when executed, it will call the JobsPage method to set the CurrentSubView to the AdminJobs view, allowing the admin user to see the pending jobs)
-            ReportsCommand = new RelayCommand(ReportsPage); // Giving the ReportsCommand a meaning (when executed, it will call the ReportsPage method to set the CurrentSubView to the AdminReports view, allowing the admin user to see various reports related to the courier service)
-            ContractsCommand = new RelayCommand(ContractsPage); // Giving the ContractsCommand a meaning (when executed, it will call the ContractsPage method to set the CurrentSubView to the AdminContracts view, allowing the admin user to manage contracts with clients)
-            ClientsCommand = new RelayCommand(ClientsPage); // Giving the ClientsCommand a meaning (when executed, it will call the ClientsPage method to set the CurrentSubView to the AdminClients view, allowing the admin user to manage client information and interactions)
-            CouriersCommand = new RelayCommand(CouriersPage); // Giving the CouriersCommand a meaning (when executed, it will call the CouriersPage method to set the CurrentSubView to the AdminCouriers view, allowing the admin user to manage courier information and interactions)
-
-            AddJobCommand = new RelayCommand(AddNewJob); // Establishes the logic of AddJobCommand
-            DeleteJobCommand = new RelayCommand(
-                execute: obj => DeleteJob(obj),
-                canExecute: obj => SelectedJob != null // Logic: Disable if SelectedJob is null
-            );
-            UpdateJobCommand = new RelayCommand(execute: obj => UpdateJob(obj), canExecute: obj => SelectedClient != null);
-            NewJobCommand = new RelayCommand(NewJob);
-            RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
-
-            // Admin contracts page commands
-            AddContractCommand = new RelayCommand(AddNewContract);
-            DeleteContractCommand = new RelayCommand(execute: obj => DeleteContract(obj), canExecute: obj => SelectedClient != null);
-            RenewContractCommand = new RelayCommand(RenewContract);
-            UpdateContractCommand = new RelayCommand(execute: obj => UpdateContract(obj), canExecute: obj => SelectedClient != null);
-            NewContractCommand = new RelayCommand(NewContract);
-
-
-            //Client page commands
-            AddClientCommand = new RelayCommand(AddNewClient);
-            DeleteClientCommand = new RelayCommand(execute: obj => DeleteClient(obj), canExecute: obj => SelectedClient != null);
-            UpdateClientCommand = new RelayCommand(execute: obj => UpdateClient(obj), canExecute: obj => SelectedClient != null);
-            NewClientCommand = new RelayCommand(NewClient);
-            RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
-
-            //Courier page commands
-            //AddCourierCommand = new RelayCommand(AddNewCourier);
-            DeleteCourierCommand = new RelayCommand(execute: obj => DeleteCourier(obj), canExecute: obj => SelectedCourier != null);
-            UpdateCourierCommand = new RelayCommand(execute: obj => UpdateCourier(obj), canExecute: obj => SelectedCourier != null);
-            //NewCourierCommand = new RelayCommand(NewCourier);
-            RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
-
-            DayJobsReportCommand = new RelayCommand(ShowDayReport);
-            MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
-            ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
-            ClientsValueReportCommand = new RelayCommand(ShowClientValueReport);
-
-            // Update the database
-            // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
-
-            // Setting the start page as the jobs page
-            JobsPage(null);
-        }
 
         private void ShowClientValueReport(object? obj)
         {
@@ -499,6 +538,7 @@ namespace BayWyn_Couriers.ViewModels
             HideAllReports();
             // Set stackpanel to visible
             DayReportVisibility = "Visible";
+            //GetCouriers();
         }
 
         private void HideAllReports()
@@ -1570,6 +1610,66 @@ namespace BayWyn_Couriers.ViewModels
                 catch (Exception ex) { MessageBox.Show("Error deleting Courier: " + ex.Message); }
                 finally { mySqlCon.Close(); }
             }
+        }
+
+
+        // Reports
+        // Gets the jobs for the current day for the couriers shift
+        private void GetDailyReportJobs(string userID)
+        {
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+            try
+            {
+                // Setting up the sql command to get the jobs for the day
+                // Filtered out using todays date
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.JobID, j.CourierID, j.DeliveryAddress, j.Description, j.JobStatus, " +
+                    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
+                    "FROM Jobs j INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
+                    "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
+                    "WHERE ja.CourierID = @CourierID " +
+                    "AND j.JobStatus = 'Accepted' " +
+                    "AND ja.DeliveryDate = @Date " +
+                    "ORDER BY ja.DeliverySlot DESC", mySqlCon);
+
+                cmGetJobs.Parameters.AddWithValue("@CourierID", userID); // Pass the ID here
+                cmGetJobs.Parameters.AddWithValue("@Date", DateForDayJobReport.Date); // Date chosen
+
+                SqlDataReader reader = cmGetJobs.ExecuteReader();
+
+                // Looping through the data reader and adding them to the list
+                if (reader.HasRows)
+                {
+                    DailyReportJobs.Clear();
+                    while (reader.Read())
+                    {
+                        DailyReportJobs.Add(
+                             new JobAssignment
+                             {
+                                 //AssignmentID
+                                 JobId = Convert.ToInt32(reader["JobId"]),
+                                 // Handling potential NULLs for CourierID
+                                 CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
+                                 ClientId = Convert.ToInt32(reader["ClientId"]),
+                                 ClientName = reader["ClientName"].ToString(), // Now available from the JOIN
+                                 DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                                 Description = reader["Description"].ToString(),
+                                 JobStatus = reader["JobStatus"].ToString(),
+
+                                 //DeliverySlot = reader["DeliverySlot"].ToString(),
+                                 // Gets the time of delivery (using the slot from the database)
+                                 DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
+                                 DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
+                             }
+                          );
+                    }
+                    reader.Close();
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
     }
 }
