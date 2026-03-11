@@ -33,6 +33,11 @@ namespace BayWyn_Couriers.ViewModels
         private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
         private bool _enableItemsForNewClient = false;
 
+        private string _dayReportVisibility = "Hidden";
+        private string _monthlyReportVisibility = "Hidden";
+        private string _allJobsReportVisibility = "Hidden";
+        private string _monthlyValueReportVisbility = "Hidden";
+
         // Lists and observable collections
         public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
@@ -214,6 +219,29 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        // Report visibility buttons
+        public string DayReportVisibility
+        {
+            get => _dayReportVisibility;
+            set { _dayReportVisibility = value; OnPropertyChanged(); }
+        }
+        public string MonthlyReportVisibility
+        {
+            get => _monthlyReportVisibility;
+            set { _monthlyReportVisibility = value; OnPropertyChanged(); }
+        }
+        public string AllJobsReportVisibility
+        {
+            get => _allJobsReportVisibility;
+            set { _allJobsReportVisibility = value; OnPropertyChanged(); }
+        }
+        public string MonthlyValueReportVisibility
+        {
+            get => _monthlyValueReportVisbility;
+            set { _monthlyValueReportVisbility = value; OnPropertyChanged(); }
+        }
+
+
 
         // Contracts page 
         public Contract SelectedContract
@@ -327,6 +355,12 @@ namespace BayWyn_Couriers.ViewModels
         //public ICommand NewCourierCommand { get; }
         public ICommand RefreshCouriersCommand { get; }
 
+        // Reports page 
+        public ICommand DayJobsReportCommand { get; }
+        public ICommand MonthlyJobsReportCommand { get; }
+        public ICommand ContractsJobReportCommand { get; }
+        public ICommand ClientsValueReportCommand { get; }
+
         // AdminVM logic
 
         // Property to get or set the current subview displayed in the admin dashboard.
@@ -373,7 +407,8 @@ namespace BayWyn_Couriers.ViewModels
             GetClients(); //Updates the clients observable collection
         }
 
-        private void CouriersPage(object? obj) {
+        private void CouriersPage(object? obj)
+        {
             CurrentSubView = new AdminCouriers();
             GetCouriers();
         }
@@ -425,7 +460,10 @@ namespace BayWyn_Couriers.ViewModels
             //NewCourierCommand = new RelayCommand(NewCourier);
             RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
 
-
+            DayJobsReportCommand = new RelayCommand(ShowDayReport);
+            MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
+            ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
+            ClientsValueReportCommand = new RelayCommand(ShowClientValueReport);
 
             // Update the database
             // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
@@ -434,6 +472,42 @@ namespace BayWyn_Couriers.ViewModels
             JobsPage(null);
         }
 
+        private void ShowClientValueReport(object? obj)
+        {
+            HideAllReports();
+            // Set stackpanel to visible
+            MonthlyValueReportVisibility = "Visible";
+        }
+
+        private void ShowContractsJobReport(object? obj)
+        {
+            HideAllReports();
+
+            // Set stackpanel to visible
+            AllJobsReportVisibility = "Visible";
+        }
+
+        private void ShowMonthlyJobReport(object? obj)
+        {
+            HideAllReports();
+            // Set stackpanel to visible
+            MonthlyReportVisibility = "Visible";
+        }
+
+        private void ShowDayReport(object? obj)
+        {
+            HideAllReports();
+            // Set stackpanel to visible
+            DayReportVisibility = "Visible";
+        }
+
+        private void HideAllReports()
+        {
+            DayReportVisibility = "Hidden";
+            MonthlyReportVisibility = "Hidden";
+            AllJobsReportVisibility = "Hidden";
+            MonthlyValueReportVisibility = "Hidden";
+        }
 
         // Methods used
 
@@ -486,14 +560,14 @@ namespace BayWyn_Couriers.ViewModels
                                 UserName = reader["UserName"].ToString(),
                                 Name = reader["Name"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["Phone"].ToString(),   
+                                PhoneNumber = reader["Phone"].ToString(),
                                 Address = reader["UserAddress"].ToString()
                             });
                         }
                     }
                 }
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);}
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
         }
 
@@ -1325,7 +1399,7 @@ namespace BayWyn_Couriers.ViewModels
         }
         public void UpdateClient(object? obj)
         {
-            if (SelectedClient == null){MessageBox.Show("Please select a Client to be update");return;}
+            if (SelectedClient == null) { MessageBox.Show("Please select a Client to be update"); return; }
             else
             {
                 MessageBoxResult result = MessageBox.Show("Confirm Update", "Update", MessageBoxButton.YesNo);
@@ -1348,18 +1422,18 @@ namespace BayWyn_Couriers.ViewModels
                         cmd.Parameters.AddWithValue("@Email", SelectedClient.Email);
                         cmd.Parameters.AddWithValue("@Phone", SelectedClient.Phone);
                         cmd.Parameters.AddWithValue("@ClientAddress", SelectedClient.ClientAddress);
-                        cmd.ExecuteNonQuery(); 
+                        cmd.ExecuteNonQuery();
                         MessageBox.Show("Client details updated");
                     }
-                    catch (Exception ex){MessageBox.Show(ex.Message); mySqlCon.Close();}
-                    finally{mySqlCon.Close();}
+                    catch (Exception ex) { MessageBox.Show(ex.Message); mySqlCon.Close(); }
+                    finally { mySqlCon.Close(); }
                     GetClients();
                 }
             }
         }
         public void DeleteClient(object? obj)
         {
-            if (SelectedClient == null){MessageBox.Show("Please select a Client to delete.");return;}
+            if (SelectedClient == null) { MessageBox.Show("Please select a Client to delete."); return; }
 
             MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this Client?", "Confirm Delete", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
@@ -1377,8 +1451,8 @@ namespace BayWyn_Couriers.ViewModels
                     MessageBox.Show("Client Deleted.");
                     GetClients();
                 }
-                catch (Exception ex){MessageBox.Show("Error deleting Client: " + ex.Message);}
-                finally{mySqlCon.Close();}
+                catch (Exception ex) { MessageBox.Show("Error deleting Client: " + ex.Message); }
+                finally { mySqlCon.Close(); }
             }
 
         }

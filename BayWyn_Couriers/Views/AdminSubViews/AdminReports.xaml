@@ -3,17 +3,157 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BayWyn_Couriers.Views.AdminSubViews"
+             xmlns:local="clr-namespace:BayWyn_Couriers.Views.AdminSubViews" 
+             xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:AdminVM}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800">
+
+
+    <Grid Background="AntiqueWhite" Margin="5">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="CHOOSE REPORT" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+
+        <!--Header for the edit column-->
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="BAYWN COURIERS" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+
+
+        <Grid Grid.Row="1" Grid.Column="0">
+            <StackPanel Orientation="Vertical">
+                <StackPanel.Resources>
+                    <!-- A style that makes RadioButtons look like Menu Buttons -->
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Margin" Value="0,5,5,5"/>
+                        <Setter Property="Background" Value="#F0F0F0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="RadioButton">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <!-- Highlighting the selected menu item -->
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter Property="Background" Value="#007BFF"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </StackPanel.Resources>
+
+                <!-- Use IsChecked="True" on the first one to select it by default -->
+                <RadioButton Content="Day Jobs (Courier Based)" Command="{Binding DayJobsReportCommand}"/>
+                <RadioButton Content="Monthly Jobs (Courier Based)" Command="{Binding MonthlyJobsReportCommand}"/>
+                <RadioButton Content="All Jobs (Client based)" Command="{Binding ContractsJobReportCommand}"/>
+                <RadioButton Content="Monthly Value (Client based)" Command="{Binding ClientsValueReportCommand}"/>
+            </StackPanel>
+        </Grid>
     
-    
-    <Grid Background="AntiqueWhite">
-        <TextBlock Text="Admin Reports Page" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Arial Black" FontSize="24" Margin="0,20,0,0"/>
-        <StackPanel Margin="50">
-            <TextBlock Text="This is where job management features will be implemented." FontSize="16"/>
-            <!-- Placeholder for report management controls -->
-        </StackPanel>
+
+        <Grid Grid.Row="1" Grid.Column="1" Width="350">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!--Report details window-->
+            <StackPanel>
+                
+            </StackPanel>
+            
+            <!-- Report Window-->
+            
+            <!--Day jobs report-->
+            <StackPanel Visibility="{Binding DayReportVisibility}">
+                <TextBlock Text="Day Jobs"/>
+            </StackPanel>
+
+            <!--Monthly jobs report-->
+            <StackPanel Visibility="{Binding MonthlyReportVisibility}">
+                <TextBlock Text="Monthly Courier Jobs"/>
+            </StackPanel>
+
+            <!--All jobs report-->
+            <StackPanel Visibility="{Binding AllJobsReportVisibility}">
+                <TextBlock Text="All Monthly Jobs"/>
+            </StackPanel>
+
+            <!--Monthly value report-->
+            <StackPanel Visibility="{Binding MonthlyValueReportVisibility}">
+                <TextBlock Text="Client Value Report"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Visibility="Collapsed">
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Job ID:"/>
+                    <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
+                </StackPanel>
+
+                <Label Content="Client Name:"/>
+                <!--<Label Content="{Binding SelectedJob.ClientName}"/>-->
+                <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
+                      DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewJob}"/>
+
+                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
+
+                <Label Content="Courier Name:"/>
+                <ComboBox ItemsSource="{Binding CouriersList}" 
+                      SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
+                      DisplayMemberPath="UserName" SelectedValuePath="UserId" IsEnabled="False" />
+
+                <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Start Date:"/>
+                    <TextBox x:Name="txtDateCreated" IsEnabled="False" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="End Date:"/>
+                    <TextBox Margin="0,0,0,10" IsEnabled="False" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Cost"/>
+                    <Label Content="{Binding CostOfJob}"/>
+                </StackPanel>
+
+
+
+                <Label Content="Delivery Address:"/>
+                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress, Mode=TwoWay}" Height="51"/>
+
+                <Label Content="Description:"/>
+                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description, Mode=TwoWay}" Height="49"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Status:"/>
+                    <Label Content="{Binding SelectedJob.JobStatus}"/>
+         
+                </StackPanel>
+            </StackPanel>
+
+        </Grid>
     </Grid>
-    
+
+
+
 </UserControl>
