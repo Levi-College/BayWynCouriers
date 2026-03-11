@@ -111,6 +111,7 @@ namespace BayWyn_Couriers.ViewModels
         public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
         public List<string> ClientsFilterList { get; } = new List<string> { "All", "Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
+        public ObservableCollection<CourierGroupHeader> GroupedMonthlyReport { get; set; } = new ObservableCollection<CourierGroupHeader>(); // To hold the headers for the courier group
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
@@ -406,6 +407,13 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
+        // Creating a class for the group details (all jobs report)
+        public class CourierGroupHeader
+        {
+            public string GroupName { get; set; }
+            public List<Job> GroupJobs { get; set; }
+        }
+
         // Establishing the commands for the admin dashboard
         public ICommand LogoutCommand { get; }
         public ICommand JobsCommand { get; }
@@ -531,6 +539,7 @@ namespace BayWyn_Couriers.ViewModels
             HideAllReports();
             // Set stackpanel to visible
             MonthlyReportVisibility = "Visible";
+            LoadMonthlyReport();
         }
 
         private void ShowDayReport(object? obj)
@@ -1670,6 +1679,110 @@ namespace BayWyn_Couriers.ViewModels
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
+        }
+
+        public void LoadMonthlyReport()
+        {
+            // Get all the jobs for the month
+            List<JobAssignment> allJobs = GetJobsForTheMonth();
+
+            //Clearing the list
+            if (GroupedMonthlyReport.Count > 0) {GroupedMonthlyReport.Clear(); }
+
+            // Loop through each job
+            foreach (JobAssignment currentJob in allJobs)
+            {
+                // We need to check: Do we already have an Expander/Group for this courier?
+                CourierGroupHeader foundGroup = null;
+
+                foreach (var group in GroupedMonthlyReport)
+                {
+                    if (group.GroupName == currentJob.CourierName)
+                    {
+                        foundGroup = group;
+                        break; // We found the right cubby, stop looking!
+                    }
+                }
+
+                // 4. Use an IF/ELSE to decide what to do
+                if (foundGroup != null)
+                {
+                    // IF we found the group, just add this job to their list
+                    foundGroup.GroupJobs.Add(currentJob);
+                }
+                else
+                {
+                    // ELSE (if this is the first time we see this courier's name)
+                    // Create a brand new group for them
+                    CourierGroupHeader newGroup = new CourierGroupHeader();
+                    newGroup.GroupName = currentJob.CourierName;
+                    newGroup.GroupJobs = new List<Job>(); // Initialize their job list
+                    newGroup.GroupJobs.Add(currentJob);   // Add their first job
+
+                    // Add the whole new group to our main list
+                    GroupedMonthlyReport.Add(newGroup);
+                }
+            }
+        }
+
+        private List<JobAssignment> GetJobsForTheMonth()
+        {
+            // Setting up sql connection
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                // 1. Updated SQL: Removed CourierID filter, added JOIN to Users to get CourierName, 
+                // and changed Date filter to look at Month/Year.
+                SqlCommand cmGetJobs = new SqlCommand(
+                    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, " +
+                    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
+                    "FROM Jobs j " +
+                    "INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
+                    "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
+                    "INNER JOIN Users u ON ja.CourierID = u.UserID " + // JOIN to get Courier Name
+                    "WHERE j.JobStatus = 'Accepted' " +
+                    "AND MONTH(ja.DeliveryDate) = @Month " +
+                    "AND YEAR(ja.DeliveryDate) = @Year " +
+                    "ORDER BY u.UserName, ja.DeliverySlot DESC", mySqlCon);
+
+                // Filter by the current month and year
+                cmGetJobs.Parameters.AddWithValue("@Month", DateTime.Now.Month);
+                cmGetJobs.Parameters.AddWithValue("@Year", DateTime.Now.Year);
+
+                SqlDataReader reader = cmGetJobs.ExecuteReader();
+
+                // Temporary list to hold every job found
+                List<JobAssignment> tempAllJobs = new List<JobAssignment>();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        tempAllJobs.Add(new JobAssignment
+                        {
+                            JobId = Convert.ToInt32(reader["JobId"]),
+                            CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
+                            CourierName = reader["CourierName"].ToString(), // Make sure your class has this property!
+                            ClientId = Convert.ToInt32(reader["ClientId"]),
+                            ClientName = reader["ClientName"].ToString(),
+                            DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            JobStatus = reader["JobStatus"].ToString(),
+                            DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
+                            DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
+                        });
+                    }
+                }
+                reader.Close();
+                return tempAllJobs;
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
+            return null;
+       
         }
     }
 }
