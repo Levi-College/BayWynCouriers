@@ -82,7 +82,7 @@
             <!-- Report Window-->
             
             <!--Day jobs report-->
-            <StackPanel Visibility="{Binding DayReportVisibility}">
+            <!--<StackPanel Visibility="{Binding DayReportVisibility}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -99,23 +99,49 @@
                     <DatePicker SelectedDate="{Binding DateForDayJobReport, UpdateSourceTrigger=PropertyChanged}"  DisplayDate="{x:Static sys:DateTime.Now}" Grid.Column="1"/>
 
                 </Grid>
-            </StackPanel>
+            </StackPanel>-->
 
             <!--Monthly jobs report-->
-            <StackPanel Visibility="{Binding MonthlyReportVisibility}">
+            <!--<StackPanel Visibility="{Binding MonthlyReportVisibility}">
                 <TextBlock Text="Monthly Courier Jobs"/>
                 
-            </StackPanel>
+            </StackPanel>-->
 
             <!--All jobs report-->
-            <StackPanel Visibility="{Binding AllJobsReportVisibility}">
-                <TextBlock Text="All Monthly Jobs"/>
-            </StackPanel>
+            <Grid Visibility="{Binding AllJobsReportVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
+                    <ComboBox Grid.Column="1">
+                        <ComboBoxItem>January</ComboBoxItem>
+                        <ComboBoxItem>January</ComboBoxItem>
+                        <ComboBoxItem>January</ComboBoxItem>
+                    </ComboBox>
+                    <ComboBox Grid.Column="2">
+                        <ComboBoxItem>2026</ComboBoxItem>
+                        <ComboBoxItem>2027</ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Button Content="Generate Report"/>
+                </Grid>
+                
+            </Grid>
 
             <!--Monthly value report-->
-            <StackPanel Visibility="{Binding MonthlyValueReportVisibility}">
+            <!--<StackPanel Visibility="{Binding MonthlyValueReportVisibility}">
                 <TextBlock Text="Client Value Report"/>
-            </StackPanel>
+            </StackPanel>-->
 
             
             <StackPanel Grid.Row="1" Visibility="{Binding DayReportVisibility}">
@@ -147,8 +173,6 @@
                     </ItemsControl>
                 </ScrollViewer>
             </StackPanel>
-
-            
             
             <StackPanel Grid.Row="1" Visibility="{Binding MonthlyReportVisibility}">
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
@@ -196,9 +220,59 @@
                 </ScrollViewer>
             </StackPanel>
 
-            <!--<StackPanel Grid.Row="1" Visibility="{Binding AllJobsReportVisibility}">
+            <StackPanel Grid.Row="1" Visibility="{Binding AllJobsReportVisibility}">
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
-                    <ItemsControl ItemsSource="{Binding DailyReportJobs}">
+                    <ItemsControl ItemsSource="{Binding GroupedMonthlyClientReport}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <!-- One Expander per Courier -->
+                                <Expander Margin="0,0,0,10" Background="#F9F9F9">
+                                    <Expander.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding ClientName}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{Binding ClientEmail}" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="{Binding ClientStatus}" FontWeight="Bold" FontSize="14"/>
+                                        </StackPanel>
+                                    </Expander.Header>
+
+                                    <!-- The list of jobs for THIS specific courier -->
+                                    <ItemsControl ItemsSource="{Binding ClientJobs}" Margin="10,5">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="#E0E0E0" BorderThickness="1,1,1,4" Margin="0,5,5,10" Background="White">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="80"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Cost}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                        </StackPanel>
+
+                                                        <StackPanel Grid.Column="1" Margin="15,5">
+                                                            
+                                                            <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" FontSize="12"/>
+                                                            <TextBlock Text="{Binding Cost}" TextWrapping="Wrap" FontSize="12"/>
+                                                            <TextBlock Text="{Binding JobID}" FontWeight="Bold" FontSize="14"/>
+                                                            <TextBlock Text="{Binding DateCreated, StringFormat=d}" FontWeight="Bold" FontSize="14"/>
+                                                            <TextBlock Text="{Binding ClientName}" FontWeight="Bold" FontSize="14"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Visibility="{Binding MonthlyValueReportVisibility}">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                    <ItemsControl ItemsSource="{Binding GroupedMonthlyClientValueReport}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border BorderBrush="#E0E0E0" BorderThickness="1,1,1,4" Margin="0,5,5,10" Background="White">
@@ -225,36 +299,6 @@
                     </ItemsControl>
                 </ScrollViewer>
             </StackPanel>
-
-            <StackPanel Grid.Row="1" Visibility="{Binding MonthlyValueReportVisibility}">
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
-                    <ItemsControl ItemsSource="{Binding DailyReportJobs}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="#E0E0E0" BorderThickness="1,1,1,4" Margin="0,5,5,10" Background="White">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding DeliverySlot}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                            <TextBlock Text="Slot" FontSize="10" Foreground="Gray" HorizontalAlignment="Center"/>
-                                        </StackPanel>
-
-                                        <StackPanel Grid.Column="1" Margin="15,0">
-                                            <TextBlock Text="{Binding ClientName}" FontSize="16" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Margin="0,4"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </StackPanel>-->
         </Grid>
     </Grid>
 
