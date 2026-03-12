@@ -82,7 +82,7 @@
             <!-- Report Window-->
             
             <!--Day jobs report-->
-            <!--<StackPanel Visibility="{Binding DayReportVisibility}">
+            <StackPanel Visibility="{Binding DayReportVisibility}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -99,16 +99,16 @@
                     <DatePicker SelectedDate="{Binding DateForDayJobReport, UpdateSourceTrigger=PropertyChanged}"  DisplayDate="{x:Static sys:DateTime.Now}" Grid.Column="1"/>
 
                 </Grid>
-            </StackPanel>-->
+            </StackPanel>
 
             <!--Monthly jobs report-->
-            <!--<StackPanel Visibility="{Binding MonthlyReportVisibility}">
+            <StackPanel Visibility="{Binding MonthlyReportVisibility}">
                 <TextBlock Text="Monthly Courier Jobs"/>
                 
-            </StackPanel>-->
+            </StackPanel>
 
             <!--All jobs report-->
-            <!--<Grid Visibility="{Binding AllJobsReportVisibility}">
+            <Grid Visibility="{Binding AllJobsReportVisibility}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -121,22 +121,16 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
-                    <ComboBox Grid.Column="1">
-                        <ComboBoxItem>January</ComboBoxItem>
-                        <ComboBoxItem>January</ComboBoxItem>
-                        <ComboBoxItem>January</ComboBoxItem>
-                    </ComboBox>
-                    <ComboBox Grid.Column="2">
-                        <ComboBoxItem>2026</ComboBoxItem>
-                        <ComboBoxItem>2027</ComboBoxItem>
-                    </ComboBox>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}"/>
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}"/>
+   
                 </Grid>
 
                 <Grid Grid.Row="1">
-                    <Button Content="Generate Report"/>
+                    <Button Content="Generate Report" Command="{Binding GenerateAllJobsReportCommand}" />
                 </Grid>
                 
-            </Grid>-->
+            </Grid>
 
             <!--Monthly value report-->
             <Grid Visibility="{Binding MonthlyValueReportVisibility}">
@@ -153,19 +147,14 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
-                    <ComboBox Grid.Column="1">
-                        <ComboBoxItem>January</ComboBoxItem>
-                        <ComboBoxItem>January</ComboBoxItem>
-                        <ComboBoxItem>January</ComboBoxItem>
-                    </ComboBox>
-                    <ComboBox Grid.Column="2">
-                        <ComboBoxItem>2026</ComboBoxItem>
-                        <ComboBoxItem>2027</ComboBoxItem>
-                    </ComboBox>
+
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}"/>
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}"/>
+
                 </Grid>
 
                 <Grid Grid.Row="1">
-                    <Button Content="Generate Report"/>
+                    <Button Content="Generate Report" Command="{Binding GenerateValueReportCommand}"/>
                 </Grid>
             </Grid>
 
