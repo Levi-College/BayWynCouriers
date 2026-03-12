@@ -108,7 +108,7 @@
             </StackPanel>-->
 
             <!--All jobs report-->
-            <Grid Visibility="{Binding AllJobsReportVisibility}">
+            <!--<Grid Visibility="{Binding AllJobsReportVisibility}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -136,12 +136,38 @@
                     <Button Content="Generate Report"/>
                 </Grid>
                 
-            </Grid>
+            </Grid>-->
 
             <!--Monthly value report-->
-            <!--<StackPanel Visibility="{Binding MonthlyValueReportVisibility}">
-                <TextBlock Text="Client Value Report"/>
-            </StackPanel>-->
+            <Grid Visibility="{Binding MonthlyValueReportVisibility}">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
+                    <ComboBox Grid.Column="1">
+                        <ComboBoxItem>January</ComboBoxItem>
+                        <ComboBoxItem>January</ComboBoxItem>
+                        <ComboBoxItem>January</ComboBoxItem>
+                    </ComboBox>
+                    <ComboBox Grid.Column="2">
+                        <ComboBoxItem>2026</ComboBoxItem>
+                        <ComboBoxItem>2027</ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Button Content="Generate Report"/>
+                </Grid>
+            </Grid>
 
             
             <StackPanel Grid.Row="1" Visibility="{Binding DayReportVisibility}">
@@ -270,12 +296,56 @@
                 </ScrollViewer>
             </StackPanel>
 
-            <StackPanel Grid.Row="1" Visibility="{Binding MonthlyValueReportVisibility}">
+            <Grid Grid.Row="1" Visibility="{Binding MonthlyValueReportVisibility}">
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
-                    <ItemsControl ItemsSource="{Binding GroupedMonthlyClientValueReport}">
+                    <ItemsControl ItemsSource="{Binding MonthlyClientValueReportList}">
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="#E0E0E0" BorderThickness="1,1,1,4" Margin="0,5,5,10" Background="White">
+                            <DataTemplate >
+                                <Border BorderBrush = "#D2B48C" BorderThickness = "1" Margin = "0,5,5,10" Background = "White" CornerRadius = "3" >
+                                    <Grid>
+                                        <Grid.RowDefinitions >
+                                            <RowDefinition Height = "Auto" />
+                                            <RowDefinition Height = "Auto" />
+                                            <RowDefinition Height = "Auto" />
+                                        </Grid.RowDefinitions >
+                                        <Grid.ColumnDefinitions >
+                                            <ColumnDefinition Width = "Auto" />
+                                            <ColumnDefinition Width = "*" />
+                                        </Grid.ColumnDefinitions >
+
+                                        <TextBlock Text = "{Binding ClientId, StringFormat='ID: {0}'}" FontWeight = "Bold" Foreground = "Gray" Margin = "0,0,10,0" />
+                                        <TextBlock Grid.Column = "1" Text = "{Binding Name}" FontSize = "16" FontWeight = "Bold" Foreground = "#2C3E50" />
+
+                                        <StackPanel Grid.Row = "1" Grid.Column = "1" Orientation = "Horizontal" Margin = "0,5" >
+                                            <TextBlock Text = "{Binding Email}" FontStyle = "Italic" Margin = "0,0,20,0" />
+                                            <TextBlock Text = "{Binding ContractStatus}" FontWeight = "SemiBold" >
+                                                <TextBlock.Style >
+                                                    <Style TargetType = "TextBlock" >
+                                                        <Style.Triggers >
+                                                            <Trigger Property = "Text" Value = "Active" >
+                                                                <Setter Property = "Foreground" Value = "Green" />
+                                                            </Trigger >
+                                                            <Trigger Property = "Text" Value = "None" >
+                                                                <Setter Property = "Foreground" Value = "Red" />
+                                                            </Trigger >
+                                                        </Style.Triggers >
+                                                    </Style >
+                                                </TextBlock.Style >    
+                                            </TextBlock >
+                                        </StackPanel >
+
+                                        <StackPanel Grid.Row = "2" Grid.Column = "1" Orientation = "Horizontal" HorizontalAlignment = "Right" Margin = "0,5,0,0" >
+                                            <TextBlock Text = "Total Value: " VerticalAlignment = "Center" FontWeight = "Bold" />
+                                            <Border Background = "#A0F0E0" Padding = "8,4" CornerRadius = "4" BorderBrush = "Gray" BorderThickness = "1" >
+                                                <TextBlock Text = "{Binding MonthlyValue, StringFormat='{}{0:C}'}" FontWeight = "Bold" FontSize = "14" />
+                                            </Border >
+                                        </StackPanel >
+                                    </Grid >
+                                </Border >
+                            </DataTemplate>
+
+                            <!--<DataTemplate>
+                                <Border BorderBrush = "#D2B48C" BorderThickness = "1" Margin = "0,5,5,10" Background = "White" CornerRadius = "3" >
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="80"/>
@@ -284,23 +354,30 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding DeliverySlot}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                            <TextBlock Text="Slot" FontSize="10" Foreground="Gray" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding ClientID}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="1" Margin="15,0">
-                                            <TextBlock Text="{Binding ClientName}" FontSize="16" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Margin="0,4"/>
+                                            <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Email}" FontSize="16" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding ContractStatus}" FontSize="16" FontWeight="Bold"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Client Value: £" FontSize="16" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding MonthlyValue}" FontSize="16" FontWeight="Bold"/>
+                                            </StackPanel>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
-                            </DataTemplate>
+                            </DataTemplate>-->
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </StackPanel>
-        </Grid>
+            </Grid>
+
+            
+            
     </Grid>
+</Grid>
 
 
 
