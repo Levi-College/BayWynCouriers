@@ -141,8 +141,8 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
                 <StackPanel>
-                    <TextBlock Text="BayWyn Couriers" FontWeight="Bold" FontSize="18" Foreground="#2D2D2D"/>
-                    <TextBlock Text="Courier Management System" FontSize="10" Foreground="Gray" Margin="0,-2,0,0"/>
+                    <TextBlock Text="BayWyn Couriers" FontWeight="Bold" FontSize="18" Foreground="White"/>
+                    <TextBlock Text="Courier Management System" FontSize="10" Foreground="#94A3B8" Margin="0,-2,0,0"/>
                 </StackPanel>
             </StackPanel>
 
@@ -155,19 +155,19 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" Background="#1A1F26">
             <Grid.RowDefinitions>
                 <RowDefinition Height="70"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="0,0,0,1">
+            <Grid Grid.Row="0" Margin="0,0,0,1" Background="#1A1F26">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Admin Dashboard" VerticalAlignment="Center" Margin="30,0" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                <TextBlock Text="Admin Dashboard" VerticalAlignment="Center" Margin="30,0" FontSize="22" FontWeight="Bold" Foreground="White"/>
 
                 <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,30,0">
                     <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>

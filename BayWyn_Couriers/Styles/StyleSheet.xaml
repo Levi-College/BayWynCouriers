@@ -5,7 +5,7 @@
     <Style TargetType="Button">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="2" />
-        <Setter Property="Background" Value="#007BFF"/>
+        <Setter Property="Background" Value="#9D7BFF"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Margin" Value="0,20,0,10"/>
@@ -18,7 +18,7 @@
     </Style>
 
     <Style x:Key="LoginWindowBorder" TargetType="Border">
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="Background" Value="#0B0E14"/>
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Width" Value="350" />
         <Setter Property="Height" Value="400" />
@@ -43,10 +43,10 @@
     
     <!--Login Brand header-->
     <Style x:Key="BrandLogo1" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="#F8F9FA"/>
         <Setter Property="FontSize" Value="28"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Margin" Value="0,0,0,20"/>
-        <Setter Property="Foreground" Value="#222"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
 
@@ -68,7 +68,7 @@
 
     <Style x:Key="PlaceholderText" TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Foreground" Value="Gray"/>
+        <Setter Property="Foreground" Value="#94A3B8"/>
     </Style>
 
     
@@ -78,7 +78,7 @@
     </Style>
 
     <Style x:Key="GenericBackground" TargetType="Grid">
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="Background" Value="#0B0E14"/>
     </Style>
 
     <!--Sidebar buttons-->
@@ -86,7 +86,7 @@
         <Setter Property="Height" Value="45"/>
         <Setter Property="Margin" Value="0,2"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="#6C757D"/>
+        <Setter Property="Foreground" Value="#94A3B8"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="Cursor" Value="Hand"/>
@@ -121,7 +121,7 @@
     </Style>
 
     <Style x:Key="SubViewBorder" TargetType="Border">
-        <Setter Property="Background" Value="White"/>
+        <Setter Property="Background" Value="#0B0E14"/>
         <Setter Property="Margin" Value="30"/>
         <Setter Property="CornerRadius" Value="15"/>
     </Style>
