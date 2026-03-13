@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BayWyn_Couriers.Utilities;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
 using System.Data.SqlClient;
-using BayWyn_Couriers.Models;
 using System.Windows;
-using System.Collections.ObjectModel;
-using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using BayWyn_Couriers.Utilities;
 
 
 namespace BayWyn_Couriers.ViewModels
@@ -23,14 +15,14 @@ namespace BayWyn_Couriers.ViewModels
         private string _password;
 
         // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
-        private NavigationVM _navigationVM; 
+        private NavigationVM _navigationVM;
 
 
 
         // To hold the current user information
         public string UserId;
-        public string UserFName;
-        public string UserLName;
+        //public string UserFName;
+        //public string UserLName;
         public string Role;
 
 
@@ -61,9 +53,17 @@ namespace BayWyn_Couriers.ViewModels
 
         private void ExecuteLogin(object? obj)
         {
+            // Getting the object that is passed through to get the password
+            var passwordBox = (PasswordBox)obj;
+
+            if (passwordBox != null)
+            {
+                Password = passwordBox.Password;
+            }
+
             if (checkLogin(UserName, Password))
             {
-                // Setting dimensions
+                // Setting dimensions (for the dashboard)
                 _navigationVM.WindowWidth = 1000;
                 _navigationVM.WindowHeight = 800;
 
@@ -71,33 +71,17 @@ namespace BayWyn_Couriers.ViewModels
                 if (Role == "Admin")
                 {
                     // Navigating to the admin dashboard view (passing the navigation view model to the admin view model constructor to allow for navigation from the admin dashboard)
-                    //_navigationVM.CurrentView = new AdminVM(_navigationVM);
                     _navigationVM.CurrentView = new AdminVM(_navigationVM);
-                }else if (Role == "LC")
-                {
-                    _navigationVM.CurrentView = new LCVM(_navigationVM);
                 }
-                else if (Role == "Courier")
-                {
-                    // Get the user ID and send it to the VM
-                    _navigationVM.CurrentView = new CourierVM(_navigationVM, UserId);
-                }
-                else if (Role == "Owner" || Role == "Manager")
-                {
-                    _navigationVM.CurrentView = new ManagerVM(_navigationVM);
-
-                }
-
+                else if (Role == "LC") { _navigationVM.CurrentView = new LCVM(_navigationVM); }
+                else if (Role == "Courier") { _navigationVM.CurrentView = new CourierVM(_navigationVM, UserId); }// Get the user ID and send it to the VM (to display details appropriate for the courier)
+                else if (Role == "Owner" || Role == "Manager") { _navigationVM.CurrentView = new ManagerVM(_navigationVM); }
             }
-            else
-            {
-                // If invalid, show an error message
-                MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            else { MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
-        public bool checkLogin(string userName, string password) {
-
+        public bool checkLogin(string userName, string password)
+        {
             // Getting the database connection string
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new SqlConnection(myCon);
@@ -106,9 +90,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                //string sqlQuery = "SELECT COUNT(1) FROM Users WHERE UserName=@UserName AND LoginPassword=@LoginPassword";
-  
-                SqlCommand cmLogin = new SqlCommand("SELECT * FROM Users WHERE Username=@UserName AND LoginPassword=@LoginPassword",mySqlCon);
+                SqlCommand cmLogin = new SqlCommand("SELECT * FROM Users WHERE Username=@UserName AND LoginPassword=@LoginPassword COLLATE Latin1_General_CS_AS ", mySqlCon);
                 cmLogin.Parameters.AddWithValue("@UserName", userName);
                 cmLogin.Parameters.AddWithValue("@LoginPassword", password);
                 SqlDataReader loginCheck = cmLogin.ExecuteReader();
@@ -117,26 +99,16 @@ namespace BayWyn_Couriers.ViewModels
                 if (loginCheck.HasRows)
                 {
                     loginCheck.Read();
-
                     UserId = loginCheck["UserId"].ToString();
-                    //UserName = loginCheck"Username"].ToString();
                     Role = loginCheck["UserRole"].ToString();
                     loginCheck.Close();
-               
-
                     return true;
                 }
-                else
-                {
-                    MessageBox.Show("Invalid credentials");
-                }
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);mySqlCon.Close();}
-            finally{mySqlCon.Close();}
+            catch (Exception ex) { MessageBox.Show(ex.Message); mySqlCon.Close(); }
+            finally { mySqlCon.Close(); }
             return false;
-
-
         }
-            
-        }
+
+    }
 }

@@ -18,13 +18,21 @@
         
 
         <Label Content="Password:" HorizontalAlignment="Left" Margin="100,121,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtPassword" 
-                    Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
-                    HorizontalAlignment="Left" Margin="193,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+
+        <PasswordBox x:Name="UserPasswordBox" Margin="191,126,244,65" Height="27"/>
 
         <Button x:Name="btnLogin" Content="Login" 
-                Command="{Binding LoginCommand}"
+        Command="{Binding LoginCommand}" 
+        CommandParameter="{Binding ElementName=UserPasswordBox}"
                 HorizontalAlignment="Left" Margin="376,80,0,0" VerticalAlignment="Top" Height="47" Width="101"/>
+
+            <!--<TextBox x:Name="txtPassword" 
+            Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
+            HorizontalAlignment="Left" Margin="193,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>-->
+
+        <!--<Button x:Name="btnLogin" Content="Login" 
+                Command="{Binding LoginCommand}"
+                HorizontalAlignment="Left" Margin="376,80,0,0" VerticalAlignment="Top" Height="47" Width="101"/>-->
     </Grid>
 
 
