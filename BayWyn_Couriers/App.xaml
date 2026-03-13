@@ -10,7 +10,7 @@
                 <ResourceDictionary Source="Utilities/DataTemplate.xaml"/>
 
                 <!--Style sheets attatched-->
-                <ResourceDictionary Source="/Styles/Button.xaml"/>
+                <ResourceDictionary Source="/Styles/StyleSheet.xaml"/>
                 
 
             </ResourceDictionary.MergedDictionaries>

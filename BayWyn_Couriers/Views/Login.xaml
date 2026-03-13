@@ -8,30 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance Type=vm:LoginVM, IsDesignTimeCreatable=False}">
-
-    <!--<Grid Background="AntiqueWhite">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
-        <Label Grid.Row="0" Content="LOGIN:" HorizontalContentAlignment="Center"/>
-        
-        <TextBox Grid.Row="1" x:Name="txtUsername"
-                Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
-                HorizontalAlignment="Center" TextWrapping="Wrap" Width="173" Height="26"/>
-
-        <PasswordBox Grid.Row="2" x:Name="UserPasswordBox" Width="173"  Height="26"/>
-
-        <Button x:Name="btnLogin" Content="Login" Grid.Row="3"
-                Command="{Binding LoginCommand}" 
-                CommandParameter="{Binding ElementName=UserPasswordBox}"
-                HorizontalAlignment="Center" Height="47" Width="200"/>
-
-    </Grid>-->
-
+    
     <Grid>
         <Border Background="White" 
             CornerRadius="10" 
@@ -92,7 +69,6 @@
                     CommandParameter="{Binding ElementName=UserPasswordBox}"
                     Height="50" 
                     Margin="0,20,0,10"
-                    Background="#17A2B8" 
                     Foreground="White" 
                     FontWeight="Bold"
                     BorderThickness="0">

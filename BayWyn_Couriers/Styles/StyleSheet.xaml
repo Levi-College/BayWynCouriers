@@ -4,8 +4,7 @@
     <Style TargetType="Button">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="2" />
-        <Setter Property="Background"
-                Value="Aquamarine"/>
+        <Setter Property="Background" Value="#007BFF"/>
     </Style>
 
 </ResourceDictionary>
