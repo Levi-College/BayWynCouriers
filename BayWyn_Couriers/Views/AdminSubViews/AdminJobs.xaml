@@ -140,7 +140,7 @@
              xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels" 
              d:DataContext="{d:DesignInstance Type=vm:AdminVM}"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1000">
+             d:DesignHeight="600" d:DesignWidth="800">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -148,21 +148,19 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,20">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <ComboBox ItemsSource="{Binding JobsFilterList}" SelectedItem="{Binding SelectedJobStatus}"
-                          Width="150" Height="35" Margin="0,0,10,0" VerticalContentAlignment="Center"/>
-                <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" Width="100" Height="35" Background="#F0F0F0" BorderThickness="0"/>
+                <ComboBox ItemsSource="{Binding JobsFilterList}" SelectedItem="{Binding SelectedJobStatus}" Width="150" Height="35" Margin="0,0,10,0" VerticalContentAlignment="Center" Background="#1A1F26"/>
+                <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" Style="{StaticResource PageButton}"/>
             </StackPanel>
 
-            <Button Content="+ New Job" Command="{Binding NewJobCommand}" HorizontalAlignment="Right" 
-                    Width="120" Height="35" Background="#2B1D42" Foreground="White" FontWeight="Bold"/>
+            <Button Content="+ New Job" Command="{Binding NewJobCommand}" Style="{StaticResource NewJobButton}"/>
         </Grid>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="White" CornerRadius="10" Margin="0,0,20,0">
@@ -170,35 +168,27 @@
                     <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
                 </Border.Effect>
 
-                <DataGrid ItemsSource="{Binding AllJobs}" SelectedItem="{Binding SelectedJob}"
-                          AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
-                          HeadersVisibility="Column" GridLinesVisibility="None" Background="Transparent" BorderThickness="0">
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#F8F9FA"/>
-                            <Setter Property="Foreground" Value="#666"/>
-                            <Setter Property="Padding" Value="10,12"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="BorderBrush" Value="#EEE"/>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-
+                <DataGrid ItemsSource="{Binding AllJobs}" SelectedItem="{Binding SelectedJob}" Style="{StaticResource MainDataGridStyle}">
+                    
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding JobId}" Width="50"/>
+                        
                         <DataGridTemplateColumn Header="Client" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0" TextWrapping="Wrap" Background="Transparent"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        
                         <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
                     </DataGrid.Columns>
+                    
+                    
                 </DataGrid>
             </Border>
 
-            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20">
+            <Border Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
                 </Border.Effect>
@@ -210,23 +200,23 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Job Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2B1D42"/>
+                    <TextBlock Text="Job Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock Text="Client" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                            <TextBlock Text="Client" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
                             <ComboBox ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
                                       DisplayMemberPath="Name" Margin="0,0,0,15" Height="35"/>
 
-                            <TextBlock Text="Delivery Address" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                            <TextBlock Text="Delivery Address" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
                             <TextBox Text="{Binding SelectedJob.DeliveryAddress}" Height="60" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                            <TextBlock Text="Description" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                            <TextBlock Text="Description" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
                             <TextBox Text="{Binding SelectedJob.Description}" Height="60" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
                             <Grid Margin="0,5">
                                 <StackPanel>
-                                    <TextBlock Text="Total Cost" FontSize="11" Foreground="Gray"/>
+                                    <TextBlock Text="Total Cost" FontSize="11" Foreground="White"/>
                                     <TextBlock Text="{Binding CostOfJob, StringFormat={}{0:C}}" FontSize="20" FontWeight="Bold" Foreground="#2B1D42"/>
                                 </StackPanel>
                             </Grid>
@@ -234,7 +224,7 @@
                     </ScrollViewer>
 
                     <StackPanel Grid.Row="2" Margin="0,20,0,0">
-                        <Button Content="Update Job" Command="{Binding UpdateJobCommand}" Height="40" Background="#FFB300" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <Button Content="Update Job" Command="{Binding UpdateJobCommand}" Height="40" Background="Green" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>

@@ -17,6 +17,8 @@
         </Style.Resources>
     </Style>
 
+    
+
     <Style x:Key="LoginWindowBorder" TargetType="Border">
         <Setter Property="Background" Value="#0B0E14"/>
         <Setter Property="CornerRadius" Value="10" />
@@ -128,6 +130,83 @@
 
     <Style TargetType="ContentControl">
         <Setter Property="Padding" Value="2"/>
+    </Style>
+    
+    
+    <!--Sub view styling-->
+
+    <Style x:Key="PageButton" TargetType="Button">
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Background" Value="#2B1D42"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="35"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="NewJobButton" TargetType="Button" BasedOn="{StaticResource PageButton}">
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+    </Style>
+    
+    <!--Data grid styling-->
+    <Style x:Key="JobGridHeaderStyle" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="#1A1F26"/>
+        <Setter Property="Foreground" Value="#94A3B8"/>
+        <Setter Property="Padding" Value="10,12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="#0B0E14"/>
+    </Style>
+
+    <Style x:Key="JobGridRowStyle" TargetType="DataGridRow">
+        <Setter Property="Background" Value="#0B0E14"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0,2"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style x:Key="JobGridCellStyle" TargetType="DataGridCell">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridCell">
+                    <Border Background="{TemplateBinding Background}" Padding="5">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="#9D7BFF"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="MainDataGridStyle" TargetType="DataGrid">
+        <Setter Property="Background" Value="#1A1F26"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="GridLinesVisibility" Value="None"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="CanUserAddRows" Value="False"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="ColumnHeaderStyle" Value="{StaticResource JobGridHeaderStyle}"/>
+        <Setter Property="RowStyle" Value="{StaticResource JobGridRowStyle}"/>
+        <Setter Property="CellStyle" Value="{StaticResource JobGridCellStyle}"/>
     </Style>
 
 
