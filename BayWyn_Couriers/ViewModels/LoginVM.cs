@@ -94,7 +94,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                SqlCommand cmLogin = new SqlCommand("SELECT * FROM Users WHERE Username=@UserName AND LoginPassword=@LoginPassword COLLATE Latin1_General_CS_AS ", mySqlCon);
+                SqlCommand cmLogin = new SqlCommand("SELECT * FROM Users WHERE Username = @UserName AND LoginPassword = @LoginPassword COLLATE Latin1_General_CS_AS ", mySqlCon);
                 cmLogin.Parameters.AddWithValue("@UserName", userName);
                 cmLogin.Parameters.AddWithValue("@LoginPassword", password);
                 SqlDataReader loginCheck = cmLogin.ExecuteReader();

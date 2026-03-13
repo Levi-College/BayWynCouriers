@@ -23,7 +23,7 @@
                 <Grid Margin="0,10">
                     <StackPanel>
                         <TextBlock Style="{StaticResource PlaceholderText}" Text="Password"/>
-                        <PasswordBox Style="{StaticResource PasswordBox}"/>
+                        <PasswordBox x:Name="UserPasswordBox" Style="{StaticResource PasswordBox}"/>
                     </StackPanel>
                 </Grid>
 

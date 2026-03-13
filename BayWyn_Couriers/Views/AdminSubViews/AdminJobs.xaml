@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="BayWyn_Couriers.Views.AdminJobs"
+﻿<!--<UserControl x:Class="BayWyn_Couriers.Views.AdminJobs"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,16 +21,16 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Structure to hold the edit window and the buttons-->
+        --><!-- Structure to hold the edit window and the buttons-->
 
-        <!--Filter-->
+        <!--Filter--><!--
         <ComboBox Grid.Row="0" Grid.Column="0" 
                   ItemsSource="{Binding JobsFilterList}"
                   SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+        --><!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>--><!--
 
 
         <Button Content="Refresh" Command="{Binding RefreshJobsCommand}"
@@ -40,10 +40,10 @@
         <Button Content="New Job" Command="{Binding NewJobCommand}" Grid.Column="0" Margin="270,18,0,0" 
                 HorizontalAlignment="Left" Width="120" VerticalAlignment="Top"/>
 
-        <!--Header for the edit column-->
+        --><!--Header for the edit column--><!--
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 
-        <!--Data grid for the jobs to be displayed-->
+        --><!--Data grid for the jobs to be displayed--><!--
         <DataGrid AutoGenerateColumns="False"
                   ItemsSource="{Binding AllJobs}" 
                   SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
@@ -66,7 +66,7 @@
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
-            <!-- Edit section for the selected job -->
+            --><!-- Edit section for the selected job --><!--
             <StackPanel Grid.Row="0">
 
                 <StackPanel Orientation="Horizontal">
@@ -75,18 +75,18 @@
                 </StackPanel>
 
                 <Label Content="Client Name:"/>
-                <!--<Label Content="{Binding SelectedJob.ClientName}"/>-->
+                --><!--<Label Content="{Binding SelectedJob.ClientName}"/>--><!--
                 <ComboBox x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
                           DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewJob}"/>
 
-                <!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>-->
+                --><!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedJob.ClientName, Mode=TwoWay}"/>--><!--
 
                 <Label Content="Courier Name:"/>
                 <ComboBox ItemsSource="{Binding CouriersList}" 
                           SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
                           DisplayMemberPath="UserName" SelectedValuePath="UserId" IsEnabled="False" />
 
-                <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>-->
+                --><!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedJob.CourierId, Mode=TwoWay}"/>--><!--
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Start Date:"/>
@@ -114,11 +114,11 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Status:"/>
                     <Label Content="{Binding SelectedJob.JobStatus}"/>
-                    <!--
+                    --><!--
                     <ComboBox Width="150" 
                               ItemsSource="{Binding JobsStatusList}"
                               SelectedItem="{Binding SelectedJob.JobStatus, Mode=TwoWay}"/>
-                    -->
+                    --><!--
                 </StackPanel>
             </StackPanel>
 
@@ -130,4 +130,122 @@
         </Grid>
     </Grid>
 
+</UserControl>-->
+
+<UserControl x:Class="BayWyn_Couriers.Views.AdminJobs"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels" 
+             d:DataContext="{d:DesignInstance Type=vm:AdminVM}"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <ComboBox ItemsSource="{Binding JobsFilterList}" SelectedItem="{Binding SelectedJobStatus}"
+                          Width="150" Height="35" Margin="0,0,10,0" VerticalContentAlignment="Center"/>
+                <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" Width="100" Height="35" Background="#F0F0F0" BorderThickness="0"/>
+            </StackPanel>
+
+            <Button Content="+ New Job" Command="{Binding NewJobCommand}" HorizontalAlignment="Right" 
+                    Width="120" Height="35" Background="#2B1D42" Foreground="White" FontWeight="Bold"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="White" CornerRadius="10" Margin="0,0,20,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
+
+                <DataGrid ItemsSource="{Binding AllJobs}" SelectedItem="{Binding SelectedJob}"
+                          AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                          HeadersVisibility="Column" GridLinesVisibility="None" Background="Transparent" BorderThickness="0">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#F8F9FA"/>
+                            <Setter Property="Foreground" Value="#666"/>
+                            <Setter Property="Padding" Value="10,12"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#EEE"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding JobId}" Width="50"/>
+                        <DataGridTemplateColumn Header="Client" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Job Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="#2B1D42"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="Client" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                            <ComboBox ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
+                                      DisplayMemberPath="Name" Margin="0,0,0,15" Height="35"/>
+
+                            <TextBlock Text="Delivery Address" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding SelectedJob.DeliveryAddress}" Height="60" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                            <TextBlock Text="Description" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+                            <TextBox Text="{Binding SelectedJob.Description}" Height="60" TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                            <Grid Margin="0,5">
+                                <StackPanel>
+                                    <TextBlock Text="Total Cost" FontSize="11" Foreground="Gray"/>
+                                    <TextBlock Text="{Binding CostOfJob, StringFormat={}{0:C}}" FontSize="20" FontWeight="Bold" Foreground="#2B1D42"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="2" Margin="0,20,0,0">
+                        <Button Content="Update Job" Command="{Binding UpdateJobCommand}" Height="40" Background="#FFB300" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Delete" Command="{Binding DeleteJobCommand}" Grid.Column="0" Margin="0,0,5,0" Height="35" Background="#FFE0E0" Foreground="#D32F2F" BorderThickness="0"/>
+                            <Button Content="Add New" Command="{Binding AddJobCommand}" Grid.Column="1" Margin="5,0,0,0" Height="35" IsEnabled="{Binding EnableItemsForNewJob}"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>
