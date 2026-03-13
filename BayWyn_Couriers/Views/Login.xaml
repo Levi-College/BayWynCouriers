@@ -8,73 +8,27 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance Type=vm:LoginVM, IsDesignTimeCreatable=False}">
-    
+
     <Grid>
-        <Border Style="{StaticResource LoginWindowBorder}" Background="White">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.2" ShadowDepth="2"/>
-            </Border.Effect>
-
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="BAYWYN COURIERS" 
-                           FontSize="28" 
-                           FontWeight="Bold" 
-                           Margin="0,0,0,20" 
-                           Foreground="#222"
-                           HorizontalAlignment="Center"/>
-               
+        <Border Style="{StaticResource LoginWindowBorder}">
+            <StackPanel Style="{StaticResource CenterStackPanel}">
+                <TextBlock Text="BAYWYN COURIERS" Style="{StaticResource BrandLogo1}"/>
                 <Grid Margin="0,10">
                     <StackPanel>
-                        <TextBlock 
-                           Text="Username" 
-                           VerticalAlignment="Center" 
-                           Foreground="Gray">
-                        </TextBlock>
-                        <TextBox x:Name="txtUsername"
-                                 Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="40" 
-                                 Padding="10,0" 
-                                 VerticalContentAlignment="Center"
-                                 BorderBrush="#CCC"
-                                 BorderThickness="1"/>
+                        <TextBlock Style="{StaticResource PlaceholderText}" Text="Username"/>
+                        <TextBox Style="{StaticResource InputBox}" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
-                    
                 </Grid>
 
                 <Grid Margin="0,10">
                     <StackPanel>
-                        <TextBlock 
-    Text="Password" 
-    VerticalAlignment="Center" 
-    Foreground="Gray">
-                        </TextBlock>
-                        <PasswordBox x:Name="UserPasswordBox" 
-                             Height="45" 
-                             Padding="10,0" 
-                             VerticalContentAlignment="Center"
-                             BorderBrush="#CCC"
-                             BorderThickness="1"/>
+                        <TextBlock Style="{StaticResource PlaceholderText}" Text="Password"/>
+                        <PasswordBox Style="{StaticResource PasswordBox}"/>
                     </StackPanel>
-                    
                 </Grid>
 
-                <Button Content="Log in" 
-                    Command="{Binding LoginCommand}"
-                    CommandParameter="{Binding ElementName=UserPasswordBox}"
-                    Height="50" 
-                    Margin="0,20,0,10"
-                    Foreground="White" 
-                    FontWeight="Bold"
-                    BorderThickness="0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="5"/>
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                <Button Content="Log in" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=UserPasswordBox}"/>
             </StackPanel>
         </Border>
     </Grid>
-
-
 </UserControl>

@@ -5,6 +5,15 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="2" />
         <Setter Property="Background" Value="#007BFF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0,20,0,10"/>
+        <Setter Property="Height" Value="50"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style x:Key="LoginWindowBorder" TargetType="Border">
@@ -15,6 +24,50 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Padding" Value="30" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect 
+                    BlurRadius="15"
+                    Direction="270"
+                    Opacity="0.2"
+                    ShadowDepth="2"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!--Center aligned stack panel-->
+    <Style x:Key="CenterStackPanel" TargetType="StackPanel">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <!--Login Brand header-->
+    <Style x:Key="BrandLogo1" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="28"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="0,0,0,20"/>
+        <Setter Property="Foreground" Value="#222"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InputBox" TargetType="TextBox">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="10,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#CCC"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <Style x:Key="PasswordBox" TargetType="PasswordBox">
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Padding" Value="10,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#CCC"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <Style x:Key="PlaceholderText" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="Gray"/>
     </Style>
 
 </ResourceDictionary>
