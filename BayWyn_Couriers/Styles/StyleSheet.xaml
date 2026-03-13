@@ -7,4 +7,14 @@
         <Setter Property="Background" Value="#007BFF"/>
     </Style>
 
+    <Style x:Key="LoginWindowBorder" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Width" Value="350" />
+        <Setter Property="Height" Value="400" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Padding" Value="30" />
+    </Style>
+
 </ResourceDictionary>

@@ -10,13 +10,7 @@
              d:DataContext="{d:DesignInstance Type=vm:LoginVM, IsDesignTimeCreatable=False}">
     
     <Grid>
-        <Border Background="White" 
-            CornerRadius="10" 
-            Width="350" 
-            Height="400" 
-            VerticalAlignment="Center" 
-            HorizontalAlignment="Center"
-            Padding="30">
+        <Border Style="{StaticResource LoginWindowBorder}" Background="White">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.2" ShadowDepth="2"/>
             </Border.Effect>
