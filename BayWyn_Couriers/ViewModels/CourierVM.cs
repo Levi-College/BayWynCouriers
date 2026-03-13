@@ -174,8 +174,8 @@ namespace BayWyn_Couriers.ViewModels
         public void ExecuteLogout(object? obj)
         {
             // Setting dimensions for the login screen
-            _navigationVM.WindowWidth = 600;
-            _navigationVM.WindowHeight = 300;
+            _navigationVM.WindowWidth = 400;
+            _navigationVM.WindowHeight = 450;
             _navigationVM.CurrentView = new LoginVM(_navigationVM); // Updating the current view to a instance of LoginVM. _sending the view model to be used as well
         }
 

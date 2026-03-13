@@ -77,7 +77,11 @@ namespace BayWyn_Couriers.ViewModels
                 else if (Role == "Courier") { _navigationVM.CurrentView = new CourierVM(_navigationVM, UserId); }// Get the user ID and send it to the VM (to display details appropriate for the courier)
                 else if (Role == "Owner" || Role == "Manager") { _navigationVM.CurrentView = new ManagerVM(_navigationVM); }
             }
-            else { MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            else {
+                UserName = "";
+                passwordBox.Password = "";
+                MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+            }
         }
 
         public bool checkLogin(string userName, string password)

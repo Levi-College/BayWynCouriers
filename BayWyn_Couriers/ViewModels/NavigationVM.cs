@@ -10,8 +10,8 @@ namespace BayWyn_Couriers.ViewModels
         /// Represents the current view object being managed.  This field is intended for internal use only.
         /// </summary>
         private object _currentView = null;
-        private int _windowWidth = 600;
-        private int _windowHeight = 300;
+        private int _windowWidth = 400;
+        private int _windowHeight = 450;
 
         /// <summary>
         /// Gets or sets the current view displayed in the application.

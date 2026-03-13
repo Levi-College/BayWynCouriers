@@ -6,33 +6,104 @@
              xmlns:local="clr-namespace:BayWyn_Couriers.Views"
              xmlns:vm="clr-namespace:BayWyn_Couriers.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="209.57" d:DesignWidth="561.328"
+             d:DesignHeight="450" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance Type=vm:LoginVM, IsDesignTimeCreatable=False}">
 
-    <Grid Background="AntiqueWhite">
-        <Label Content="Username:" HorizontalAlignment="Left" Margin="100,71,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtUsername"
+    <!--<Grid Background="AntiqueWhite">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Label Grid.Row="0" Content="LOGIN:" HorizontalContentAlignment="Center"/>
+        
+        <TextBox Grid.Row="1" x:Name="txtUsername"
                 Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
-                HorizontalAlignment="Left" Margin="193,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        
-        
+                HorizontalAlignment="Center" TextWrapping="Wrap" Width="173" Height="26"/>
 
-        <Label Content="Password:" HorizontalAlignment="Left" Margin="100,121,0,0" VerticalAlignment="Top"/>
+        <PasswordBox Grid.Row="2" x:Name="UserPasswordBox" Width="173"  Height="26"/>
 
-        <PasswordBox x:Name="UserPasswordBox" Margin="191,126,244,65" Height="27"/>
+        <Button x:Name="btnLogin" Content="Login" Grid.Row="3"
+                Command="{Binding LoginCommand}" 
+                CommandParameter="{Binding ElementName=UserPasswordBox}"
+                HorizontalAlignment="Center" Height="47" Width="200"/>
 
-        <Button x:Name="btnLogin" Content="Login" 
-        Command="{Binding LoginCommand}" 
-        CommandParameter="{Binding ElementName=UserPasswordBox}"
-                HorizontalAlignment="Left" Margin="376,80,0,0" VerticalAlignment="Top" Height="47" Width="101"/>
+    </Grid>-->
 
-            <!--<TextBox x:Name="txtPassword" 
-            Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}"
-            HorizontalAlignment="Left" Margin="193,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>-->
+    <Grid>
+        <Border Background="White" 
+            CornerRadius="10" 
+            Width="350" 
+            Height="400" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center"
+            Padding="30">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" Opacity="0.2" ShadowDepth="2"/>
+            </Border.Effect>
 
-        <!--<Button x:Name="btnLogin" Content="Login" 
-                Command="{Binding LoginCommand}"
-                HorizontalAlignment="Left" Margin="376,80,0,0" VerticalAlignment="Top" Height="47" Width="101"/>-->
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="BAYWYN COURIERS" 
+                           FontSize="28" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,20" 
+                           Foreground="#222"
+                           HorizontalAlignment="Center"/>
+               
+                <Grid Margin="0,10">
+                    <StackPanel>
+                        <TextBlock 
+                           Text="Username" 
+                           VerticalAlignment="Center" 
+                           Foreground="Gray">
+                        </TextBlock>
+                        <TextBox x:Name="txtUsername"
+                                 Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="40" 
+                                 Padding="10,0" 
+                                 VerticalContentAlignment="Center"
+                                 BorderBrush="#CCC"
+                                 BorderThickness="1"/>
+                    </StackPanel>
+                    
+                </Grid>
+
+                <Grid Margin="0,10">
+                    <StackPanel>
+                        <TextBlock 
+    Text="Password" 
+    VerticalAlignment="Center" 
+    Foreground="Gray">
+                        </TextBlock>
+                        <PasswordBox x:Name="UserPasswordBox" 
+                             Height="45" 
+                             Padding="10,0" 
+                             VerticalContentAlignment="Center"
+                             BorderBrush="#CCC"
+                             BorderThickness="1"/>
+                    </StackPanel>
+                    
+                </Grid>
+
+                <Button Content="Log in" 
+                    Command="{Binding LoginCommand}"
+                    CommandParameter="{Binding ElementName=UserPasswordBox}"
+                    Height="50" 
+                    Margin="0,20,0,10"
+                    Background="#17A2B8" 
+                    Foreground="White" 
+                    FontWeight="Bold"
+                    BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Border>
     </Grid>
 
 
