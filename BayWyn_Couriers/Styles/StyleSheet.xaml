@@ -17,7 +17,7 @@
         </Style.Resources>
     </Style>
 
-    
+
 
     <Style x:Key="LoginWindowBorder" TargetType="Border">
         <Setter Property="Background" Value="#0B0E14"/>
@@ -37,12 +37,12 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <!--Center aligned stack panel-->
     <Style x:Key="CenterStackPanel" TargetType="StackPanel">
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-    
+
     <!--Login Brand header-->
     <Style x:Key="BrandLogo1" TargetType="TextBlock">
         <Setter Property="Foreground" Value="#F8F9FA"/>
@@ -66,9 +66,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="#CCC"/>
         <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="#0B0E14"/>
         <Style.Resources>
             <Style TargetType="Border">
                 <Setter Property="CornerRadius" Value="5"/>
+
             </Style>
         </Style.Resources>
     </Style>
@@ -76,9 +78,10 @@
     <Style x:Key="PlaceholderText" TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Foreground" Value="#94A3B8"/>
+        <Setter Property="Margin" Value="0,0,0,5"/>
     </Style>
 
-    
+
     <!--Admin Page-->
     <Style x:Key="AdminBackground" TargetType="Grid">
         <Setter Property="Background" Value="#F8F9FA"/>
@@ -136,8 +139,8 @@
     <Style TargetType="ContentControl">
         <Setter Property="Padding" Value="2"/>
     </Style>
-    
-    
+
+
     <!--Sub view styling-->
 
     <Style x:Key="PageButton" TargetType="Button">
@@ -162,7 +165,7 @@
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
     </Style>
-    
+
     <!--Data grid styling-->
     <Style x:Key="JobGridHeaderStyle" TargetType="DataGridColumnHeader">
         <Setter Property="Background" Value="Transparent"/>
@@ -225,9 +228,9 @@
         </Style.Resources>
     </Style>
 
-    
-    <!--Combo box styling. General-->   
-    
+
+    <!--Combo box styling. General-->
+
     <!--This is for the toggle button (the dorpdown bit which is visible-->
     <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
         <Setter Property="Template">
@@ -391,8 +394,6 @@ ClickMode="Press"/>
         </Setter>
     </Style>
 
-    
-  
 
 
     <Style x:Key="InputTextBox" TargetType="TextBox">
@@ -405,5 +406,14 @@ ClickMode="Press"/>
             </Style>
         </Style.Resources>
     </Style>
+
+    <Style x:Key="InputTextBoxLogin" TargetType="TextBox" BasedOn="{StaticResource InputTextBox}">
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="0"/>
+            </Style>
+        </Style.Resources>
+    </Style>
+    
 
 </ResourceDictionary>

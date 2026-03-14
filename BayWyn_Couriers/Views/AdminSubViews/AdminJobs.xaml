@@ -218,7 +218,7 @@
                             <Grid Margin="0,5">
                                 <StackPanel>
                                     <TextBlock Text="Total Cost" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="{Binding CostOfJob, StringFormat={}{0:C}}" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="{Binding CostOfJob}" FontSize="20" FontWeight="Bold" Foreground="White"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

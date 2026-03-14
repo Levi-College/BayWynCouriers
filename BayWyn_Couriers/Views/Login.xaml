@@ -16,7 +16,7 @@
                 <Grid Margin="0,10">
                     <StackPanel>
                         <TextBlock Style="{StaticResource PlaceholderText}" Text="Username"/>
-                        <TextBox  Style="{StaticResource InputTextBox}" Height="40" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox  Style="{StaticResource InputTextBoxLogin}" Height="40" Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </Grid>
 
