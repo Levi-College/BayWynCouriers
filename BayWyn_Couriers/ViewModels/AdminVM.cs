@@ -40,7 +40,6 @@ namespace BayWyn_Couriers.ViewModels
             UpdateContractCommand = new RelayCommand(execute: obj => UpdateContract(obj), canExecute: obj => SelectedClient != null);
             NewContractCommand = new RelayCommand(NewContract);
 
-
             //Client page commands
             AddClientCommand = new RelayCommand(AddNewClient);
             DeleteClientCommand = new RelayCommand(execute: obj => DeleteClient(obj), canExecute: obj => SelectedClient != null);
@@ -49,10 +48,8 @@ namespace BayWyn_Couriers.ViewModels
             RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
 
             //Courier page commands
-            //AddCourierCommand = new RelayCommand(AddNewCourier);
             DeleteCourierCommand = new RelayCommand(execute: obj => DeleteCourier(obj), canExecute: obj => SelectedCourier != null);
             UpdateCourierCommand = new RelayCommand(execute: obj => UpdateCourier(obj), canExecute: obj => SelectedCourier != null);
-            //NewCourierCommand = new RelayCommand(NewCourier);
             RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
 
             DayJobsReportCommand = new RelayCommand(ShowDayReport);
@@ -219,6 +216,7 @@ namespace BayWyn_Couriers.ViewModels
 
                     // Filtering the jobs list based on the selected job status
                     LoadJobsByStatus(value);
+                    CostOfJob -= CostOfJob; //Clearing the value
                 }
             }
         }
@@ -686,8 +684,7 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJob = null; // Clearing all the fields   
             SelectedCourier = null; // Clear the dropdown selections
             SelectedClient = null;
-
-            //RefreshPage(); // Refreshing the fields and the page
+            if (CostOfJob != null) { CostOfJob = 0; };
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             //LoadJobsByStatus("Pending"); // Loads all the jobs initially 
@@ -897,6 +894,12 @@ namespace BayWyn_Couriers.ViewModels
 
         public void AddNewJob(object? obj)
         {
+            // Checking the values is not null or empty
+            if (SelectedClient == null || SelectedJob.DeliveryAddress == null || SelectedJob.Description == null) {
+                MessageBox.Show("Please enter all details");
+                return;
+            }
+
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
@@ -932,6 +935,7 @@ namespace BayWyn_Couriers.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                MessageBox.Show("Please try again");
                 mySqlCon.Close();
             }
 
@@ -939,6 +943,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 mySqlCon.Close();
             }
+            RefreshPage();
             GetAllJobs();
         }
 
@@ -1000,7 +1005,7 @@ namespace BayWyn_Couriers.ViewModels
                     {
                         mySqlCon.Close();
                     }
-                    GetAllJobs();
+                    GetAllJobs(); 
                 }
             }
         }
@@ -1050,6 +1055,7 @@ namespace BayWyn_Couriers.ViewModels
         public void GetAllJobs()
         {
             RefreshPage(); // Refreshing before updating the form
+            SelectedJobStatus = "All";
 
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -1159,6 +1165,7 @@ namespace BayWyn_Couriers.ViewModels
                                  // Handling potential NULLs for CourierID (Ternary operation - if variable == (Null value) ? (execute this) : (if not execute this)
                                  CourierId = drlistJobs["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(drlistJobs["CourierId"]),
                                  StartDate = Convert.ToDateTime(drlistJobs["StartDate"]),
+                                 EndDate = drlistJobs["EndDate"] == DBNull.Value ? Convert.ToDateTime(drlistJobs["StartDate"]) : Convert.ToDateTime(drlistJobs["EndDate"]),
                                  JobStatus = drlistJobs["JobStatus"].ToString(),
                                  DeliveryAddress = drlistJobs["DeliveryAddress"].ToString(),
                                  Description = drlistJobs["Description"].ToString(),

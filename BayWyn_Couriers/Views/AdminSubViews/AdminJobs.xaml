@@ -173,6 +173,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding JobId}" Width="50"/>
                         
+                        
                         <DataGridTemplateColumn Header="Client" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -180,7 +181,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        
+                        <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
                     </DataGrid.Columns>
                     
@@ -206,7 +207,30 @@
                         <StackPanel>
                             <TextBlock Text="Client" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
                             <ComboBox ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}" Style="{StaticResource ModernComboBoxStyle2}"
-                                      DisplayMemberPath="Name" Margin="0,0,0,15" Height="35"/>
+                                      DisplayMemberPath="Name" Margin="0,0,0,10" Height="35" IsEnabled="{Binding EnableItemsForNewJob}"/>
+
+
+                            <Label Content="Courier Name:" Foreground="#94A3B8"/>
+                            <TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedCourier.UserName, Mode=TwoWay}" Style="{StaticResource InputTextBox}"/>
+                            <!--<ComboBox ItemsSource="{Binding CouriersList}" SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" DisplayMemberPath="UserName" SelectedValuePath="UserId" IsEnabled="False" />-->
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="Start Date:" Grid.Row="0" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                                <TextBox Grid.Row="1" IsEnabled="False" Margin="5,0,5,5" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+
+                                <Label Content="End Date:" Grid.Row="0" Grid.Column="1" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                                <TextBox Margin="5,0,5,5" Grid.Row="1" Grid.Column="1" IsEnabled="False" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
+                            </Grid>
+
 
                             <TextBlock Text="Delivery Address" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
                             <TextBox Text="{Binding SelectedJob.DeliveryAddress}" Style="{StaticResource InputTextBox}" Height="60" TextWrapping="Wrap" Margin="0,0,0,15"/>
@@ -218,14 +242,15 @@
                             <Grid Margin="0,5">
                                 <StackPanel>
                                     <TextBlock Text="Total Cost" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="{Binding CostOfJob}" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                                    <TextBlock Text="{Binding CostOfJob, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" FontSize="20" FontWeight="Bold" Foreground="White"/>
+
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </ScrollViewer>
 
                     <StackPanel Grid.Row="2" Margin="0,20,0,0">
-                        <Button Content="Update Job" Command="{Binding UpdateJobCommand}" Height="40" Background="Green" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
+                        <Button Content="Update/Approve" Command="{Binding UpdateJobCommand}" Height="40" Background="Green" Foreground="White" FontWeight="Bold" Margin="0,0,0,10"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
