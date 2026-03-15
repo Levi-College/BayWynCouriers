@@ -36,21 +36,17 @@ Status Updates: Mark parcels as "Picked Up" or "Completed" upon delivery.
 ## 🛠️ Technical Stack
 UI Framework: WPF (Windows Presentation Foundation)
 
-Communication: WCF (Windows Communication Foundation) - SOAP/TCP
+Software Architecture: MVVM (Model-View-ViewModel) 
 
 Language: C#
 
 Database: Microsoft SQL Server
 
-ORM: Entity Framework (or ADO.NET)
 
 ## 📖 Wiki Content Overview
 For more detailed documentation, refer to the Project Wiki, which includes:
-
-WCF Service Contracts: Documentation of IService1 and Data Contracts.
-
 SQL Schema: ER Diagrams for the Shipments, Staff, and WorkLogs tables. Includes Use Case diagram, Class diagram, BPMN diagram, State diagram and Sequence diagram.
 
 Workflow Diagrams: Logical flow of a delivery from "Unassigned" to "Complete."
 
-User Manuals: Specific guides for the Coordinator dashboard.
+User Manuals: Specific guides for the each user dashboard.
