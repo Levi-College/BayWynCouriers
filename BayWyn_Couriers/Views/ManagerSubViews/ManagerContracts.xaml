@@ -36,6 +36,9 @@
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
+        <Button Content="Refresh" Command="{Binding RefreshContractsCommand}" 
+HorizontalAlignment="Left" Width="126" Height="23" Margin="249,15,0,0" VerticalAlignment="Top"/>
+
         <!--Header for the edit column-->
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 

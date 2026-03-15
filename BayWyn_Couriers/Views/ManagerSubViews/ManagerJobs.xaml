@@ -90,8 +90,8 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Cost: £"/>
-                    <Label Content="{Binding CostOfJob}"/>
+                    <TextBlock Text="Total Cost" FontSize="11" Foreground="Black"/>
+                    <TextBlock Text="{Binding CostOfJob, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" FontSize="20" FontWeight="Bold" Foreground="Black"/>
                 </StackPanel>
 
 

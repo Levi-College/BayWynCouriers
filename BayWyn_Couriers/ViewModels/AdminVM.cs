@@ -295,10 +295,7 @@ namespace BayWyn_Couriers.ViewModels
                             SelectedJob.ClientId = value.ClientId;
                             CostOfJob = GetCostOfTheJob(value.ClientId);
                         }
-
                     }
-                    // Updating the cost based on if the client is in the contract table or the contracts is expired
-                    //CostOfJob = GetCostOfTheJob(SelectedJob.ClientId);
                 }
             }
         }
@@ -586,13 +583,15 @@ namespace BayWyn_Couriers.ViewModels
         private void ReportsPage(object? obj)
         {
             CurrentSubView = new AdminReports();
-            SetupSlotMap();// Setting up the slot map (t;
+            SetupSlotMap();// Setting up the slot map 
         }
 
         private void ClientsPage(object? obj)
         {
             CurrentSubView = new AdminClients();
             GetClients(); //Updates the clients observable collection
+            RefreshPage() ;
+            SelectedClientStatus = "All";
         }
 
         private void CouriersPage(object? obj)
@@ -685,6 +684,7 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJob = null; // Clearing all the fields   
             SelectedCourier = null; // Clear the dropdown selections
             SelectedClient = null;
+            SelectedClientStatus = "All";
             if (CostOfJob != null) { CostOfJob = 0; }
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
@@ -1519,7 +1519,6 @@ namespace BayWyn_Couriers.ViewModels
         public void RefreshClientsPage(object? obj)
         {
             RefreshPage();
-            SelectedClientStatus = "All";
         }
         public void NewClient(object? obj)
         {
