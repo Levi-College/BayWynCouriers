@@ -67,10 +67,10 @@
 
                 <Label Content="Courier Name:"/>
                 <TextBox Text="{Binding SelectedCourier.UserName}"/>
-                
+
                 <Label Content="Delivered On:"/>
                 <TextBox Text="{Binding SelectedJob.EndDate, StringFormat=d}"/>
-     
+
 
                 <Label Content="Delivered Address:"/>
                 <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}" Height="51"/>
@@ -82,13 +82,6 @@
                     <Label Content="Status:"/>
                     <TextBox Text="{Binding SelectedJob.JobStatus}" Width="200"/>
                 </StackPanel>
-
-
-
-            </StackPanel>
-
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Update" Command="{Binding AssignJobCommand}" Width="100" Margin="5"/>
             </StackPanel>
         </Grid>
     </Grid>

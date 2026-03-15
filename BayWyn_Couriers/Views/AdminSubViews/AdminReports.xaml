@@ -70,14 +70,9 @@
 
         <Grid Grid.Row="1" Grid.Column="1" Width="350">
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
-            <!--Report details window-->
-            <StackPanel>
-                
-            </StackPanel>
             
             <!-- Report Window-->
             
@@ -161,7 +156,7 @@
             
             <StackPanel Grid.Row="1" Visibility="{Binding DayReportVisibility}">
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
-                    <ItemsControl ItemsSource="{Binding DailyReportJobs}">
+                    <ItemsControl ItemsSource="{Binding ReportJobs}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border BorderBrush="#E0E0E0" BorderThickness="1,1,1,4" Margin="0,5,5,10" Background="White">

@@ -324,15 +324,15 @@ namespace BayWyn_Couriers.ViewModels
             LoadJobsByStatus("Completed"); // Loads all the jobs initially 
         }
 
-        private void LCJobsPage(object? obj)
-        {
-            CurrentSubView = new LCJobs();
-            RefreshPage(); // Refreshing the fields and the page
-            GetCouriers(); // Populate the status filter
-            LoadJobsByStatus("All"); // Loads all the jobs initially 
-            SetupSlotMap();
-            InitializeTimeSlots();
-        }
+        //private void LCJobsPage(object? obj)
+        //{
+        //    CurrentSubView = new LCJobs();
+        //    RefreshPage(); // Refreshing the fields and the page
+        //    GetCouriers(); // Populate the status filter
+        //    LoadJobsByStatus("All"); // Loads all the jobs initially 
+        //    SetupSlotMap();
+        //    InitializeTimeSlots();
+        //}
 
         // Logout
         public void ExecuteLogout(object? obj)

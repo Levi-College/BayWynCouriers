@@ -111,7 +111,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)        
         public List<string> JobsFilterList { get; } = new List<string> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
-        public ObservableCollection<JobAssignment> ReportJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
+       
 
         //public List<string> JobsStatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box
         public List<string> MonthsList { get; set; } = new List<string>
@@ -136,6 +136,7 @@ namespace BayWyn_Couriers.ViewModels
         public List<string> ContractsStatusList { get; } = new List<string> { "Active", "Expired" };  // A list to show the conditions in the edit box
         public List<string> ClientsFilterList { get; } = new List<string> { "All", "Contract", "No Contract/Expired" }; // Filter to show contract vs no contract clients
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
+        public ObservableCollection<JobAssignment> ReportJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
         public ObservableCollection<CourierGroupHeader> GroupedMonthlyReport { get; set; } = new ObservableCollection<CourierGroupHeader>(); // To hold the headers for the courier group
         public ObservableCollection<ClientGroupHeader> GroupedMonthlyClientReport { get; set; } = new ObservableCollection<ClientGroupHeader>(); // To hold the headers for the courier group
         public ObservableCollection<ClientValueItem> MonthlyClientValueReportList { get; set; } = new ObservableCollection<ClientValueItem>(); // To hold the headers for the courier group
@@ -684,7 +685,7 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJob = null; // Clearing all the fields   
             SelectedCourier = null; // Clear the dropdown selections
             SelectedClient = null;
-            if (CostOfJob != null) { CostOfJob = 0; };
+            if (CostOfJob != null) { CostOfJob = 0; }
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             //LoadJobsByStatus("Pending"); // Loads all the jobs initially 
@@ -762,17 +763,15 @@ namespace BayWyn_Couriers.ViewModels
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         private void LoadClientsByStatus(string status)
         {
             if (string.IsNullOrEmpty(status)) return;
             ClientList.Clear();
-            if (status == "All") { GetClients(); return; }
+            if (status == "All") { SelectedClientStatus = "All"; GetClients(); return; }
 
             // Sql setup
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -895,7 +894,8 @@ namespace BayWyn_Couriers.ViewModels
         public void AddNewJob(object? obj)
         {
             // Checking the values is not null or empty
-            if (SelectedClient == null || SelectedJob.DeliveryAddress == null || SelectedJob.Description == null) {
+            if (SelectedClient == null || SelectedJob.DeliveryAddress == null || SelectedJob.Description == null)
+            {
                 MessageBox.Show("Please enter all details");
                 return;
             }
@@ -1005,7 +1005,7 @@ namespace BayWyn_Couriers.ViewModels
                     {
                         mySqlCon.Close();
                     }
-                    GetAllJobs(); 
+                    GetAllJobs();
                 }
             }
         }
@@ -1435,16 +1435,8 @@ namespace BayWyn_Couriers.ViewModels
                         cmd.ExecuteNonQuery(); // Running the sql command to update the database
                         MessageBox.Show("Contract Updated Successfully");
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                        mySqlCon.Close();
-                    }
-
-                    finally
-                    {
-                        mySqlCon.Close();
-                    }
+                    catch (Exception ex) { MessageBox.Show(ex.Message); }
+                    finally { mySqlCon.Close(); }
                     GetAllContracts();
                 }
             }
@@ -1527,6 +1519,7 @@ namespace BayWyn_Couriers.ViewModels
         public void RefreshClientsPage(object? obj)
         {
             RefreshPage();
+            SelectedClientStatus = "All";
         }
         public void NewClient(object? obj)
         {
@@ -1758,9 +1751,9 @@ namespace BayWyn_Couriers.ViewModels
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
                     "WHERE ja.CourierID = @CourierID " +
                     "AND j.JobStatus = 'Accepted' " +
-                    "AND ja.DeliveryDate = @Date " +
+                    "AND CAST(ja.DeliveryDate AS DATE)= @Date " +
                     "ORDER BY ja.DeliverySlot DESC", mySqlCon);
-
+    
                 cmGetJobs.Parameters.AddWithValue("@CourierID", userID); // Pass the ID here
                 cmGetJobs.Parameters.AddWithValue("@Date", DateForDayJobReport.Date); // Date chosen
 
@@ -1890,7 +1883,7 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-        
+
 
         private List<JobAssignment> GetJobsForTheMonth()
         {
