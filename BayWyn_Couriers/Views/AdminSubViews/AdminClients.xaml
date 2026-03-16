@@ -8,167 +8,116 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <Style x:Key="CyanButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#A0F0E0"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="2"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#90E0D0"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Style x:Key="FormLabelStyle" TargetType="Label">
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0,10,0,2"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding ClientsFilterList}" Style="{StaticResource ModernComboBoxStyle}"
+                   SelectedItem="{Binding SelectedClientStatus, UpdateSourceTrigger=PropertyChanged}"
+                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Button Content="Refresh List" Style="{StaticResource PageButton}" Command="{Binding RefreshClientsCommand}"/>
+            </StackPanel>
 
-        <Style TargetType="TextBox">
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="BorderBrush" Value="LightGray"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-    </UserControl.Resources>
+            <Button Content="New Client" Command="{Binding NewClientCommand}"  Style="{StaticResource NewJobButton}" />
+        </Grid>
 
-    <Grid Margin="15" Background="AntiqueWhite">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*" />
-            <ColumnDefinition Width="4*" />
-        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="300" />
+            </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,15,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+            <Border Grid.Column="0" Margin="0,0,20,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
 
-            <!--Filter and date picker-->
-            <ComboBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding ClientsFilterList}"
-                      SelectedItem="{Binding SelectedClientStatus, UpdateSourceTrigger=PropertyChanged}"
-                      Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-            <Grid Grid.Row="0" Margin="0,0,0,15">
-                <Button Content="Refresh List" DockPanel.Dock="Right" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding RefreshClientsCommand}" Width="120" Margin="196,6,131,-2" RenderTransformOrigin="0.175,0.751"/>
-                <Button Content="New Client" Command="{Binding NewClientCommand}" Margin="328,12,0,0" 
-        HorizontalAlignment="Left" Width="120" VerticalAlignment="Top"/>
-
-                <!--
-
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Search Clients:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Bold"/>
-                        <TextBox Width="300" 
-                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                             VerticalAlignment="Center"/>
-                    
-                    </StackPanel>
-                    -->
-            </Grid>
-
-            <DataGrid Grid.Row="1" 
+                <DataGrid Style="{StaticResource MainDataGridStyle}"
                       ItemsSource="{Binding ClientList}" 
                       SelectedItem="{Binding SelectedClient}"
                       AutoGenerateColumns="False" 
-                      IsReadOnly="True" 
-                      Background="White"
-                      AlternatingRowBackground="#F9F9F9"
-                      RowHeaderWidth="0"
-                      SelectionMode="Single">
+                      IsReadOnly="True">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ClientId}" Width="50"/>
+                        <DataGridTextColumn Header="Client Name" Binding="{Binding Name}" Width="2*"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            
+            <Border Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
                 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding ClientId}" Width="50"/>
-                    <DataGridTextColumn Header="Client Name" Binding="{Binding Name}" Width="2*"/>
-                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
-                    <!--
-                    <DataGridTextColumn Header="Active Contract" Binding="{Binding IsContractActive}" Width="*"/>
-                    -->
+                
+                <Grid>
                     
-                    <!--
-                    <DataGridTemplateColumn Header="Address/Notes" Width="3*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Address}" TextWrapping="Wrap" Padding="5"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    -->
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <Border Grid.Column="1" Background="{Binding ElementName=rootView, Path=Background}" 
-                BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Padding="20">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                    <TextBlock Text="Client Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
 
-                <TextBlock Grid.Row="0" Text="Client Details" FontSize="26" FontWeight="Bold" 
-                           HorizontalAlignment="Center" Margin="0,0,0,20"/>
-
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,-10,0" Padding="0,0,10,0">
-                    <StackPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Client ID:" Style="{StaticResource FormLabelStyle}" Grid.Column="0"/>
-                            <TextBox Text="{Binding SelectedClient.ClientId, Mode=TwoWay}" IsReadOnly="True" 
-                                     Background="#EEE" FontWeight="Bold" Grid.Column="1" Width="80"/>
+                            
+                            <Label Content="Client ID:" Style="{StaticResource LabelStyle}" Grid.Column="0"/>
+                                <TextBox Text="{Binding SelectedClient.ClientId, Mode=TwoWay}" IsReadOnly="True" Style="{StaticResource InputTextBox}"
+                                     Grid.Column="1"/>
                         </Grid>
 
-                        <Label Content="Contact Person / Full Name:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedClient.Name, Mode=TwoWay}" />
+                        <Label Content="Contact Person / Full Name:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SelectedClient.Name, Mode=TwoWay}" Style="{StaticResource InputTextBox}"/>
 
-                        <Label Content="Contact Email Address:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedClient.Email, Mode=TwoWay}"/>
+                        <Label Content="Contact Email Address:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SelectedClient.Email, Mode=TwoWay}" Style="{StaticResource InputTextBox}"/>
 
-                        <Label Content="Contact Phone Number:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedClient.Phone, Mode=TwoWay}" InputScope="TelephoneNumber"/>
+                        <Label Content="Contact Phone Number:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SelectedClient.Phone, Mode=TwoWay}" Style="{StaticResource InputTextBox}" InputScope="TelephoneNumber"/>
 
-                        <Label Content="Client/Business Address:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedClient.ClientAddress, Mode=TwoWay}" 
+                        <Label Content="Client/Business Address:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SelectedClient.ClientAddress, Mode=TwoWay}" Style="{StaticResource InputTextBox}"
                                  Height="80" VerticalContentAlignment="Top" 
                                  TextWrapping="Wrap" AcceptsReturn="True"/>
-
-                        <!--
-                            <Label Content="Internal Account Notes / Special Instructions:" Style="{StaticResource FormLabelStyle}"/>
-                            <TextBox Text="{Binding ClientForm.Notes, Mode=TwoWay}" 
-                                 Height="100" VerticalContentAlignment="Top" 
-                                 TextWrapping="Wrap" AcceptsReturn="True"/>
-                            -->
-                    </StackPanel>
+                        </StackPanel>
                 </ScrollViewer>
 
-                <UniformGrid Grid.Row="2" Rows="1" Columns="3" Margin="0,20,0,0">
-                    <!--
-                        <Button Content="Clear Form" Style="{StaticResource CyanButtonStyle}" 
-                            Command="{Binding NewClientCommand}" />
-                        -->
-
-                    <Button Content="Delete" Style="{StaticResource CyanButtonStyle}" 
-                            Command="{Binding DeleteClientCommand}" 
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Content="Delete" 
+                            Command="{Binding DeleteClientCommand}" Margin="0,0,5,0" Grid.Column="0"
                             Foreground="Red" FontWeight="Bold"/>
 
-                    <Button Content="Update" Style="{StaticResource CyanButtonStyle}" 
+                        <Button Content="Update" Margin="0,0,5,0" Grid.Column="1"
                             Command="{Binding UpdateClientCommand}" />
 
-                    <Button Content="Add New" Style="{StaticResource CyanButtonStyle}" 
+                        <Button Content="Add New" Margin="0,0,5,0" Grid.Column="2"
                             Command="{Binding AddClientCommand}" IsEnabled="{Binding EnableItemsForNewClient}" FontWeight="Bold"/>
-                </UniformGrid>
+                </Grid>
             </Grid>
         </Border>
+        </Grid>
     </Grid>
 
 </UserControl>

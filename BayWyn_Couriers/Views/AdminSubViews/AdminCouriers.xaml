@@ -8,36 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <Style x:Key="CyanButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#A0F0E0"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="10,5"/>
-            <Setter Property="Margin" Value="2"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#90E0D0"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="FormLabelStyle" TargetType="Label">
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0,10,0,2"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-
-        <Style TargetType="TextBox">
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="BorderBrush" Value="LightGray"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-    </UserControl.Resources>
-
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -89,7 +59,7 @@
         
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -98,47 +68,52 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Label Content="Courier ID:" Style="{StaticResource FormLabelStyle}" Grid.Column="0"/>
-                            <TextBox Text="{Binding SelectedCourier.UserId, Mode=TwoWay}" IsReadOnly="True" 
-                                 Background="#EEE" FontWeight="Bold" Grid.Column="1" Width="80"/>
+                            
+                        <Label Content="Courier ID:" Style="{StaticResource LabelStyle}" Grid.Column="0"/>
+                        <TextBox Style="{StaticResource InputTextBox}" Text="{Binding SelectedCourier.UserId}" IsReadOnly="True" 
+                                FontWeight="Bold" Grid.Column="1"/>
 
 
-                        <Label Content="User Name:"  Grid.Row="1" Grid.Column="0" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding SelectedCourier.UserName, Mode=TwoWay}" />
+                        <Label Content="User Name:"  Grid.Row="1" Grid.Column="0"  Style="{StaticResource LabelStyle}"/>
+                        <TextBox Style="{StaticResource InputTextBox}" Grid.Row="1" Grid.Column="1" Text="{Binding SelectedCourier.UserName}" />
 
-                        <Label Content="Full Name:"  Grid.Row="2" Grid.Column="0" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox  Grid.Row="2" Grid.Column="1" Text="{Binding SelectedCourier.Name, Mode=TwoWay}" />
+                        <Label Content="Full Name:"  Grid.Row="2" Grid.Column="0"  Style="{StaticResource LabelStyle}"/>
+                        <TextBox Style="{StaticResource InputTextBox}" Grid.Row="2" Grid.Column="2" Text="{Binding SelectedCourier.Name}" />
 
-                        <Label  Grid.Row="3" Grid.Column="0" Content="Contact Email Address:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedCourier.Email, Mode=TwoWay}"  Grid.Row="1" Grid.Column="1"/>
 
-                        <StackPanel Orientation="Horizontal"  Grid.Row="4" Grid.Column="0">
-                            <Label Content="Phone:" Style="{StaticResource FormLabelStyle}"/>
-                            <TextBox Text="{Binding SelectedCourier.PhoneNumber, Mode=TwoWay}" Width="200" InputScope="TelephoneNumber"/>
+                        <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
+                            <Label Content="Contact Email Address:"  Style="{StaticResource LabelStyle}"/>
+                            <TextBox  Grid.ColumnSpan="2" Text="{Binding SelectedCourier.Email}" Style="{StaticResource InputTextBox}" />
+                        </StackPanel>
+                            
+                        <StackPanel Grid.Row="4" Grid.ColumnSpan="2">
+                            <Label Content="Phone:"  Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SelectedCourier.PhoneNumber}" Style="{StaticResource InputTextBox}" InputScope="TelephoneNumber"/>
                         </StackPanel>
 
 
-                        <Label Content="Address:" Style="{StaticResource FormLabelStyle}"  Grid.Row="5" Grid.Column="0"/>
-                        <TextBox Text="{Binding SelectedCourier.Address, Mode=TwoWay}"  Grid.Row="5" Grid.Column="0"
-                             Height="47" VerticalContentAlignment="Top" 
-                             TextWrapping="Wrap" AcceptsReturn="True"/>
+                        <StackPanel Grid.Row="5" Grid.ColumnSpan="2">
+                            <Label Content="Address:"  Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SelectedCourier.Address}" Style="{StaticResource InputTextBox}" Height="47" TextWrapping="Wrap"/>
+                        </StackPanel>
                     </Grid>
                 </ScrollViewer>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Delete" Style="{StaticResource CyanButtonStyle}" 
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Button Grid.Column="0" Content="Delete" Margin="0,0,5,0" 
                         Command="{Binding DeleteCourierCommand}" 
-                        Foreground="Red" FontWeight="Bold"/>
+                        FontWeight="Bold"/>
 
-                    <Button Content="Update" Style="{StaticResource CyanButtonStyle}" 
+                    <Button Content="Update" Grid.Column="1" Margin="0,0,5,0"
                         Command="{Binding UpdateCourierCommand}" />
-                </StackPanel>
+                </Grid>
 
             </Grid>
         </Border>

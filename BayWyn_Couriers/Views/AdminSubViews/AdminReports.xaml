@@ -11,7 +11,7 @@
              d:DesignHeight="600" d:DesignWidth="800">
 
 
-    <Grid Background="AntiqueWhite" Margin="5">
+    <Grid Margin="5">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -22,143 +22,127 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="CHOOSE REPORT" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+        
+        <TextBlock Grid.Row="0" Grid.Column="0" FontWeight="Bold" FontSize="18" Foreground="White" Text="Reports" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10"/>
 
         <!--Header for the edit column-->
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="BAYWN COURIERS" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="BAYWN COURIERS" FontWeight="Bold" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 
         <Grid Grid.Row="1" Grid.Column="0">
             <StackPanel Orientation="Vertical">
-                <StackPanel.Resources>
-                    <!-- A style that makes RadioButtons look like Menu Buttons -->
-                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-                        <Setter Property="Height" Value="40"/>
-                        <Setter Property="Margin" Value="0,5,5,5"/>
-                        <Setter Property="Background" Value="#F0F0F0"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="RadioButton">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <!-- Highlighting the selected menu item -->
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter Property="Background" Value="#007BFF"/>
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </StackPanel.Resources>
-
                 <!-- Use IsChecked="True" on the first one to select it by default -->
-                <RadioButton Content="Day Jobs (Courier Based)" Command="{Binding DayJobsReportCommand}"/>
-                <RadioButton Content="Monthly Jobs (Courier Based)" Command="{Binding MonthlyJobsReportCommand}"/>
-                <RadioButton Content="All Jobs (Client based)" Command="{Binding ContractsJobReportCommand}"/>
-                <RadioButton Content="Monthly Value (Client based)" Command="{Binding ClientsValueReportCommand}"/>
+                <RadioButton Content="Day Jobs (Courier Based)" Command="{Binding DayJobsReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="Monthly Jobs (Courier Based)" Command="{Binding MonthlyJobsReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="All Jobs (Client based)" Command="{Binding ContractsJobReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="Monthly Value (Client based)" Command="{Binding ClientsValueReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
             </StackPanel>
         </Grid>
     
 
-        <Grid Grid.Row="1" Grid.Column="1" Width="350">
+        <Grid Grid.Row="1" Grid.Column="1" Margin="10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             
-            <!-- Report Window-->
             
             <!--Day jobs report-->
-            <StackPanel Visibility="{Binding DayReportVisibility}">
+            <Grid Visibility="{Binding DayReportVisibility}">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid>
-                        <StackPanel Grid.Row="0"  Grid.Column="0">
-                            <ComboBox ItemsSource="{Binding CouriersList}" Style="{StaticResource ModernComboBoxStyle2}"
+                    
+                    
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Daily Jobs Report" TextWrapping="Wrap" Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox ItemsSource="{Binding CouriersList}" Style="{StaticResource ModernComboBoxStyle2}"
                                       SelectedItem="{Binding SelectedCourier, UpdateSourceTrigger=PropertyChanged}" 
                                       DisplayMemberPath="UserName" SelectedValuePath="UserId"/>
-                        </StackPanel>
+                        <DatePicker SelectedDate="{Binding DateForDayJobReport, UpdateSourceTrigger=PropertyChanged}"  DisplayDate="{x:Static sys:DateTime.Now}" Grid.Column="2"/>
+       
                     </Grid>
-
-                    <DatePicker SelectedDate="{Binding DateForDayJobReport, UpdateSourceTrigger=PropertyChanged}"  DisplayDate="{x:Static sys:DateTime.Now}" Grid.Row="0" Grid.Column="1"/>
-                    
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0">
-                        <Button Content="Generate Report" Command="{Binding GenerateDayJobsReportCommand}" Margin="0" />
-                    </Grid>
-
-
+ 
+                    <Button  Grid.Row="2" Grid.ColumnSpan="2" Content="Generate Report" Command="{Binding GenerateDayJobsReportCommand}" Style="{StaticResource NewJobButton}" HorizontalAlignment="Center"/>
                 </Grid>
-            </StackPanel>
+            </Grid>
 
             <!--Monthly jobs report-->
             <StackPanel Visibility="{Binding MonthlyReportVisibility}">
-                <Button Content="Generate Report" Command="{Binding GenerateMonthlyJobsReportCommand}" Margin="0" />
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Monthly Courier Report" TextWrapping="Wrap" Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    
+                    <Button Grid.Row="1" Content="Generate Report" Command="{Binding GenerateMonthlyJobsReportCommand}" HorizontalAlignment="Center" Margin="0" Style="{StaticResource NewJobButton}"/>
+                    
+                </Grid>
+                
             </StackPanel>
 
             <!--All jobs report-->
 
             <Grid Visibility="{Binding AllJobsReportVisibility}">
-                <Grid.RowDefinitions>
+             
+                    <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <TextBlock Text="All Jobs Report" TextWrapping="Wrap" Grid.Column="0" Foreground="White" HorizontalAlignment="Center"/>
 
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
-                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
+                    
+                 
+                    <ComboBox Grid.Column="0" Margin="5,0" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
+                    <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
    
                 </Grid>
 
-                <Grid Grid.Row="1">
-                    <Button Content="Generate Report" Command="{Binding GenerateAllJobsReportCommand}" />
+                <Grid Grid.Row="2">
+                    <Button HorizontalAlignment="Center" Content="Generate Report" Command="{Binding GenerateAllJobsReportCommand}" Style="{StaticResource NewJobButton}"/>
                 </Grid>
                 
             </Grid>
 
             <!--Monthly value report-->
             <Grid Visibility="{Binding MonthlyValueReportVisibility}">
-                
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <TextBlock Text="Client Value Report" TextWrapping="Wrap" Grid.Column="0" Foreground="White" HorizontalAlignment="Center"/>
 
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
 
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}"  SelectedItem="{Binding SelectedMonthForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
-                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
+                    <ComboBox Grid.Column="0" Margin="5,0" ItemsSource="{Binding MonthsList}"  SelectedItem="{Binding SelectedMonthForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
+                    <ComboBox Grid.Column="1" Margin="5,0" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
 
                 </Grid>
 
-                <Grid Grid.Row="1">
-                    <Button Content="Generate Report" Command="{Binding GenerateValueReportCommand}"/>
+                <Grid Grid.Row="2">
+                    <Button Content="Generate Report" Command="{Binding GenerateValueReportCommand}" Style="{StaticResource NewJobButton}" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
 
@@ -370,8 +354,7 @@
                 </ScrollViewer>
             </Grid>
 
-            
-            
+           
     </Grid>
 </Grid>
 
