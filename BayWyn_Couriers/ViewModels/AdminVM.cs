@@ -56,6 +56,8 @@ namespace BayWyn_Couriers.ViewModels
             MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
             ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
             ClientsValueReportCommand = new RelayCommand(ShowClientValueReport);
+            GenerateDayJobsReportCommand = new RelayCommand(GenerateDayJobsReport);
+            GenerateMonthlyJobsReportCommand = new RelayCommand(GenerateMonthlyJobsReport);
             GenerateAllJobsReportCommand = new RelayCommand(GenerateContractsJobReport);
             GenerateValueReportCommand = new RelayCommand(GenerateClientValueReport);
 
@@ -237,7 +239,7 @@ namespace BayWyn_Couriers.ViewModels
                     if (_selectedCourier != null)
                     {
                         if (SelectedJob != null) { SelectedJob.CourierId = value.UserId; }
-                        GetDailyJobsReport(SelectedCourier.UserId.ToString());
+                        //GetDailyJobsReport(SelectedCourier.UserId.ToString());
                     }
                 }
             }
@@ -250,7 +252,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 _dateForDayJobReport = value;
                 OnPropertyChanged(nameof(DateForDayJobReport));
-                GetDailyJobsReport(SelectedCourier.UserId.ToString());
+                //GetDailyJobsReport(SelectedCourier.UserId.ToString());
             }
         }
 
@@ -425,7 +427,6 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-
         public string SelectedMonthForReport
         {
             get => _selectedMonthForReport;
@@ -479,7 +480,6 @@ namespace BayWyn_Couriers.ViewModels
             public string Name { get; set; }
             public string Email { get; set; }
             public string ContractStatus { get; set; }
-
             public decimal MonthlyContractFee { get; set; }
             public decimal TotalJobsCost { get; set; }
 
@@ -535,6 +535,9 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand ContractsJobReportCommand { get; }
         public ICommand ClientsValueReportCommand { get; }
 
+
+        public ICommand GenerateMonthlyJobsReportCommand { get; }
+        public ICommand GenerateDayJobsReportCommand { get; }
         public ICommand GenerateValueReportCommand { get; }
         public ICommand GenerateAllJobsReportCommand { get; }
 
@@ -597,14 +600,6 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-        private void ShowClientValueReport(object? obj)
-        {
-            HideAllReports();
-            // Set stackpanel to visible
-            MonthlyValueReportVisibility = "Visible";
-            //GetClientValueReport();
-        }
-
         private void GenerateClientValueReport(object? obj)
         {
             // Conditional check to check if the year and month is selected
@@ -616,15 +611,6 @@ namespace BayWyn_Couriers.ViewModels
 
             // Load the report using the selected month and year
             GetClientValueReport(_monthToNumberMap[SelectedMonthForReport], int.Parse(SelectedYearForReport));
-        }
-
-        private void ShowContractsJobReport(object? obj)
-        {
-            HideAllReports();
-
-            // Set stackpanel to visible
-            AllJobsReportVisibility = "Visible";
-            //LoadMonthlyClientReport(3);
         }
 
         private void GenerateContractsJobReport(object? obj)
@@ -639,14 +625,44 @@ namespace BayWyn_Couriers.ViewModels
             LoadMonthlyClientReport(_monthToNumberMap[SelectedMonthForReport], int.Parse(SelectedYearForReport));
         }
 
+        private void GenerateMonthlyJobsReport(object? obj)
+        {
+            LoadMonthlyReport();
+        }
+
+        private void GenerateDayJobsReport(object? obj)
+        {
+            if (SelectedCourier == null || DateForDayJobReport == null)
+            {
+                MessageBox.Show("Please select a courier and a date to display the report");
+                return;
+            }
+            else
+            {
+                ReportJobs.Clear();
+                GetDailyJobsReport(SelectedCourier.UserId.ToString());
+            }
+        }
+        private void ShowClientValueReport(object? obj)
+        {
+            HideAllReports();
+            // Set stackpanel to visible
+            MonthlyValueReportVisibility = "Visible";
+        }
+
+        private void ShowContractsJobReport(object? obj)
+        {
+            HideAllReports();
+            // Set stackpanel to visible
+            AllJobsReportVisibility = "Visible";
+        }
         private void ShowMonthlyJobReport(object? obj)
         {
             HideAllReports();
             // Set stackpanel to visible
             MonthlyReportVisibility = "Visible";
-            LoadMonthlyReport();
         }
-
+        
         private void ShowDayReport(object? obj)
         {
             HideAllReports();
@@ -1877,7 +1893,6 @@ namespace BayWyn_Couriers.ViewModels
                 }
             }
         }
-
 
 
         private List<JobAssignment> GetJobsForTheMonth()

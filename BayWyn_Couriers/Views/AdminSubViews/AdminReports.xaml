@@ -79,30 +79,39 @@
             <!--Day jobs report-->
             <StackPanel Visibility="{Binding DayReportVisibility}">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid>
-                        <StackPanel Grid.Column="1">
+                        <StackPanel Grid.Row="0"  Grid.Column="0">
                             <ComboBox ItemsSource="{Binding CouriersList}" 
                                       SelectedItem="{Binding SelectedCourier, UpdateSourceTrigger=PropertyChanged}" 
                                       DisplayMemberPath="UserName" SelectedValuePath="UserId"/>
                         </StackPanel>
                     </Grid>
 
-                    <DatePicker SelectedDate="{Binding DateForDayJobReport, UpdateSourceTrigger=PropertyChanged}"  DisplayDate="{x:Static sys:DateTime.Now}" Grid.Column="1"/>
+                    <DatePicker SelectedDate="{Binding DateForDayJobReport, UpdateSourceTrigger=PropertyChanged}"  DisplayDate="{x:Static sys:DateTime.Now}" Grid.Row="0" Grid.Column="1"/>
+                    
+                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0">
+                        <Button Content="Generate Report" Command="{Binding GenerateDayJobsReportCommand}" Margin="0" />
+                    </Grid>
+
 
                 </Grid>
             </StackPanel>
 
             <!--Monthly jobs report-->
             <StackPanel Visibility="{Binding MonthlyReportVisibility}">
-                <TextBlock Text="Monthly Courier Jobs"/>
-                
+                <Button Content="Generate Report" Command="{Binding GenerateMonthlyJobsReportCommand}" Margin="0" />
             </StackPanel>
 
             <!--All jobs report-->
+
             <Grid Visibility="{Binding AllJobsReportVisibility}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -153,6 +162,8 @@
                 </Grid>
             </Grid>
 
+            
+            <!--Reports-->
             
             <StackPanel Grid.Row="1" Visibility="{Binding DayReportVisibility}">
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
