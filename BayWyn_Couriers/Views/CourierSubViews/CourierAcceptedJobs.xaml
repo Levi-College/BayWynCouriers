@@ -37,6 +37,7 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding ClientName}" FontSize="18" FontWeight="Bold"/>
                                 <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Margin="0,5"/>
+                                <TextBlock Text="{Binding DeliveryDate, StringFormat=d}"/>
                                 <TextBlock Text="{Binding DeliverySlot}" Foreground="DarkBlue" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Grid>

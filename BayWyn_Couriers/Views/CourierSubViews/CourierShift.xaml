@@ -49,8 +49,17 @@
 
             <!-- 1. Shift Controls & Timer -->
             <Border Grid.Row="0" Background="#F8F9FA" Padding="15">
+                
                 <StackPanel HorizontalAlignment="Center">
-
+                    <Grid HorizontalAlignment="Right">
+                        <!-- The Timer Display -->
+                        <TextBlock Text="{Binding CurrentTimeDisplay}" 
+        FontSize="32" 
+        FontWeight="Bold" 
+        HorizontalAlignment="Center" 
+        Margin="0,0,0,10" 
+        Foreground="#333"/>
+                    </Grid>
                     <!-- The Timer Display -->
                     <TextBlock Text="{Binding ShiftTimerDisplay}" 
                            FontSize="32" 
@@ -62,14 +71,12 @@
                     <StackPanel Orientation="Horizontal">
                         <Button Content="START SHIFT" 
                             Command="{Binding StartShiftCommand}" 
-                            Style="{StaticResource RoundedButtonStyle}"
-                            Background="#28A745" 
+                            IsEnabled="{Binding StartShiftEnabler}"
                             Padding="20,10" Margin="10,0"/>
 
                         <Button Content="END SHIFT" 
                             Command="{Binding EndShiftCommand}" 
-                            Style="{StaticResource RoundedButtonStyle}"
-                            Background="#DC3545" 
+                            IsEnabled="{Binding EndShiftEnabler}"
                             Padding="20,10" Margin="10,0"/>
                     </StackPanel>
                 </StackPanel>
@@ -96,6 +103,7 @@
                                     <StackPanel Grid.Column="1" Margin="15,0">
                                         <TextBlock Text="{Binding ClientName}" FontSize="16" FontWeight="Bold"/>
                                         <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Margin="0,4"/>
+                                        <TextBlock Text="{Binding Description}"/>
                                     </StackPanel>
 
                                     <Button Grid.Column="2" Content="COMPLETE" 

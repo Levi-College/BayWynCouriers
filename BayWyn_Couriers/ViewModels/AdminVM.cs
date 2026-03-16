@@ -320,11 +320,7 @@ namespace BayWyn_Couriers.ViewModels
         public bool EnableItemsForNewClient
         {
             get => _enableItemsForNewClient;
-            set
-            {
-                _enableItemsForNewClient = value;
-                OnPropertyChanged();
-            }
+            set{_enableItemsForNewClient = value;OnPropertyChanged();}
         }
 
         // To update the boolean in UI when it is updated in code

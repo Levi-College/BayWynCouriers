@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BayWyn_Couriers.Views.CourierSubViews" 
              xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
-             d:DataContext="{d:DesignInstance Type=viewmodels:LCVM}"
+             d:DataContext="{d:DesignInstance Type=viewmodels:CourierVM}"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
@@ -22,13 +22,6 @@
         </Grid.ColumnDefinitions>
 
         <!-- Structure to hold the edit window and the buttons-->
-
-        <!--Filter and date picker-->
-        <!--<ComboBox Grid.Column="0" 
-              ItemsSource="{Binding LCJobsFilterList}"
-              SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
-              Margin="648,0,0,0" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center"/>-->
-
         <!--Header for the edit column-->
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Pending Acceptance" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 
@@ -45,7 +38,9 @@
                             <StackPanel>
                                 <TextBlock Text="{Binding ClientName}" FontSize="18" FontWeight="Bold"/>
                                 <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" Margin="0,5"/>
+                                <TextBlock Text="{Binding }"/>
                                 <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding DeliveryDate, StringFormat=d}"/>
                                     <TextBlock Text="{Binding DeliverySlot}" Foreground="DarkBlue" FontWeight="SemiBold"/>
                                 </StackPanel>
                                 

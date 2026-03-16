@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -38,6 +39,7 @@ namespace BayWyn_Couriers.ViewModels
 
             // Setting up the time slot dictionary (used to get the time from the slot)
             SetupSlotMap();
+            StartTimer();
         }
 
 
@@ -74,26 +76,16 @@ namespace BayWyn_Couriers.ViewModels
         private DispatcherTimer _timer;
         private Stopwatch _stopwatch;
         private string _shiftTimerDisplay = "00:00:00";
-        
+        private string _currentTimeDisplay = "00:00";
+
         private bool _enableCompleteJobButton = false;
-
-
-        //private User _selectedCourier; // To hold the selected courier for dropdown display
-        //private bool _datePickerEnabled = false; // To disable the date picker unless a courier is selected
-        //private bool _timePickerEnabled = false; // To disable timer pickers unless a date is picked
-
-        //public List<String> LCJobsFilterList { get; } = new List<String> { "All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
-        //public List<string> JobsStatusList { get; } = new List<string> { "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box        
+        private bool _startShiftEnabler = false;
+        private bool _endShiftEnabler = false;    
         public ObservableCollection<JobAssignment> PendingJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the jobs waiting to be accepted
         public ObservableCollection<JobAssignment> AcceptedJobs { get; set; } = new ObservableCollection<JobAssignment>();
         public ObservableCollection<JobAssignment> DailyJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
-        //public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
-        //public Dictionary<string, string> SlotTimeMap { get; set; } //Dictionary to hold the time slot name and the time
-        //public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
-        //private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Holds the slot names for the break schedule
-
-
+ 
         // Objects
         // To update the sub view
         // Notify the view that the CurrentSubView property has changed, allowing the UI to update accordingly (e.g., displaying the new subview content)
@@ -132,11 +124,32 @@ namespace BayWyn_Couriers.ViewModels
             set{_shiftTimerDisplay = value;OnPropertyChanged();}
         }
 
+        public string CurrentTimeDisplay
+        {
+            get => _currentTimeDisplay;
+            set { _currentTimeDisplay = value; OnPropertyChanged(); }
+        }
+
         public bool EnableCompleteJobButton
         {
             get => _enableCompleteJobButton;
             set { _enableCompleteJobButton = value; OnPropertyChanged(); }
         }
+
+        // To adjust the logic for enabling and disabling the start and end shift button
+
+        public bool StartShiftEnabler
+        {
+            get => _startShiftEnabler;
+            set { _startShiftEnabler = value; OnPropertyChanged(); }
+        }
+
+        public bool EndShiftEnabler
+        {
+            get => _endShiftEnabler;
+            set { _endShiftEnabler = value; OnPropertyChanged(); }
+        }
+
 
         // Methods
         private void CourierPendingJobsPage(object? obj)
@@ -144,10 +157,6 @@ namespace BayWyn_Couriers.ViewModels
             CurrentSubView = new CourierPendingJobs();
             RefreshPage(); // Refreshing the fields and the page
             GetPendingJobs(); // Populates the list of pending acceptance jobs
-            //GetCouriers(); // Populate the status filter
-            //LoadJobsByStatus("All"); // Loads all the jobs initially 
-            //SetupSlotMap();
-            //InitializeTimeSlots();
         }
 
         private void CourierAcceptedJobsPage(object? obj)
@@ -162,12 +171,7 @@ namespace BayWyn_Couriers.ViewModels
             CurrentSubView = new CourierShift();
             RefreshPage(); // Refreshing the fields and the page
             GetDailyJobs(UserID);
-            //GetCouriers(); // Populate the status filter
-            //LoadJobsByStatus("All"); // Loads all the jobs initially 
-            //SetupSlotMap();
-            //InitializeTimeSlots();
         }
-
 
 
         // Logout
@@ -179,6 +183,7 @@ namespace BayWyn_Couriers.ViewModels
             _navigationVM.CurrentView = new LoginVM(_navigationVM); // Updating the current view to a instance of LoginVM. _sending the view model to be used as well
         }
 
+        // To get the time from the dictionary as the slots are stored in the database  
         private void SetupSlotMap()
         {
             SlotsDictionary = new Dictionary<string, string>();
@@ -232,10 +237,7 @@ namespace BayWyn_Couriers.ViewModels
                 PendingJobs.Remove(SelectedJob);
 
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex){MessageBox.Show(ex.Message);}
         }
 
         //Reject the selected job 
@@ -387,7 +389,6 @@ namespace BayWyn_Couriers.ViewModels
             finally{mySqlCon.Close();}
         }
 
-
         // Gets the jobs for the current day for the couriers shift
         private void GetDailyJobs(string userID)
         {
@@ -418,6 +419,7 @@ namespace BayWyn_Couriers.ViewModels
                 if (reader.HasRows)
                 {
                     DailyJobs.Clear();
+                    StartShiftEnabler = true; // Enabling the start shift timer only if there are any jobs for the day
                     while (reader.Read())
                     {
                         DailyJobs.Add(
@@ -442,47 +444,51 @@ namespace BayWyn_Couriers.ViewModels
                     }
                     reader.Close();
                 }
+                else{MessageBox.Show("No jobs for today");}
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
         }
 
-        //Start shift methods
-        private void StartShift(object? obj)
+        // Starts when the courier page is loaded
+        private void StartTimer()
         {
-            // Start the timer
-
             // Add the start time to the database (if a shifts table is there)
             _stopwatch = new Stopwatch();
-            _stopwatch.Start();
 
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += (s, e) =>
-            {
-                ShiftTimerDisplay = _stopwatch.Elapsed.ToString(@"hh\:mm\:ss");
+            {   
+                CurrentTimeDisplay = DateTime.Now.ToString(@"HH:mm"); // Live time
+                if (_stopwatch.IsRunning) { ShiftTimerDisplay = _stopwatch.Elapsed.ToString(@"hh\:mm\:ss"); }
             };
             _timer.Start();
+        }
+
+        //Start shift methods
+        private void StartShift(object? obj)
+        {
+            // Starting the stop watch
+            _stopwatch.Start();
 
             // Enable all the confirm buttons
             EnableCompleteJobButton = true;
+            EndShiftEnabler = true;
+            StartShiftEnabler = false; // Cannot start the shift again
         }
 
         private void EndShift(object? obj)
-        {
-            // End the timer
+        {           
+            _stopwatch.Stop(); // Stop and reset
+            _stopwatch.Reset();
 
-            // Add the end time to the database (if a shifts table is there)
-
-            // Update all the jobs that are not completed today to incomplete
-            // These can be set to approved (not assigned) so that the LC can assign the jobs to other couriers
-            // Maybe add the details (of the courier who had the job, any reason for not delivering, etc)
-            _stopwatch?.Stop();
-            _timer.Stop();
-
+            ShiftTimerDisplay = "00:00:00"; // Clearing the elapsed time
+            MessageBox.Show("Thank you for the shift. Have a great time off");
+            // Disabling and enabling the buttons
             EnableCompleteJobButton = false;
-
-
+            StartShiftEnabler = true ;
+            EndShiftEnabler= false;
         }
 
         private void CompleteDelivery(object? obj)
@@ -500,7 +506,6 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-               
                 SqlCommand cmdCompleteJob = new SqlCommand("UPDATE Jobs SET JobStatus = 'Completed', EndDate = @EndDate WHERE JobID = @JobID", mySqlCon);
                 cmdCompleteJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
                 cmdCompleteJob.Parameters.AddWithValue("@EndDate",DateTime.Now);
@@ -516,10 +521,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 MessageBox.Show("Delivery completed");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex){MessageBox.Show(ex.Message);}
         }
 
     }
