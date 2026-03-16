@@ -128,7 +128,7 @@ namespace BayWyn_Couriers.ViewModels
                 // Only allow future dates
                 if (value.Date <= DateTime.Today)
                 {
-                    MessageBox.Show("Please select a future date. Same-day booking is not permitted.");
+                    MessageBox.Show("Please select a future date");
                     // Reset to the next available weekday or just don't update
                     return;
                 }
@@ -253,7 +253,7 @@ namespace BayWyn_Couriers.ViewModels
                     OnPropertyChanged();
 
                     // Updating the courierId of the Job based on the selected new courier
-                    if (_selectedCourier != null)
+                    if (_selectedCourier != null && SelectedJob != null)
                     {
                         SelectedJob.CourierId = value.UserId;
                     }
@@ -312,6 +312,7 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new LCAssignedJobs();
             RefreshPage(); // Refreshing the fields and the page
+            SelectedJobAssignment = null;
             GetCouriers(); // Populate the status filter
             //LoadJobsByStatus("Assigned"); // Loads all the jobs for the page
             GetAllAssignedJobs();
