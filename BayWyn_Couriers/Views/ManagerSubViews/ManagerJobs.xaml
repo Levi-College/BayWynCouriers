@@ -10,105 +10,153 @@
              d:DesignHeight="600" d:DesignWidth="800">
 
 
-    <Grid Background="AntiqueWhite" Margin="5">
+    <Grid Margin="10">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
         <!-- Structure to hold the edit window and the buttons-->
 
         <!--Filter-->
-        <ComboBox Grid.Row="0" Grid.Column="0" 
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <ComboBox ItemsSource="{Binding JobsFilterList}" SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}" 
+                      Style="{StaticResource ModernComboBoxStyle}" Width="150" Height="35" 
+                      Margin="0,0,10,0" VerticalContentAlignment="Center"/>
+
+            <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" Style="{StaticResource PageButton}"/>
+        </StackPanel>
+
+        <!--<ComboBox Grid.Row="0" Grid.Column="0" 
               ItemsSource="{Binding JobsFilterList}"
               SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
               Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
         <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" 
-    HorizontalAlignment="Left" Width="126" Height="23" Margin="249,15,0,0" VerticalAlignment="Top"/>
+    HorizontalAlignment="Left" Width="126" Height="23" Margin="249,15,0,0" VerticalAlignment="Top"/>-->
 
         <!--Header for the edit column-->
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="Details" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-
-        <!--Data grid for the jobs to be displayed-->
-        <DataGrid AutoGenerateColumns="False"
-              ItemsSource="{Binding AllJobs}" 
-              SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
-              IsReadOnly="True"
-              Grid.Row="1" Grid.Column="0" x:Name="jobsList">
-
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
-                <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="*"/>
-                <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
-            </DataGrid.Columns>
-
-        </DataGrid>
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="Details" Foreground ="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
 
 
-        <Grid Grid.Row="1" Grid.Column="1" Width="350">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
-            </Grid.RowDefinitions>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            
+            <Border Grid.Row="1" Grid.Column="0" Margin="0,0,20,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
+            
 
-            <!-- Edit section for the selected job -->
-            <StackPanel Grid.Row="0">
+            <!--Data grid for the jobs to be displayed-->
+                <DataGrid  x:Name="jobsList" AutoGenerateColumns="False" ItemsSource="{Binding AllJobs}" 
+                      SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}" 
+                      Style="{StaticResource MainDataGridStyle}" IsReadOnly="True">
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Job ID:"/>
-                    <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50"/>
-                </StackPanel>
+                    <DataGrid.Columns>
+                    <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
+                    <!--<DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="*"/>-->
+                    <DataGridTemplateColumn Header="Client" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0" TextWrapping="Wrap" Background="Transparent"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
+                </DataGrid.Columns>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Client Name:"/>
-                    <Label Content="{Binding SelectedJob.ClientName}"/>
-                </StackPanel>
+            </DataGrid>
+            </Border>
 
+            <Border Grid.Row="1" Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+                </Border.Effect>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Courier Name:"/>
-                    <Label Content="{Binding SelectedCourier.UserName}"/>
-                </StackPanel>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <!-- Edit section for the selected job -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Job ID:" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50" Style="{StaticResource LabelBox}"/>
+                            </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Start Date:"/>
-                    <TextBox x:Name="txtDateCreated" IsEnabled="False" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="End Date:"/>
-                    <TextBox Margin="0,0,0,10" IsEnabled="False" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Total Cost" FontSize="11" Foreground="Black"/>
-                    <TextBlock Text="{Binding CostOfJob, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" FontSize="20" FontWeight="Bold" Foreground="Black"/>
-                </StackPanel>
-
-
-
-                <Label Content="Delivery Address:"/>
-                <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}" IsReadOnly="True" Height="51"/>
-
-                <Label Content="Description:"/>
-                <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedJob.Description}" IsReadOnly="True" Height="49"/>
-
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Status:"/>
-                    <Label Content="{Binding SelectedJob.JobStatus}"/>
-                </StackPanel>
-            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Client Name:" Style="{StaticResource LabelStyle}"/>
+                                <Label Content="{Binding SelectedJob.ClientName}" Style="{StaticResource LabelBox}"/>
+                            </StackPanel>
 
 
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Courier Name:" Style="{StaticResource LabelStyle}"/>
+                                <Label Content="{Binding SelectedCourier.UserName}" Style="{StaticResource LabelBox}"/>
+                            </StackPanel>
+
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Content="Start Date:" Grid.Row="0" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                                <TextBox Grid.Row="1" IsEnabled="False" Margin="5,0,5,5" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+
+                                <Label Content="End Date:" Grid.Row="0" Grid.Column="1" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                                <TextBox Margin="5,0,5,5" Grid.Row="1" Grid.Column="1" IsEnabled="False" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
+                            </Grid>
+                            
+                            <!--<StackPanel Orientation="Horizontal">
+                                <Label Content="Start Date:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtDateCreated" IsEnabled="False" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" Style="{StaticResource InputTextBox}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="End Date:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Margin="0,0,0,10" IsEnabled="False" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" Style="{StaticResource InputTextBox}" />
+                            </StackPanel>-->
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Total Cost" Style="{StaticResource PlaceholderText}"/>
+                                <TextBlock Text="{Binding CostOfJob, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" FontSize="20" FontWeight="Bold" Foreground="Black"/>
+                            </StackPanel>
+
+
+
+                            <Label Content="Delivery Address:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}" Style="{StaticResource InputTextBox}" IsReadOnly="True" Height="51"/>
+
+                            <Label Content="Description:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.Description}" IsReadOnly="True" Height="49"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Status:" Style="{StaticResource LabelStyle}"/>
+                                <Label Content="{Binding SelectedJob.JobStatus}" Style="{StaticResource LabelBox}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+
+                </Grid>
+            </Border>
         </Grid>
+
     </Grid>
 </UserControl>

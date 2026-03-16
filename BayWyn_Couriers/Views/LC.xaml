@@ -7,40 +7,59 @@
              xmlns:viewmodels="clr-namespace:BayWyn_Couriers.ViewModels" 
              d:DataContext="{d:DesignInstance Type=viewmodels:LCVM}"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="1000">
-    <Grid>
+             d:DesignHeight="800" d:DesignWidth="1000">
+    <Grid Style="{StaticResource AdminBackground}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="800"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-
         <!-- Side Menu -->
-        <Grid Grid.Column="0" Background="Aqua">
+        <Grid Grid.Column="0"  Style="{StaticResource GenericBackground}">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="80"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="Beige">
-                <Label Content="BayWyn Couriers" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="20"/>
-            </Grid>
 
-            <!--Side menu buttons-->
-            <Grid Grid.Row="1">
-                <StackPanel Orientation="Vertical">
-                    <Button Content="Pending Assignment" Command="{Binding LCApprovedJobsCommand }" Height="40" Margin="0,5,5,5"/>
-                    <Button Content="Assigned Jobs" Command="{Binding LCAssignedJobsCommand }" Height="40" Margin="0,5,5,5"/>
-                    
-                    <Button Content="Completed Jobs" Command="{Binding LCCompletedJobsCommand }" Height="40" Margin="0,5,5,5"/>
-                   
+            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                <StackPanel>
+                    <TextBlock Text="BayWyn Couriers" FontWeight="Bold" FontSize="18" Foreground="White"/>
+                    <TextBlock Text="Courier Management System" FontSize="10" Foreground="#94A3B8" Margin="0,-2,0,0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Margin="10,20,10,0" >
+                <RadioButton Content="Pending Assignments" Command="{Binding LCApprovedJobsCommand}" IsChecked="True" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="Assigned Jobs" Command="{Binding LCAssignedJobsCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="Completed Jobs" Command="{Binding LCCompletedJobsCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" Background="#1A1F26">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Margin="0,0,0,1" Background="#1A1F26">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Logistics Coordinator Dashboard" VerticalAlignment="Center" Margin="30,0" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,30,0">
+                    <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>
                 </StackPanel>
             </Grid>
-        </Grid>
 
-        <!-- Main Content Area -->
-        <Grid Grid.Column="1" Background="Azure">
+            <Border Grid.Row="1" Style="{StaticResource SubViewBorder}">
+                <ContentControl Content="{Binding CurrentSubView}"/>
+            </Border>
+
+        </Grid>
+        <!--<Grid Grid.Column="1" Background="Azure">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="*"/>
@@ -71,6 +90,6 @@
                 <ContentControl Content="{Binding CurrentSubView}" />
             </Grid>
 
-        </Grid>
+        </Grid>-->
     </Grid>
 </UserControl>

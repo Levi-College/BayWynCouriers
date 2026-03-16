@@ -24,6 +24,9 @@ namespace BayWyn_Couriers.ViewModels
             LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
             AssignJobCommand = new RelayCommand(AssignJob);
             UnAssignJobCommand = new RelayCommand(UnAssignJob);
+
+            // Showing the default page
+            LCApprovedJobs(null);
         }
 
 

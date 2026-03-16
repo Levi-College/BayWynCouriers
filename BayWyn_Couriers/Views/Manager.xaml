@@ -9,28 +9,42 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1000">
 
-    <Grid>
+    <Grid Style="{StaticResource AdminBackground}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="800"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Side Menu -->
-        <Grid Grid.Column="0" Background="Aqua">
+        <Grid Grid.Column="0"  Style="{StaticResource GenericBackground}">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="80"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="Beige">
+            <!--<Grid Grid.Row="0" Background="Beige">
                 <Label Content="BayWyn Couriers" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Arial Black" FontSize="20"/>
-            </Grid>
+            </Grid>-->
 
-            <Grid Grid.Row="1">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel.Resources>
-                        <!-- A style that makes RadioButtons look like Menu Buttons -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                <StackPanel>
+                    <TextBlock Text="BayWyn Couriers" FontWeight="Bold" FontSize="18" Foreground="White"/>
+                    <TextBlock Text="Courier Management System" FontSize="10" Foreground="#94A3B8" Margin="0,-2,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            
+            <!-- Use IsChecked="True" on the first one to select it by default -->
+            <StackPanel Grid.Row="1" Margin="10,20,10,0" >
+                <RadioButton Content="View Jobs" Command="{Binding ManagerJobsCommand}" IsChecked="True" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="View Reports" Command="{Binding ReportsCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="View Contracts" Command="{Binding ManagerContractsCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="View Clients" Command="{Binding ManagerClientsCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="View Couriers" Command="{Binding ManagerCouriersCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+            </StackPanel>
+
+            <!--<StackPanel.Resources>
+                        --><!-- A style that makes RadioButtons look like Menu Buttons --><!--
                         <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
                             <Setter Property="Height" Value="40"/>
                             <Setter Property="Margin" Value="0,5,5,5"/>
@@ -43,7 +57,7 @@
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
-                                            <!-- Highlighting the selected menu item -->
+                                            --><!-- Highlighting the selected menu item --><!--
                                             <Trigger Property="IsChecked" Value="True">
                                                 <Setter Property="Background" Value="#007BFF"/>
                                                 <Setter Property="Foreground" Value="White"/>
@@ -54,49 +68,31 @@
                                 </Setter.Value>
                             </Setter>
                         </Style>
-                    </StackPanel.Resources>
+                    </StackPanel.Resources>-->
 
-                    <!-- Use IsChecked="True" on the first one to select it by default -->
-                    <RadioButton Content="View Jobs" Command="{Binding ManagerJobsCommand}" IsChecked="True"/>
-                    <RadioButton Content="View Reports" Command="{Binding ReportsCommand}"/>
-                    <RadioButton Content="View Contracts" Command="{Binding ManagerContractsCommand}"/>
-                    <RadioButton Content="View Clients" Command="{Binding ManagerClientsCommand}"/>
-                    <RadioButton Content="View Couriers" Command="{Binding ManagerCouriersCommand}"/>
-                </StackPanel>
-            </Grid>
+                  
         </Grid>
 
         <!-- Main Content Area -->
-        <Grid Grid.Column="1" Background="Azure">
+        <Grid Grid.Column="1" Background="#1A1F26">
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="70"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0" Background="#2C3E50">
-
+            <Grid Grid.Row="0" Margin="0,0,0,1" Background="#1A1F26">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="600" />
-                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
-                <Grid Grid.Column="0">
-                    <Label Content="Welcome Manager" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
-                </Grid>
-
-                <Grid Grid.Column="1">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
-                        <Label Content="Manager" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
-                        <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>
-                    </StackPanel>
-                </Grid>
-
-
+                <TextBlock Text="Manager Dashboard" VerticalAlignment="Center" Margin="30,0" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,30,0">
+                    <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>
+                </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="1" Background="White">
-                <ContentControl Content="{Binding CurrentSubView}" />
-            </Grid>
+            
+            <Border Grid.Row="1" Style="{StaticResource SubViewBorder}">
+                <ContentControl Content="{Binding CurrentSubView}"/>
+            </Border>
 
         </Grid>
     </Grid>

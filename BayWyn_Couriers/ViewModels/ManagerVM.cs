@@ -198,7 +198,7 @@ namespace BayWyn_Couriers.ViewModels
                     if (_selectedCourier != null)
                     {
                         if (SelectedJob != null) { SelectedJob.CourierId = value.UserId; }
-                        GetDailyJobsReport(SelectedCourier.UserId.ToString());
+                        if (SelectedCourier != null) { GetDailyJobsReport(SelectedCourier.UserId.ToString()); }
                     }
                 }
             }
@@ -211,7 +211,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 _dateForDayJobReport = value;
                 OnPropertyChanged(nameof(DateForDayJobReport));
-                GetDailyJobsReport(SelectedCourier.UserId.ToString());
+                if (SelectedCourier != null) { GetDailyJobsReport(SelectedCourier.UserId.ToString()); }
             }
         }
         private void SetupSlotMap()

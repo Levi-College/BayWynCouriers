@@ -15,109 +15,161 @@
         </Style>
     </UserControl.Resources>
     
-    <Grid Background="AntiqueWhite" Margin="5">
+    <Grid Margin="5">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="400"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
         <!-- Structure to hold the edit window and the buttons-->
 
         <!--Filter and date picker-->
         <ComboBox Grid.Row="0" Grid.Column="0" 
-                  ItemsSource="{Binding ContractsFilterList}"
+                  ItemsSource="{Binding ContractsFilterList}" Style="{StaticResource ModernComboBoxStyle}"
                   SelectedItem="{Binding SelectedContractStatus, UpdateSourceTrigger=PropertyChanged}"
                   Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <Button Content="Refresh" Command="{Binding RefreshContractsCommand}" 
-HorizontalAlignment="Left" Width="126" Height="23" Margin="249,15,0,0" VerticalAlignment="Top"/>
+        <Button Content="Refresh" Command="{Binding RefreshContractsCommand}" Style="{StaticResource PageButton}" 
+                Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,20,0"/>
 
         <!--Header for the edit column-->
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="Edit/New" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="Details" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Foreground="White"/>
 
-        <!--Data grid for the Contracts to be displayed-->
-        <DataGrid AutoGenerateColumns="False"
+        <Border Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+            </Border.Effect>
+            <!--Data grid for the Contracts to be displayed-->
+            <DataGrid AutoGenerateColumns="False" Style="{StaticResource MainDataGridStyle}"
                   ItemsSource="{Binding AllContracts}" 
                   SelectedItem="{Binding Path=SelectedContract}"
                   IsReadOnly="True"
-                  Grid.Row="1" Grid.Column="0" x:Name="ContractsList">
+                  x:Name="ContractsList">
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Contract ID" Binding="{Binding ContractId}" Width="Auto"/>
-                <DataGridTextColumn Header="Company Name" Binding="{Binding CompanyName}" Width="*"/>
-                <DataGridTextColumn Header="Status" Binding="{Binding ContractStatus}" Width="*"/>
-            </DataGrid.Columns>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Contract ID" Binding="{Binding ContractId}" Width="Auto"/>
+                    <DataGridTemplateColumn Header="Company" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding CompanyName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0" TextWrapping="Wrap" Background="Transparent"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Status" Binding="{Binding ContractStatus}" Width="*"/>
+                </DataGrid.Columns>
 
-        </DataGrid>
+            </DataGrid>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+            </Border.Effect>
+
+            <Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Edit section for the selected contract -->
 
 
-        <Grid Grid.Row="1" Grid.Column="1" Width="350">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
-            </Grid.RowDefinitions>
+                        <!--<Label Grid.Row="1" Grid.Column="0" Content="Company/Client:" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <Label x:Name="txtContractID" Content="{Binding SelectedContract.ContractId, Mode=OneWay}" Width="50"/>-->
 
-            <!-- Edit section for the selected contract -->
-            <StackPanel Grid.Row="0">
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Contract ID:"/>
-                    <Label x:Name="txtContractID" Content="{Binding SelectedContract.ContractId, Mode=OneWay}" Width="50"/>
-                </StackPanel>
+                        <!---->
+                        <Label Grid.Row="1" Grid.Column="0" Content="Company/Client:" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="1" Grid.Column="1"  Margin="0,5" Text="{Binding SelectedClient.Name}" Style="{StaticResource InputTextBox}"/>
 
-                <!---->
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Company/Client:"/>
-                    <TextBox Text="{Binding SelectedClient.Name}" />
-                </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Started Date:"/>
-                    <TextBox IsEnabled="{Binding EnableItemsForNewContract}" Width="100" Text="{Binding SelectedContract.StartDate, StringFormat=d}" />
-                </StackPanel>
+                        <Label Grid.Row="2" Grid.Column="0" Content="Started Date:" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Margin="0,5" Height="30" Width="150" HorizontalAlignment="Left" Style="{StaticResource InputTextBox}"
+                         Text="{Binding SelectedContract.StartDate, StringFormat=d}" />
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="End Date:     "/>
-                    <TextBox IsEnabled="{Binding EnableItemsForNewContract}" Width="100" Text="{Binding SelectedContract.EndDate, StringFormat=d}" />
-                </StackPanel>
+                        <Label Grid.Row="3" Grid.Column="0" Content="End Date:" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Margin="0,5" Height="30" Width="150" Style="{StaticResource InputTextBox}" HorizontalAlignment="Left" Text="{Binding SelectedContract.EndDate, StringFormat=d}" />
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Phone:"/>
-                    <TextBox Margin="0,0,0,10" Width="200" Text="{Binding SelectedContract.PhoneNumber}" Height="30"/>
-                </StackPanel>
+                        <Label Grid.Row="4" Grid.Column="0" Content="Phone:" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Margin="0,5" Height="30" Style="{StaticResource InputTextBox}" Text="{Binding SelectedContract.PhoneNumber}"/>
 
-                <Label Content="Email:"/>
-                <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Email}" Height="31"/>
 
-                <Label Content="Address:"/>
-                <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Address}" Height="31"/>
 
-                <Label Content="Notes:"/>
-                <TextBox Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedContract.Notes}" Height="30"/>
+                        <!--<Label Content="Started Date:"/>
+                            <TextBox Width="100" Text="{Binding SelectedContract.StartDate, StringFormat=d}" />
+             
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Contract Status:"/>
-                    <TextBox Text="{Binding SelectedContract.ContractStatus}"/>
-                    
-                </StackPanel>
+          
+                            <Label Content="End Date:     "/>
+                            <TextBox IsReadOnly="True" Width="100" Text="{Binding SelectedContract.EndDate, StringFormat=d}" />
+                
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Monthly Cost"/>
-                    <Label Content="{Binding SelectedContract.MonthlyCost}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Cost Per Job"/>
-                    <Label Content="{Binding SelectedContract.CostPerJob}"/>
-                </StackPanel>
-            </StackPanel>
+                            <Label Content="Phone:"/>
+                            <TextBox Margin="0,0,0,10" Width="200" Text="{Binding SelectedContract.PhoneNumber}" Height="30"/>-->
 
-        </Grid>
+
+                        <!--<Label Content="Email:"/>
+                        <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Email}" Height="31"/>
+
+                        <Label Content="Address:"/>
+                        <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Address}" Height="31"/>-->
+
+                        <!--<Label Content="Notes:"/>
+                        <TextBox Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedContract.Notes}" Height="30"/>-->
+
+                        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5">
+                            <Label Content="Email:" Foreground="#94A3B8"/>
+                            <TextBox Text="{Binding SelectedContract.Email}" Style="{StaticResource InputTextBox}" Height="30"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Margin="0,5">
+                            <Label Content="Address:" Foreground="#94A3B8"/>
+                            <TextBox Text="{Binding SelectedContract.Address}" Style="{StaticResource InputTextBox}" Height="30"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Margin="0,5">
+                            <Label Content="Notes:" Foreground="#94A3B8"/>
+                            <TextBox TextWrapping="Wrap" Text="{Binding SelectedContract.Notes, Mode=TwoWay}" Style="{StaticResource InputTextBox}" Height="60"/>
+                        </StackPanel>
+
+
+
+                            <Label Grid.Row="8" Grid.Column="0" Content="Contract Status:" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox Grid.Row="8" Grid.Column="1" Margin="0,5" Height="30" Text="{Binding SelectedContract.ContractStatus}" Style="{StaticResource InputTextBox}"/>
+
+
+                        <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,10">
+                            <Label Content="Monthly Cost:" Foreground="#94A3B8"/>
+                            <Label Content="{Binding SelectedContract.MonthlyCost}" Foreground="White" Margin="0,0,20,0"/>
+                            <Label Content="Cost Per Job:" Foreground="#94A3B8"/>
+                            <Label Content="{Binding SelectedContract.CostPerJob}" Foreground="White"/>
+                        </StackPanel>
+
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>
