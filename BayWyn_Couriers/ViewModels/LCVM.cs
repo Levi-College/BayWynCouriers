@@ -24,7 +24,13 @@ namespace BayWyn_Couriers.ViewModels
             LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
             AssignJobCommand = new RelayCommand(AssignJob);
             UnAssignJobCommand = new RelayCommand(UnAssignJob);
+
+            SetupSlotMap();
+            InitializeTimeSlots();
+
             LCApprovedJobs(null);// Showing the default page
+
+           
         }
 
 
@@ -58,9 +64,22 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new ();
         public ObservableCollection<User> CouriersList { get; set; } = new (); // Hold all the courier names and ID (using the user class)
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
-        public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
+        //public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
+
         private readonly List<String> lstBreaksType1 = ["S15", "S16", "S17", "S18"]; // Break slots
         private readonly List<String> lstBreaksType2 = ["S19", "S20", "S21", "S22"]; // Break slots
+
+        private ObservableCollection<TimeSlot> _timeSlots;
+        public ObservableCollection<TimeSlot> TimeSlots
+        {
+            get => _timeSlots;
+            set
+            {
+                _timeSlots = value;
+                // This is the "Magic" that tells the UI to redraw the radio buttons
+                OnPropertyChanged(nameof(TimeSlots));
+            }
+        }
 
         // Setting up classes
         // Class used for setting up the timeslot for the couriers
@@ -167,9 +186,12 @@ namespace BayWyn_Couriers.ViewModels
                 // Also the courier selection is set to false
                 if (_selectedJob == null) { SelectedCourier = null; EnableCourierSelection = false; return; }
 
+                // Refreshing the page (delivery slot and time booking)
+                RefreshBookingPage();
                 //Enabling the courier selection in the edit window
                 EnableCourierSelection = true;
-
+                DatePickerEnabled = false;
+                TimePickerEnabled = false;
                 //Matching the courier using the ID
                 foreach (User courier in CouriersList)
                 {
@@ -179,6 +201,7 @@ namespace BayWyn_Couriers.ViewModels
                         SelectedCourier = courier;
                         break;
                     }
+                    else { SelectedCourier = null; }
                 }
             }
         }
@@ -236,14 +259,17 @@ namespace BayWyn_Couriers.ViewModels
                     _selectedCourier = value;
                     OnPropertyChanged();
 
+
                     // Updating the courierId of the Job based on the selected new courier
                     if (_selectedCourier != null && SelectedJob != null)
                     {
                         SelectedJob.CourierId = value.UserId;
                     }
-
-                    // Resetting the date to today
-                    SelectedDeliveryDate = GetDay(DateTime.Today.AddDays(1));
+                    SelectedDeliveryDate = GetDay(DateTime.Today.AddDays(1)); // Setting the date to tomorrow
+                    if (SelectedCourier != null)
+                    {
+                        RefreshAvailableSlots(SelectedDeliveryDate, SelectedCourier.UserId);
+                    }                    
                     // Enabling the date picker but disabling the time picker
                     DatePickerEnabled = true;
                     TimePickerEnabled = true; // Only enabled when a date is selected
@@ -288,8 +314,8 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             GetCouriers(); // Populate the status filter
             LoadJobsByStatus("Approved"); // Loads all the jobs for the page
-            SetupSlotMap();
-            InitializeTimeSlots();
+            //SetupSlotMap();
+            //InitializeTimeSlots();
         }
 
         private void LCAssignedJobsPage(object? obj)
@@ -299,8 +325,8 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJobAssignment = null;
             GetCouriers(); // Populate the status filter
             GetAllAssignedJobs();
-            SetupSlotMap();
-            InitializeTimeSlots();
+            //SetupSlotMap();
+            //InitializeTimeSlots();
         }
 
         private void LCCompletedJobsPage(object? obj)
@@ -340,8 +366,15 @@ namespace BayWyn_Couriers.ViewModels
             DatePickerEnabled = false;
             TimePickerEnabled = false;
             EnableCourierSelection = false;
-            SetupSlotMap();
-            InitializeTimeSlots(); // Resetting the time slots
+            //SetupSlotMap();
+            //InitializeTimeSlots(); // Resetting the time slots
+        }
+
+        public void RefreshBookingPage()
+        {
+            SelectedCourier = null; // Clear the dropdown selections
+            DatePickerEnabled = false;
+            TimePickerEnabled = false;
         }
 
         // Sets up the dictionary 
@@ -383,8 +416,11 @@ namespace BayWyn_Couriers.ViewModels
 
         public void RefreshAvailableSlots(DateTime selectedDate, int courierId)
         {
+            if (courierId <= 0) return; //Only if a valid courierID is sent, null ignored
             // 1. Reset all slots to enabled first
-            foreach (var slot in TimeSlots) slot.IsEnabled = true;
+            //foreach (var slot in TimeSlots) slot.IsEnabled = true;
+            InitializeTimeSlots();
+        
 
             // Disabling break slots (12-1pm)
             foreach (var slot in TimeSlots)
@@ -405,9 +441,7 @@ namespace BayWyn_Couriers.ViewModels
                         slot.IsEnabled = false;
                         slot.DisplayName = "Break/Disabled";
                     }
-                }
-
-               
+                }               
             }
 
             //Finding out slots that are already booked.Looping throught the slots first then looping through each item in the list

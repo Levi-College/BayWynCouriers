@@ -30,7 +30,7 @@
         <!--Data grid for the jobs to be displayed-->
         <DataGrid AutoGenerateColumns="False"
           ItemsSource="{Binding AllJobs}" 
-          SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}"
+          SelectedItem="{Binding Path=SelectedJob, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
           IsReadOnly="True"
           Grid.Row="1" Grid.Column="0">
 
