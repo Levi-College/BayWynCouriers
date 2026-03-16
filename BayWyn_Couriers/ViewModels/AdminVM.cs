@@ -33,7 +33,7 @@ namespace BayWyn_Couriers.ViewModels
             NewJobCommand = new RelayCommand(NewJob);
             RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
 
-            // Admin contracts page commands
+            //Contract page commands
             AddContractCommand = new RelayCommand(AddNewContract);
             DeleteContractCommand = new RelayCommand(execute: obj => DeleteContract(obj), canExecute: obj => SelectedClient != null);
             RenewContractCommand = new RelayCommand(RenewContract);
@@ -52,6 +52,7 @@ namespace BayWyn_Couriers.ViewModels
             UpdateCourierCommand = new RelayCommand(execute: obj => UpdateCourier(obj), canExecute: obj => SelectedCourier != null);
             RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
 
+            //Report page commands
             DayJobsReportCommand = new RelayCommand(ShowDayReport);
             MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
             ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
@@ -61,50 +62,33 @@ namespace BayWyn_Couriers.ViewModels
             GenerateAllJobsReportCommand = new RelayCommand(GenerateContractsJobReport);
             GenerateValueReportCommand = new RelayCommand(GenerateClientValueReport);
 
-
-
             // Calling commonly used methods
             GetCouriers();
-
-            // Update the database
-            // If contract has expired change the price and status text. Check the date. If the end date is before today then make the change
-            RefreshJobsInDatabase(); // Moves all incomplete jobs (check date and status to filter), to the jobs page, removes assignment and updates status
             // Setting the start page as the jobs page
             JobsPage(null);
         }
 
-        private void RefreshJobsInDatabase()
-        {
-            //throw new NotImplementedException();
-        }
 
-        // Declaring variables (simple ones)
-
-        // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
-        private NavigationVM _navigationVM;
-        // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
-        private object _currentSubView;
+        // Declaring variables
+        private NavigationVM _navigationVM; // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
+        private object _currentSubView; // A private field to hold the reference to the current subview, which can be used to display different content within the admin dashboard based on user interactions (e.g., viewing pending jobs, managing contracts, etc.)
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
         private string _selectedJobStatus = "Pending"; // Setting the private variable
         private User _selectedCourier; // To hold the selected courier for dropdown display
         private Client _selectedClient; // To hold the client details when adding a new job
         private decimal _costOfJob = 10m; // To update the price of the job (when creating a new one)
         private bool _enableItemsForNewJob = false; // This is used to enable and disable items for adding new job (new job window)
-
         private Contract _selectedContract; // Hold contract details
         private string _selectedContractStatus = "All"; //Default status for the contracts list
         private bool _enableItemsForNewContract = false;
-
         private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
         private bool _enableItemsForNewClient = false;
-
+        // Boolean which hide the grids/stackpanel used for report
         private string _dayReportVisibility = "Hidden";
         private string _monthlyReportVisibility = "Hidden";
         private string _allJobsReportVisibility = "Hidden";
         private string _monthlyValueReportVisbility = "Hidden";
-
-        private DateTime _dateForDayJobReport = DateTime.Today;
-
+        private DateTime _dateForDayJobReport = DateTime.Today; // Selected day for the courier jobs report
         private string _selectedMonthForReport;
         private string _selectedYearForReport;
 
@@ -113,14 +97,7 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
         public ObservableCollection<Client> ClientList { get; set; } = new ObservableCollection<Client>(); // Holds all the clients (dropdown)        
         public List<string> JobsFilterList { get; } = new List<string> { "All", "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
-       
-
-        //public List<string> JobsStatusList { get; } = new List<string> { "Pending", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box
-        public List<string> MonthsList { get; set; } = new List<string>
-        {
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        };
+        public List<string> MonthsList { get; set; } = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
         // Used to get the month number using the dropdown value
         private Dictionary<string, int> _monthToNumberMap = new Dictionary<string, int>()
@@ -239,7 +216,6 @@ namespace BayWyn_Couriers.ViewModels
                     if (_selectedCourier != null)
                     {
                         if (SelectedJob != null) { SelectedJob.CourierId = value.UserId; }
-                        //GetDailyJobsReport(SelectedCourier.UserId.ToString());
                     }
                 }
             }
@@ -248,15 +224,10 @@ namespace BayWyn_Couriers.ViewModels
         public DateTime DateForDayJobReport
         {
             get => _dateForDayJobReport;
-            set
-            {
-                _dateForDayJobReport = value;
-                OnPropertyChanged(nameof(DateForDayJobReport));
-                //GetDailyJobsReport(SelectedCourier.UserId.ToString());
-            }
+            set { _dateForDayJobReport = value; OnPropertyChanged(nameof(DateForDayJobReport)); }
         }
 
-        private void SetupSlotMap()
+        public void SetupSlotMap()
         {
             SlotsDictionary = new Dictionary<string, string>();
             DateTime startTime = DateTime.Today.AddHours(8).AddMinutes(30); // 08:30 AM
@@ -322,7 +293,7 @@ namespace BayWyn_Couriers.ViewModels
         public bool EnableItemsForNewClient
         {
             get => _enableItemsForNewClient;
-            set{_enableItemsForNewClient = value;OnPropertyChanged();}
+            set { _enableItemsForNewClient = value; OnPropertyChanged(); }
         }
 
         // To update the boolean in UI when it is updated in code
@@ -589,7 +560,7 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminClients();
             GetClients(); //Updates the clients observable collection
-            RefreshPage() ;
+            RefreshPage();
             SelectedClientStatus = "All";
         }
 
@@ -662,7 +633,7 @@ namespace BayWyn_Couriers.ViewModels
             // Set stackpanel to visible
             MonthlyReportVisibility = "Visible";
         }
-        
+
         private void ShowDayReport(object? obj)
         {
             HideAllReports();
@@ -1764,7 +1735,7 @@ namespace BayWyn_Couriers.ViewModels
                     "AND j.JobStatus = 'Accepted' " +
                     "AND CAST(ja.DeliveryDate AS DATE)= @Date " +
                     "ORDER BY ja.DeliverySlot DESC", mySqlCon);
-    
+
                 cmGetJobs.Parameters.AddWithValue("@CourierID", userID); // Pass the ID here
                 cmGetJobs.Parameters.AddWithValue("@Date", DateForDayJobReport.Date); // Date chosen
 

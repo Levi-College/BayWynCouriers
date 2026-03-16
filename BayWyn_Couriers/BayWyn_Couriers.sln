@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BayWyn_Couriers", "BayWyn_C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "..\UnitTesting\UnitTesting.csproj", "{4289495A-12FA-459B-901C-9148A3BEE16F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestingConsoleApp", "..\UnitTestingConsoleApp\UnitTestingConsoleApp.csproj", "{7EDB63A6-A16E-4BD0-B639-25D6D212F242}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{4289495A-12FA-459B-901C-9148A3BEE16F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4289495A-12FA-459B-901C-9148A3BEE16F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4289495A-12FA-459B-901C-9148A3BEE16F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EDB63A6-A16E-4BD0-B639-25D6D212F242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EDB63A6-A16E-4BD0-B639-25D6D212F242}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EDB63A6-A16E-4BD0-B639-25D6D212F242}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EDB63A6-A16E-4BD0-B639-25D6D212F242}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
