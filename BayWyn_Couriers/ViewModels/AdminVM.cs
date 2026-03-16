@@ -81,6 +81,7 @@ namespace BayWyn_Couriers.ViewModels
         private bool _enableItemsForNewContract = false;
         private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
         private bool _enableItemsForNewClient = false;
+        private string _hideCosts = "Visible";
         // Boolean which hide the grids/stackpanel used for report
         private string _dayReportVisibility = "Hidden";
         private string _monthlyReportVisibility = "Hidden";
@@ -305,6 +306,16 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        public string HideCosts
+        {
+            get => _hideCosts;
+            set
+            {
+                _hideCosts = value;
+                OnPropertyChanged();
+            }
+        }
+
         // Report visibility buttons
         public string DayReportVisibility
         {
@@ -344,6 +355,9 @@ namespace BayWyn_Couriers.ViewModels
                     SelectedClient = null;
                     return;
                 }
+
+                HideCosts = "Visible";
+                EnableItemsForNewContract = false;
 
                 //Matching the courier using the ID
                 //foreach (User courier in CouriersList)
@@ -431,6 +445,11 @@ namespace BayWyn_Couriers.ViewModels
             public List<ClientMonthlyJobReport> ClientJobs { get; set; }
         }
 
+        public class JobReport : Job 
+        {
+            public string ClientName { get;set;  }
+        }
+
         public class ClientMonthlyJobReport
         {
             // Job Data
@@ -480,10 +499,6 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand RenewContractCommand { get; }
         public ICommand NewContractCommand { get; }
 
-        // Admin couriers page commands
-
-        // Admin reports page commands
-
         // Admin clients page
         public ICommand AddClientCommand { get; }
         public ICommand DeleteClientCommand { get; }
@@ -492,7 +507,6 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand RefreshClientsCommand { get; }
 
         // Admin couriers page
-        //public ICommand AddCourierCommand { get; }
         public ICommand DeleteCourierCommand { get; }
         public ICommand UpdateCourierCommand { get; }
         //public ICommand NewCourierCommand { get; }
@@ -503,8 +517,6 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand MonthlyJobsReportCommand { get; }
         public ICommand ContractsJobReportCommand { get; }
         public ICommand ClientsValueReportCommand { get; }
-
-
         public ICommand GenerateMonthlyJobsReportCommand { get; }
         public ICommand GenerateDayJobsReportCommand { get; }
         public ICommand GenerateValueReportCommand { get; }
@@ -545,6 +557,7 @@ namespace BayWyn_Couriers.ViewModels
             //GetContracts(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             LoadContractsByStatus("All"); // Loads all the jobs initially 
+            HideCosts = "Visible";
             EnableItemsForNewContract = false; // Used to enable and disable buttons for the edit window
         }
 
@@ -565,7 +578,6 @@ namespace BayWyn_Couriers.ViewModels
         private void CouriersPage(object? obj)
         {
             CurrentSubView = new AdminCouriers();
-            //GetCouriers();
         }
 
 
@@ -684,7 +696,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Update this
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier'", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier' AND WorkingStatus = 'Active'", mySqlCon);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -1001,7 +1013,7 @@ namespace BayWyn_Couriers.ViewModels
             else
             {
                 // Confirming deletion
-                MessageBoxResult result = MessageBox.Show("Are you sure", "Deletion", MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show("Are you sure? All related information wil be deleted.", "Deletion", MessageBoxButton.YesNo);
 
                 if (result == MessageBoxResult.Yes)
                 {
@@ -1010,23 +1022,28 @@ namespace BayWyn_Couriers.ViewModels
                     SqlConnection mySqlCon = new(myCon);
                     mySqlCon.Open();
 
+                    SqlTransaction transaction = mySqlCon.BeginTransaction();
+
                     try
                     {
+                        //Deleting the job for job assignments
+                        SqlCommand cmdDeleteAssignment = new SqlCommand("DELETE FROM JobAssignments WHERE JobID=@ID", mySqlCon);
+                        cmdDeleteAssignment.Parameters.AddWithValue("@ID", SelectedJob.JobId);
+                        cmdDeleteAssignment.Transaction = transaction;
+                        cmdDeleteAssignment.ExecuteNonQuery();
+
                         // Setting up the sql command
                         SqlCommand cmDeleteJob = new SqlCommand("DELETE FROM Jobs WHERE JobID=@ID", mySqlCon);
                         cmDeleteJob.Parameters.AddWithValue("@ID", SelectedJob.JobId);
-                        cmDeleteJob.ExecuteReader();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                        mySqlCon.Close();
-                    }
+                        cmDeleteJob.Transaction = transaction;
+                        cmDeleteJob.ExecuteNonQuery();
 
-                    finally
-                    {
-                        mySqlCon.Close();
+                        transaction.Commit();
+                        MessageBox.Show("Job and any related details have been removed");
                     }
+                    catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+                    finally { mySqlCon.Close(); }
                     GetAllJobs(); // Refresh and load
                 }
             }
@@ -1124,7 +1141,6 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
                 SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
@@ -1307,7 +1323,7 @@ namespace BayWyn_Couriers.ViewModels
             // Refreshing the texboxes in the edit window
             GetAllContracts();
             MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
-
+            HideCosts = "Hidden";
             // Setting the boolean to show client list to true
             EnableItemsForNewContract = true;
 
@@ -1324,6 +1340,12 @@ namespace BayWyn_Couriers.ViewModels
 
         public void AddNewContract(object? obj)
         {
+            // If client ID in the contracts list (return)
+            foreach (var contract in AllContracts)
+            {
+                if (contract.ClientId == SelectedClient.ClientId) { MessageBox.Show("Client has a contract. Please renew if required"); return; }
+            }
+
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
@@ -1331,9 +1353,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                // Check if the client already has a contract
-                //MessageBox.Show("Client has a contract. Please update the existing contract, Set to active, etc")
-
+                
 
                 // If no contracts
                 // Setting up the sql command
@@ -1354,6 +1374,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 cmdAddContract.ExecuteNonQuery();
                 MessageBox.Show("Contract Added Successfully");
+                HideCosts = "Visible";
                 GetAllContracts(); // Refresh the list
             }
             catch (Exception ex)
@@ -1647,6 +1668,13 @@ namespace BayWyn_Couriers.ViewModels
                 MessageBox.Show("Please select a Courier to be update");
                 return;
             }
+
+            if (SelectedCourier.UserName == "" || SelectedCourier.Name == "" || SelectedCourier.Email == "" || SelectedCourier.Address == ""
+                || SelectedCourier.PhoneNumber == "")
+            {
+                MessageBox.Show("All fields are required"); return;
+            }
+
             else
             {
                 MessageBoxResult result = MessageBox.Show("Confirm Update", "Update", MessageBoxButton.YesNo);
@@ -1699,7 +1727,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("DELETE FROM Users WHERE UserID = @ID", mySqlCon);
+                    SqlCommand cmd = new SqlCommand("UPDATE Users SET WorkingStatus = 'Inactive' WHERE UserID = @ID", mySqlCon);
                     cmd.Parameters.AddWithValue("@ID", SelectedCourier.UserId);
 
                     cmd.ExecuteNonQuery();
@@ -1766,6 +1794,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
                     reader.Close();
                 }
+                else { MessageBox.Show("No data to be viewed. Edit and try again."); }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
@@ -1774,13 +1803,14 @@ namespace BayWyn_Couriers.ViewModels
         public void LoadMonthlyReport()
         {
             // Get all the jobs for the month
-            List<JobAssignment> allJobs = GetJobsForTheMonth();
+            //List<JobAssignment> allJobs = GetJobsForTheMonth();
+            List<JobReport> allJobs = GetJobsForTheMonth();
 
             //Clearing the list
             if (GroupedMonthlyReport.Count > 0) { GroupedMonthlyReport.Clear(); }
 
             // Loop through each job
-            foreach (JobAssignment currentJob in allJobs)
+            foreach (JobReport currentJob in allJobs)
             {
                 // We need to check: Do we already have an Expander/Group for this courier?
                 CourierGroupHeader foundGroup = null;
@@ -1863,7 +1893,7 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
-        private List<JobAssignment> GetJobsForTheMonth()
+        private List<JobReport> GetJobsForTheMonth()
         {
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -1874,17 +1904,28 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // 1. Updated SQL: Removed CourierID filter, added JOIN to Users to get CourierName, 
                 // and changed Date filter to look at Month/Year.
+                //SqlCommand cmGetJobs = new SqlCommand(
+                //    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, " +
+                //    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
+                //    "FROM Jobs j " +
+                //    "INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
+                //    "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
+                //    "INNER JOIN Users u ON ja.CourierID = u.UserID " + // JOIN to get Courier Name
+                //    "WHERE j.JobStatus = 'Accepted' " +
+                //    "AND MONTH(ja.DeliveryDate) = @Month " +
+                //    "AND YEAR(ja.DeliveryDate) = @Year " +
+                //    "ORDER BY u.UserName, ja.DeliverySlot DESC", mySqlCon);
+
                 SqlCommand cmGetJobs = new SqlCommand(
-                    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, " +
-                    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
+                    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, j.EndDate, " +
+                    "c.ClientID, c.Name AS ClientName " +
                     "FROM Jobs j " +
-                    "INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
-                    "INNER JOIN Users u ON ja.CourierID = u.UserID " + // JOIN to get Courier Name
-                    "WHERE j.JobStatus = 'Accepted' " +
-                    "AND MONTH(ja.DeliveryDate) = @Month " +
-                    "AND YEAR(ja.DeliveryDate) = @Year " +
-                    "ORDER BY u.UserName, ja.DeliverySlot DESC", mySqlCon);
+                    "INNER JOIN Users u ON j.CourierID = u.UserID " + // JOIN to get Courier Name
+                    "WHERE j.JobStatus = 'Completed' " +
+                    "AND MONTH(j.EndDate) = @Month " +
+                    "AND YEAR(j.EndDate) = @Year " +
+                    "ORDER BY u.UserName, j.EndDate DESC", mySqlCon);
 
                 // Filter by the current month and year
                 cmGetJobs.Parameters.AddWithValue("@Month", DateTime.Now.Month);
@@ -1893,27 +1934,38 @@ namespace BayWyn_Couriers.ViewModels
                 SqlDataReader reader = cmGetJobs.ExecuteReader();
 
                 // Temporary list to hold every job found
-                List<JobAssignment> tempAllJobs = new List<JobAssignment>();
+                //List<JobAssignment> tempAllJobs = new List<JobAssignment>();
+                List<JobReport> tempAllJobs = new List<JobReport>();
 
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        tempAllJobs.Add(new JobAssignment
+                        tempAllJobs.Add(new JobReport
                         {
+                            //JobId = Convert.ToInt32(reader["JobId"]),
+                            //CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
+                            //CourierName = reader["CourierName"].ToString(),
+                            //ClientId = Convert.ToInt32(reader["ClientId"]),
+                            //ClientName = reader["ClientName"].ToString(),
+                            //DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                            //Description = reader["Description"].ToString(),
+                            //JobStatus = reader["JobStatus"].ToString(),
+                            //DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
+                            //DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
                             JobId = Convert.ToInt32(reader["JobId"]),
                             CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
-                            CourierName = reader["CourierName"].ToString(), // Make sure your class has this property!
+                            CourierName = reader["CourierName"].ToString(),
                             ClientId = Convert.ToInt32(reader["ClientId"]),
                             ClientName = reader["ClientName"].ToString(),
                             DeliveryAddress = reader["DeliveryAddress"].ToString(),
                             Description = reader["Description"].ToString(),
                             JobStatus = reader["JobStatus"].ToString(),
-                            DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
-                            DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
+                            EndDate = Convert.ToDateTime(reader["EndDate"]),
                         });
                     }
                 }
+                else { MessageBox.Show("No data to be viewed. Edit and try again."); }
                 reader.Close();
                 return tempAllJobs;
             }
@@ -1975,6 +2027,7 @@ namespace BayWyn_Couriers.ViewModels
                         });
                     }
                 }
+                else { MessageBox.Show("No data to be viewed. Edit and try again."); }
                 reader.Close();
                 return tempAllJobs;
             }
@@ -2028,6 +2081,7 @@ namespace BayWyn_Couriers.ViewModels
                         });
                     }
                 }
+                else { MessageBox.Show("No data to be viewed. Edit and try again."); }
                 reader.Close();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }

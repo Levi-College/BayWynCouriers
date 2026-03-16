@@ -89,7 +89,7 @@
                     </Grid.ColumnDefinitions>
                     <Grid>
                         <StackPanel Grid.Row="0"  Grid.Column="0">
-                            <ComboBox ItemsSource="{Binding CouriersList}" 
+                            <ComboBox ItemsSource="{Binding CouriersList}" Style="{StaticResource ModernComboBoxStyle2}"
                                       SelectedItem="{Binding SelectedCourier, UpdateSourceTrigger=PropertyChanged}" 
                                       DisplayMemberPath="UserName" SelectedValuePath="UserId"/>
                         </StackPanel>
@@ -125,8 +125,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}"/>
-                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
    
                 </Grid>
 
@@ -152,8 +152,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Month and Year" TextWrapping="Wrap" Grid.Column="0"/>
 
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonthForReport}"/>
-                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding MonthsList}"  SelectedItem="{Binding SelectedMonthForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
+                    <ComboBox Grid.Column="2" ItemsSource="{Binding YearsList}" SelectedItem="{Binding SelectedYearForReport}" Style="{StaticResource ModernComboBoxStyle2}"/>
 
                 </Grid>
 
@@ -228,6 +228,7 @@
                                                         <StackPanel Grid.Column="1" Margin="15,5">
                                                             <TextBlock Text="{Binding ClientName}" FontSize="14" FontWeight="Bold"/>
                                                             <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" FontSize="12"/>
+                                                            <TextBlock Text="{Binding EndDate, StringFormat=d}"/>
                                                         </StackPanel>
                                                     </Grid>
                                                 </Border>

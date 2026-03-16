@@ -511,7 +511,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT UserID, Username FROM Users WHERE UserRole = 'Courier'", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT UserID, Username FROM Users WHERE UserRole = 'Courier' AND WorkingStatus = 'Active'", mySqlCon);
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.HasRows)

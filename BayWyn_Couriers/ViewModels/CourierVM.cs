@@ -526,6 +526,7 @@ namespace BayWyn_Couriers.ViewModels
                 MessageBox.Show("Delivery completed");
             }
             catch (Exception ex){ transaction.Rollback(); MessageBox.Show(ex.Message);}
+            finally { mySqlCon.Close(); }
         }
 
     }
