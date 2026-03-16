@@ -483,7 +483,7 @@ namespace BayWyn_Couriers.ViewModels
             _stopwatch.Stop(); // Stop and reset
             _stopwatch.Reset();
 
-            ShiftTimerDisplay = "00:00:00"; // Clearing the elapsed time
+            ShiftTimerDisplay = "00:00:00"; // Cj
             MessageBox.Show("Thank you for the shift. Have a great time off");
             // Disabling and enabling the buttons
             EnableCompleteJobButton = false;
@@ -503,25 +503,29 @@ namespace BayWyn_Couriers.ViewModels
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
             mySqlCon.Open();
-
+            SqlTransaction transaction = mySqlCon.BeginTransaction();
             try
             {
                 SqlCommand cmdCompleteJob = new SqlCommand("UPDATE Jobs SET JobStatus = 'Completed', EndDate = @EndDate WHERE JobID = @JobID", mySqlCon);
                 cmdCompleteJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
                 cmdCompleteJob.Parameters.AddWithValue("@EndDate",DateTime.Now);
+                cmdCompleteJob.Transaction = transaction;
                 cmdCompleteJob.ExecuteNonQuery();
 
                 SqlCommand cmdRemoveAssignment = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID",mySqlCon);
                 cmdRemoveAssignment.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                cmdRemoveAssignment.Transaction = transaction;
                 cmdRemoveAssignment.ExecuteNonQuery();
 
+                // Safely completing both the queries
+                transaction.Commit();
                 // Removing the jobs from the lists 
                 AcceptedJobs.Remove(SelectedJob);
                 DailyJobs.Remove(SelectedJob);
 
                 MessageBox.Show("Delivery completed");
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);}
+            catch (Exception ex){ transaction.Rollback(); MessageBox.Show(ex.Message);}
         }
 
     }

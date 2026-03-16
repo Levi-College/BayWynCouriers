@@ -1,4 +1,5 @@
-﻿using BayWyn_Couriers.Utilities;
+﻿using BayWyn_Couriers.Models;
+using BayWyn_Couriers.Utilities;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Windows;
@@ -50,8 +51,7 @@ namespace BayWyn_Couriers.ViewModels
             // Relay command is a common implementation of the ICommand interface that allows for parameterized commands in WPF applications, enabling the binding of UI actions to methods in the view model
             LoginCommand = new RelayCommand(ExecuteLogin);
 
-            // Refresh database. Updates the jobs, if the job is failed or delivery date is in the past and has not completed
-            // then remove them from the job assignments if not completed, update the status to approved (not assigned)
+            // Refresh database
             RefreshJobAssignments();
         }
 
@@ -125,11 +125,26 @@ namespace BayWyn_Couriers.ViewModels
             SqlConnection mySqlCon = new SqlConnection(myCon);
             mySqlCon.Open();
 
+            // Using sql transaction so that the jobs are only deleted if both the sql commands work
+            SqlTransaction transaction = mySqlCon.BeginTransaction();
             // Going through the jobs assignment and checking the date is in the past
+            // Removes the courier and updates the status if the job is failed or delivery date is in the past and has not completed
+            // Then removes them from the job assignments (if date in the past) 
             try
             {
+                SqlCommand cmdResetJobs = new SqlCommand("Update J SET J.CourierID = NULL, J.JobStatus = 'Approved' FROM " +
+                    "Jobs J INNER JOIN JobAssignments JA ON J.JobID = JA.JobID " +
+                    "WHERE JA.DeliveryDate < CAST(GETDATE() AS DATE) ", mySqlCon);
+                cmdResetJobs.Transaction = transaction;
+                cmdResetJobs.ExecuteNonQuery();
 
+                SqlCommand cmdDeleteJobsFromJA = new SqlCommand("DELETE FROM JobAssignments WHERE DeliveryDate<CAST(GETDATE() AS DATE)", mySqlCon);
+                cmdDeleteJobsFromJA.Transaction = transaction;
+                cmdDeleteJobsFromJA.ExecuteNonQuery();
+
+                transaction.Commit();
             }
+            catch (Exception ex) { transaction.Rollback(); MessageBox.Show(ex.Message); }
         }
 
     }
