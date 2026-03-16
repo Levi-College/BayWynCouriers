@@ -38,140 +38,108 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="15" Background="AntiqueWhite">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*" />
-            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,15,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Right">
+            <Button Content="Refresh List" Style="{StaticResource PageButton}" Command="{Binding RefreshCouriersCommand}" Width="120"/>
+        </StackPanel>
+        
+        
+        <TextBlock Grid.Row="0" Grid.Column="1" Foreground="White" Text="Courier Details" FontSize="26" FontWeight="Bold" 
+       HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-            <Grid Grid.Row="0" Margin="0,0,0,15">
-                <Button Content="Refresh List" DockPanel.Dock="Right" Style="{StaticResource CyanButtonStyle}" 
-                    Command="{Binding RefreshCouriersCommand}" Width="120" Margin="316,9,11,-5" RenderTransformOrigin="0.175,0.751"/>
-                <!--
-                <Button Content="New Courier" Command="{Binding NewCourierCommand}" Margin="328,12,0,0" 
-    HorizontalAlignment="Left" Width="120" VerticalAlignment="Top"/>
-                -->
-
-                <!--
-
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Search Couriers:" VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Bold"/>
-                    <TextBox Width="300" 
-                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                         VerticalAlignment="Center"/>
-                
-                </StackPanel>
-                -->
-            </Grid>
-
-            <DataGrid Grid.Row="1" 
-                  ItemsSource="{Binding CouriersList}" 
-                  SelectedItem="{Binding SelectedCourier}"
-                  AutoGenerateColumns="False" 
-                  IsReadOnly="True" 
-                  Background="White"
-                  AlternatingRowBackground="#F9F9F9"
-                  RowHeaderWidth="0"
-                  SelectionMode="Single">
+        <!--Data grid for the Contracts to be displayed-->
+        <Border Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+            </Border.Effect>
+            <DataGrid ItemsSource="{Binding CouriersList}" Style="{StaticResource MainDataGridStyle}"
+                      SelectedItem="{Binding SelectedCourier}" AutoGenerateColumns="False" IsReadOnly="True">
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding UserId}" Width="50"/>
                     <DataGridTextColumn Header="Courier Name" Binding="{Binding Name}" Width="2*"/>
                     <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
-                    <!--
-                <DataGridTextColumn Header="Active Contract" Binding="{Binding IsContractActive}" Width="*"/>
-                -->
-
-                    <!--
-                <DataGridTemplateColumn Header="Address/Notes" Width="3*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Address}" TextWrapping="Wrap" Padding="5"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                -->
                 </DataGrid.Columns>
             </DataGrid>
-        </Grid>
+        </Border>
 
-        <Border Grid.Column="1" Background="{Binding ElementName=rootView, Path=Background}" 
-            BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" Padding="20">
+        <Border Grid.Row="1" Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
+            </Border.Effect>
+
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Courier Details" FontSize="26" FontWeight="Bold" 
-                       HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,-10,0" Padding="0,0,10,0">
-                    <StackPanel>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,0,10,0">
+        
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             <Label Content="Courier ID:" Style="{StaticResource FormLabelStyle}" Grid.Column="0"/>
                             <TextBox Text="{Binding SelectedCourier.UserId, Mode=TwoWay}" IsReadOnly="True" 
                                  Background="#EEE" FontWeight="Bold" Grid.Column="1" Width="80"/>
-                        </Grid>
-                        
-                        <Label Content="User Name:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedCourier.UserName, Mode=TwoWay}" />
-                        
-                        <Label Content="Full Name:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedCourier.Name, Mode=TwoWay}" />
 
-                        <Label Content="Contact Email Address:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedCourier.Email, Mode=TwoWay}"/>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Label Content="User Name:"  Grid.Row="1" Grid.Column="0" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox  Grid.Row="1" Grid.Column="1" Text="{Binding SelectedCourier.UserName, Mode=TwoWay}" />
+
+                        <Label Content="Full Name:"  Grid.Row="2" Grid.Column="0" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox  Grid.Row="2" Grid.Column="1" Text="{Binding SelectedCourier.Name, Mode=TwoWay}" />
+
+                        <Label  Grid.Row="3" Grid.Column="0" Content="Contact Email Address:" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Text="{Binding SelectedCourier.Email, Mode=TwoWay}"  Grid.Row="1" Grid.Column="1"/>
+
+                        <StackPanel Orientation="Horizontal"  Grid.Row="4" Grid.Column="0">
                             <Label Content="Phone:" Style="{StaticResource FormLabelStyle}"/>
                             <TextBox Text="{Binding SelectedCourier.PhoneNumber, Mode=TwoWay}" Width="200" InputScope="TelephoneNumber"/>
                         </StackPanel>
-                        
 
-                        <Label Content="Address:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding SelectedCourier.Address, Mode=TwoWay}" 
+
+                        <Label Content="Address:" Style="{StaticResource FormLabelStyle}"  Grid.Row="5" Grid.Column="0"/>
+                        <TextBox Text="{Binding SelectedCourier.Address, Mode=TwoWay}"  Grid.Row="5" Grid.Column="0"
                              Height="47" VerticalContentAlignment="Top" 
                              TextWrapping="Wrap" AcceptsReturn="True"/>
-
-                        <!--
-                        <Label Content="Internal Account Notes / Special Instructions:" Style="{StaticResource FormLabelStyle}"/>
-                        <TextBox Text="{Binding CourierForm.Notes, Mode=TwoWay}" 
-                             Height="100" VerticalContentAlignment="Top" 
-                             TextWrapping="Wrap" AcceptsReturn="True"/>
-                        -->
-                    </StackPanel>
+                    </Grid>
                 </ScrollViewer>
 
-                <UniformGrid Grid.Row="2" Rows="1" Columns="2" Margin="0,20,0,0">
-                    <!--
-                    <Button Content="Clear Form" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding NewCourierCommand}" />
-                    -->
-
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Content="Delete" Style="{StaticResource CyanButtonStyle}" 
                         Command="{Binding DeleteCourierCommand}" 
                         Foreground="Red" FontWeight="Bold"/>
 
                     <Button Content="Update" Style="{StaticResource CyanButtonStyle}" 
                         Command="{Binding UpdateCourierCommand}" />
+                </StackPanel>
 
-                    <!--
-                    <Button Content="Add New" Style="{StaticResource CyanButtonStyle}" 
-                        Command="{Binding AddCourierCommand}" IsEnabled="{Binding EnableItemsForNewCourier}" FontWeight="Bold"/>
-                    -->           
-                </UniformGrid>
             </Grid>
         </Border>
     </Grid>
