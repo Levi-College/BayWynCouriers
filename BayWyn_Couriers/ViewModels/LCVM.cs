@@ -24,10 +24,7 @@ namespace BayWyn_Couriers.ViewModels
             LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
             AssignJobCommand = new RelayCommand(AssignJob);
             UnAssignJobCommand = new RelayCommand(UnAssignJob);
-            //LCApprovedJobs(null);// Showing the default page
-
-            SetupSlotMap();
-            InitializeTimeSlots();
+            LCApprovedJobs(null);// Showing the default page
         }
 
 
@@ -413,20 +410,20 @@ namespace BayWyn_Couriers.ViewModels
                
             }
 
-            // Finding out slots that are already booked. Looping throught the slots first then looping through each item in the list
-            //var takenSlots = LoadTakenSlotsFromDatabase(selectedDate, courierId);
+            //Finding out slots that are already booked.Looping throught the slots first then looping through each item in the list
+            var takenSlots = LoadTakenSlotsFromDatabase(selectedDate, courierId);
 
-            //foreach (var slot in TimeSlots)
-            //{
-            //    // If slot name in the list set the isEnabled to false and change the display name
-            //    if (takenSlots.Contains(slot.SlotName))
+            foreach (var slot in TimeSlots)
+            {
+                // If slot name in the list set the isEnabled to false and change the display name
+                if (takenSlots.Contains(slot.SlotName))
 
-            //    {
-            //        slot.IsEnabled = false;
-            //        slot.DisplayName = "Booked";
-            //    }
+                {
+                    slot.IsEnabled = false;
+                    slot.DisplayName = "Booked";
+                }
 
-            //}
+            }
         }
 
 

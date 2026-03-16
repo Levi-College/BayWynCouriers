@@ -62,8 +62,8 @@ namespace BayWyn_Couriers.ViewModels
             GenerateAllJobsReportCommand = new RelayCommand(GenerateContractsJobReport);
             GenerateValueReportCommand = new RelayCommand(GenerateClientValueReport);
             SetupSlotMap();// Setting up the slot map 
-            //GetCouriers();  Calling commonly used methods
-            //JobsPage(null); Setting the start page as the jobs page
+            GetCouriers();  //Calling commonly used methods
+            JobsPage(null); //Setting the start page as the jobs page
         }
 
 
