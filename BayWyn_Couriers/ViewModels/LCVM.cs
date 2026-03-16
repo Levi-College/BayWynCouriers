@@ -24,9 +24,10 @@ namespace BayWyn_Couriers.ViewModels
             LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
             AssignJobCommand = new RelayCommand(AssignJob);
             UnAssignJobCommand = new RelayCommand(UnAssignJob);
+            //LCApprovedJobs(null);// Showing the default page
 
-            // Showing the default page
-            LCApprovedJobs(null);
+            SetupSlotMap();
+            InitializeTimeSlots();
         }
 
 
@@ -37,8 +38,6 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand LCCompletedJobsCommand { get; }
         public ICommand AssignJobCommand { get; }
         public ICommand UnAssignJobCommand { get; }
-
-
 
 
 
@@ -56,14 +55,15 @@ namespace BayWyn_Couriers.ViewModels
         private bool _timePickerEnabled = false; // To disable timer pickers unless a date is picked
         private bool _enableCourierSelection = false; // Disables the courier dropdown by default
 
-        public List<String> LCJobsFilterList { get; } = new List<String> { "All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" }; // A list of string for the items in the job status combo box (item source)
-        public List<string> JobsStatusList { get; } = new List<string> { "Approved", "Assigned", "Accepted", "Cancelled", "Completed" };  // A list to show the conditions in the edit box        
-        public ObservableCollection<Job> AllJobs { get; set; } = new ObservableCollection<Job>(); // To hold the jobs (used for filtered list as well)
-        public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new ObservableCollection<JobAssignment>();
-        public ObservableCollection<User> CouriersList { get; set; } = new ObservableCollection<User>(); // Hold all the courier names and ID (using the user class)
+        public List<String> LCJobsFilterList { get; } = ["All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" ]; // A list of string for the items in the job status combo box (item source)
+        public List<string> JobsStatusList { get; } = ["Approved", "Assigned", "Accepted", "Cancelled", "Completed"];  // A list to show the conditions in the edit box        
+        public ObservableCollection<Job> AllJobs { get; set; } = new (); // To hold the jobs (used for filtered list as well)
+        public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new ();
+        public ObservableCollection<User> CouriersList { get; set; } = new (); // Hold all the courier names and ID (using the user class)
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
         public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
-        private List<String> lstBreaks = new List<String>() { "S15", "S16", "S17", "S18", "S19", "S20", "S21", "S22" }; // Break slots
+        private readonly List<String> lstBreaksType1 = ["S15", "S16", "S17", "S18"]; // Break slots
+        private readonly List<String> lstBreaksType2 = ["S19", "S20", "S21", "S22"]; // Break slots
 
         // Setting up classes
         // Class used for setting up the timeslot for the couriers
@@ -183,22 +183,11 @@ namespace BayWyn_Couriers.ViewModels
                         break;
                     }
                 }
-
-
-
-                // Setting the client in the edit window (using the selected job client Id)
-                //foreach (Client client in ClientList)
-                //{
-                //    if (client.ClientId == _selectedJob.ClientId)
-                //    {
-                //        SelectedClient = client;
-                //        break;
-                //    }
-                //}
             }
         }
 
-        public JobAssignment SelectedJobAssignment {
+        public JobAssignment SelectedJobAssignment
+        {
             get => _selectedJobAssignment;
             set
             {
@@ -234,9 +223,7 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     _selectedJobStatus = value;
                     OnPropertyChanged();
-
-                    // Filtering the jobs list based on the selected job status
-                    LoadJobsByStatus(value);
+                    LoadJobsByStatus(value);// Filtering the jobs list based on the selected job status
                 }
             }
         }
@@ -314,7 +301,6 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             SelectedJobAssignment = null;
             GetCouriers(); // Populate the status filter
-            //LoadJobsByStatus("Assigned"); // Loads all the jobs for the page
             GetAllAssignedJobs();
             SetupSlotMap();
             InitializeTimeSlots();
@@ -327,16 +313,6 @@ namespace BayWyn_Couriers.ViewModels
             GetCouriers(); // Populate the status filter
             LoadJobsByStatus("Completed"); // Loads all the jobs initially 
         }
-
-        //private void LCJobsPage(object? obj)
-        //{
-        //    CurrentSubView = new LCJobs();
-        //    RefreshPage(); // Refreshing the fields and the page
-        //    GetCouriers(); // Populate the status filter
-        //    LoadJobsByStatus("All"); // Loads all the jobs initially 
-        //    SetupSlotMap();
-        //    InitializeTimeSlots();
-        //}
 
         // Logout
         public void ExecuteLogout(object? obj)
@@ -408,8 +384,6 @@ namespace BayWyn_Couriers.ViewModels
             TimeSlots = slots;
         }
 
-        //private void GetDeliverySlot (string slotCode){ Deliv }
-
         public void RefreshAvailableSlots(DateTime selectedDate, int courierId)
         {
             // 1. Reset all slots to enabled first
@@ -418,27 +392,41 @@ namespace BayWyn_Couriers.ViewModels
             // Disabling break slots (12-1pm)
             foreach (var slot in TimeSlots)
             {
-                if (lstBreaks.Contains(slot.SlotName))
+                // Alternating the breaks to the coueirs. Even number couriers get type 1 breaks while odd numbers get type 2
+                if (courierId%2 == 0)
                 {
-                    slot.IsEnabled = false;
-                    slot.DisplayName = "Break/Disabled";
+                    if (lstBreaksType1.Contains(slot.SlotName))
+                    {
+                        slot.IsEnabled = false;
+                        slot.DisplayName = "Break/Disabled";
+                    }
                 }
+                else
+                {
+                    if (lstBreaksType2.Contains(slot.SlotName))
+                    {
+                        slot.IsEnabled = false;
+                        slot.DisplayName = "Break/Disabled";
+                    }
+                }
+
+               
             }
 
             // Finding out slots that are already booked. Looping throught the slots first then looping through each item in the list
-            var takenSlots = LoadTakenSlotsFromDatabase(selectedDate, courierId);
+            //var takenSlots = LoadTakenSlotsFromDatabase(selectedDate, courierId);
 
-            foreach (var slot in TimeSlots)
-            {
-                // If slot name in the list set the isEnabled to false and change the display name
-                if (takenSlots.Contains(slot.SlotName))
+            //foreach (var slot in TimeSlots)
+            //{
+            //    // If slot name in the list set the isEnabled to false and change the display name
+            //    if (takenSlots.Contains(slot.SlotName))
 
-                {
-                    slot.IsEnabled = false;
-                    slot.DisplayName = "Booked";
-                }
+            //    {
+            //        slot.IsEnabled = false;
+            //        slot.DisplayName = "Booked";
+            //    }
 
-            }
+            //}
         }
 
 
@@ -597,7 +585,7 @@ namespace BayWyn_Couriers.ViewModels
                              {
                                  JobId = Convert.ToInt32(reader["JobId"]),
                                  ClientId = Convert.ToInt32(reader["ClientId"]),
-                                 
+
                                  // Handling potential NULLs for CourierID
                                  CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
 
@@ -618,8 +606,8 @@ namespace BayWyn_Couriers.ViewModels
                     reader.Close();
                 }
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);mySqlCon.Close();}
-            finally{mySqlCon.Close();}
+            catch (Exception ex) { MessageBox.Show(ex.Message); mySqlCon.Close(); }
+            finally { mySqlCon.Close(); }
         }
 
         // This method is used to update or filter the data grid source based on the selected job status

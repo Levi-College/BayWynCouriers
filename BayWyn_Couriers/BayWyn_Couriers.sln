@@ -5,7 +5,7 @@ VisualStudioVersion = 18.4.11605.240 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BayWyn_Couriers", "BayWyn_Couriers.csproj", "{61A24981-7CFF-46C1-82FC-C830932D97E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "..\UnitTesting\UnitTesting.csproj", "{4289495A-12FA-459B-901C-9148A3BEE16F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BayWyn_Couriers_UnitTest", "..\BayWyn_Couriers_UnitTest\BayWyn_Couriers_UnitTest.csproj", "{2E24EB42-EB28-401F-AC03-147D9BFF7F26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{61A24981-7CFF-46C1-82FC-C830932D97E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61A24981-7CFF-46C1-82FC-C830932D97E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61A24981-7CFF-46C1-82FC-C830932D97E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4289495A-12FA-459B-901C-9148A3BEE16F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4289495A-12FA-459B-901C-9148A3BEE16F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4289495A-12FA-459B-901C-9148A3BEE16F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4289495A-12FA-459B-901C-9148A3BEE16F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E24EB42-EB28-401F-AC03-147D9BFF7F26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E24EB42-EB28-401F-AC03-147D9BFF7F26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E24EB42-EB28-401F-AC03-147D9BFF7F26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E24EB42-EB28-401F-AC03-147D9BFF7F26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

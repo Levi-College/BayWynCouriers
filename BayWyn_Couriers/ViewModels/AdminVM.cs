@@ -61,11 +61,9 @@ namespace BayWyn_Couriers.ViewModels
             GenerateMonthlyJobsReportCommand = new RelayCommand(GenerateMonthlyJobsReport);
             GenerateAllJobsReportCommand = new RelayCommand(GenerateContractsJobReport);
             GenerateValueReportCommand = new RelayCommand(GenerateClientValueReport);
-
-            // Calling commonly used methods
-            GetCouriers();
-            // Setting the start page as the jobs page
-            JobsPage(null);
+            SetupSlotMap();// Setting up the slot map 
+            //GetCouriers();  Calling commonly used methods
+            //JobsPage(null); Setting the start page as the jobs page
         }
 
 
@@ -639,7 +637,6 @@ namespace BayWyn_Couriers.ViewModels
             HideAllReports();
             // Set stackpanel to visible
             DayReportVisibility = "Visible";
-            //GetCouriers();
         }
 
         private void HideAllReports()
