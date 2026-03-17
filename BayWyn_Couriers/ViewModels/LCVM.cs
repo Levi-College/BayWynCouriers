@@ -793,11 +793,11 @@ namespace BayWyn_Couriers.ViewModels
                 try
                 {
                     SqlCommand cmdDelete = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID", mySqlCon);
-                    cmdDelete.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                    cmdDelete.Parameters.AddWithValue("@JobID", SelectedJobAssignment.JobId);
                     cmdDelete.ExecuteNonQuery();
 
                     SqlCommand cmdUpdate = new SqlCommand("UPDATE Jobs SET JobStatus = 'Approved', CourierID = NULL WHERE JobID = @JobID", mySqlCon);
-                    cmdUpdate.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
+                    cmdUpdate.Parameters.AddWithValue("@JobID", SelectedJobAssignment.JobId);
                     cmdUpdate.ExecuteNonQuery();
 
                     MessageBox.Show("Job successfully unassigned. It is now back in the pending assignment list.");
