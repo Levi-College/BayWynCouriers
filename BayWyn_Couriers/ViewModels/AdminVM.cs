@@ -76,6 +76,7 @@ namespace BayWyn_Couriers.ViewModels
         private Client _selectedClient; // To hold the client details when adding a new job
         private decimal _costOfJob = 10m; // To update the price of the job (when creating a new one)
         private bool _enableItemsForNewJob = false; // This is used to enable and disable items for adding new job (new job window)
+        private bool _disableItemsForNewJob = false;
         private Contract _selectedContract; // Hold contract details
         private string _selectedContractStatus = "All"; //Default status for the contracts list
         private bool _enableItemsForNewContract = false;
@@ -146,6 +147,9 @@ namespace BayWyn_Couriers.ViewModels
                 }
 
                 CostOfJob = _selectedJob.Cost;
+
+                if (SelectedJob.JobId != 0) { EnableItemsForNewJob = false; DisableItemsForNewJob = true; }
+                else { EnableItemsForNewJob = true; DisableItemsForNewJob = false; }
 
                 // Only if the job has a valid courier ID
                 if (_selectedJob.CourierId != 0)
@@ -266,7 +270,7 @@ namespace BayWyn_Couriers.ViewModels
                     if (_selectedClient != null)
                     {
                         if (SelectedClient.ClientId != 0) { DisableItemsForNewClient = true; EnableItemsForNewClient = false; }
-                        else { DisableItemsForNewClient = false; }
+                        else { DisableItemsForNewClient = false; EnableItemsForNewClient = true; }
 
                         // Only if a job is selected as this property is also used in the clients page
                         if (_selectedJob != null)
@@ -316,6 +320,16 @@ namespace BayWyn_Couriers.ViewModels
             set
             {
                 _enableItemsForNewJob = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DisableItemsForNewJob
+        {
+            get => _disableItemsForNewJob;
+            set
+            {
+                _disableItemsForNewJob = value;
                 OnPropertyChanged();
             }
         }
@@ -971,6 +985,11 @@ namespace BayWyn_Couriers.ViewModels
                 MessageBox.Show("Please select a job to be update");
                 return;
             }
+            if (SelectedJob == null || SelectedJob.ClientName == "" || SelectedJob.DeliveryAddress == "")
+            {
+                MessageBox.Show("Please enter all details");
+                return;
+            }
             else
             {
                 // Confirming deletion
@@ -1541,6 +1560,13 @@ namespace BayWyn_Couriers.ViewModels
         }
         public void AddNewClient(object? obj)
         {
+            // Checking the values is not null or empty
+            if (SelectedClient == null || SelectedClient.ClientAddress == null || SelectedClient.Name == null || SelectedClient.Phone == null)
+            {
+                MessageBox.Show("Please enter all details");
+                return;
+            }
+
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
@@ -1570,6 +1596,11 @@ namespace BayWyn_Couriers.ViewModels
         public void UpdateClient(object? obj)
         {
             if (SelectedClient == null) { MessageBox.Show("Please select a Client to be update"); return; }
+            if (SelectedClient == null || SelectedClient.ClientAddress == "" || SelectedClient.Name == "" || SelectedClient.Phone == "")
+            {
+                MessageBox.Show("Please enter all details");
+                return;
+            }
             else
             {
                 MessageBoxResult result = MessageBox.Show("Confirm Update", "Update", MessageBoxButton.YesNo);

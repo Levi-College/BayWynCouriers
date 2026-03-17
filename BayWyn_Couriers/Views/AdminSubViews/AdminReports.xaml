@@ -30,8 +30,7 @@
 
         <Grid Grid.Row="1" Grid.Column="0">
             <StackPanel Orientation="Vertical">
-                <!-- Use IsChecked="True" on the first one to select it by default -->
-                <RadioButton Content="Day Jobs (Courier Based)" IsChecked="True" Command="{Binding DayJobsReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                <RadioButton Content="Day Jobs (Courier Based)" Command="{Binding DayJobsReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
                 <RadioButton Content="Monthly Jobs (Courier Based)" Command="{Binding MonthlyJobsReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
                 <RadioButton Content="All Jobs (Client based)" Command="{Binding ContractsJobReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
                 <RadioButton Content="Monthly Value (Client based)" Command="{Binding ClientsValueReportCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
