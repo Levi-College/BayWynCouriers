@@ -13,7 +13,41 @@ namespace BayWyn_Couriers.ViewModels
 {
     public class ManagerVM : ViewModelBase
     {
+        public ManagerVM(NavigationVM _nav)
+        {
+            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
+            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
+            _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning using Relay command 
 
+            // Admin jobs page commands
+            // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
+            ManagerJobsCommand = new RelayCommand(ManagerJobsPage);
+            ReportsCommand = new RelayCommand(ReportsPage);
+            ManagerContractsCommand = new RelayCommand(ManagerContractsPage);
+            ManagerClientsCommand = new RelayCommand(ManagerClientsPage);
+            ManagerCouriersCommand = new RelayCommand(ManagerCouriersPage);
+
+            RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
+            RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
+            RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
+            RefreshContractsCommand = new RelayCommand(RefreshContractsPage);
+
+            DayJobsReportCommand = new RelayCommand(ShowDayReport);
+            MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
+            ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
+            ClientsValueReportCommand = new RelayCommand(ShowClientValueReport);
+            GenerateDayJobsReportCommand = new RelayCommand(GenerateDayJobsReport);
+            GenerateMonthlyJobsReportCommand = new RelayCommand(GenerateMonthlyJobsReport);
+            GenerateAllJobsReportCommand = new RelayCommand(GenerateContractsJobReport);
+            GenerateValueReportCommand = new RelayCommand(GenerateClientValueReport);
+
+            // Setting the start page as the jobs page
+            ManagerJobsPage(null);
+        }
+
+
+        // Declaring variables
         private NavigationVM _navigationVM; // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
         private object _currentSubView; // A private field to hold the reference to the current subview (used to change the pages/user controls)
         private Job _selectedJob; // Private field to hold the reference to the selected job from the observable collection of pending jobs in the admin clients page
@@ -65,40 +99,6 @@ namespace BayWyn_Couriers.ViewModels
             { "November", 11 },{ "December", 12 }
         };
         public List<string> YearsList { get; set; } = new List<string> { "2026" };
-
-        public ManagerVM(NavigationVM _nav)
-        {
-            // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
-            // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
-            _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
-            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning using Relay command 
-
-            // Admin jobs page commands
-            // Intializing other commands for the admin dashboard (e.g., JobsCommand for viewing pending jobs)
-            ManagerJobsCommand = new RelayCommand(ManagerJobsPage);
-            ReportsCommand = new RelayCommand(ReportsPage);
-            ManagerContractsCommand = new RelayCommand(ManagerContractsPage);
-            ManagerClientsCommand = new RelayCommand(ManagerClientsPage);
-            ManagerCouriersCommand = new RelayCommand(ManagerCouriersPage);
-
-            RefreshJobsCommand = new RelayCommand(RefreshJobsPage);
-            RefreshClientsCommand = new RelayCommand(RefreshClientsPage);
-            RefreshCouriersCommand = new RelayCommand(RefreshCouriersPage);
-            RefreshContractsCommand = new RelayCommand(RefreshContractsPage);
-
-            DayJobsReportCommand = new RelayCommand(ShowDayReport);
-            MonthlyJobsReportCommand = new RelayCommand(ShowMonthlyJobReport);
-            ContractsJobReportCommand = new RelayCommand(ShowContractsJobReport);
-            ClientsValueReportCommand = new RelayCommand(ShowClientValueReport);
-            GenerateDayJobsReportCommand = new RelayCommand(GenerateDayJobsReport);
-            GenerateMonthlyJobsReportCommand = new RelayCommand(GenerateMonthlyJobsReport);
-            GenerateAllJobsReportCommand = new RelayCommand(GenerateContractsJobReport);
-            GenerateValueReportCommand = new RelayCommand(GenerateClientValueReport);
-
-            // Setting the start page as the jobs page
-            ManagerJobsPage(null);
-        }
-
 
 
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
@@ -198,7 +198,6 @@ namespace BayWyn_Couriers.ViewModels
                     if (_selectedCourier != null)
                     {
                         if (SelectedJob != null) { SelectedJob.CourierId = value.UserId; }
-                        //if (SelectedCourier != null) { GetDailyJobsReport(SelectedCourier.UserId.ToString()); }
                     }
                 }
             }
@@ -211,7 +210,6 @@ namespace BayWyn_Couriers.ViewModels
             {
                 _dateForDayJobReport = value;
                 OnPropertyChanged(nameof(DateForDayJobReport));
-                //if (SelectedCourier != null) { GetDailyJobsReport(SelectedCourier.UserId.ToString()); }
             }
         }
         private void SetupSlotMap()
@@ -255,7 +253,6 @@ namespace BayWyn_Couriers.ViewModels
                             SelectedJob.ClientId = value.ClientId;
                             CostOfJob = GetCostOfTheJob(value.ClientId);
                         }
-
                     }
                 }
             }
@@ -271,9 +268,7 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     _selectedClientStatus = value;
                     OnPropertyChanged();
-
-                    // Filtering the jobs list based on the selected job status
-                    LoadClientsByStatus(value);
+                    LoadClientsByStatus(value); // Filtering the jobs list based on the selected job status
                 }
             }
         }
@@ -317,9 +312,7 @@ namespace BayWyn_Couriers.ViewModels
                 {
                     _selectedContractStatus = value;
                     OnPropertyChanged();
-
-                    // Filtering the jobs list based on the selected job status
-                    LoadContractsByStatus(value);
+                    LoadContractsByStatus(value); // Filtering the jobs list based on the selected job status
                 }
             }
         }
@@ -349,21 +342,14 @@ namespace BayWyn_Couriers.ViewModels
         public string SelectedMonthForReport
         {
             get => _selectedMonthForReport;
-            set
-            {
-                _selectedMonthForReport = value;
-                OnPropertyChanged();
-            }
+            set { _selectedMonthForReport = value; OnPropertyChanged(); }
+
         }
 
         public string SelectedYearForReport
         {
             get => _selectedYearForReport;
-            set
-            {
-                _selectedYearForReport = value;
-                OnPropertyChanged();
-            }
+            set { _selectedYearForReport = value; OnPropertyChanged(); }
         }
 
         // Establishing the commands for the admin dashboard
@@ -413,10 +399,8 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new ManagerContracts();
             RefreshPage(); // Refreshing the fields and the page
-            //GetContracts(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             GetAllContracts();
-            //LoadContractsByStatus("All"); // Loads all the jobs initially 
         }
 
         private void ReportsPage(object? obj)
@@ -477,23 +461,22 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // Update this
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier'", mySqlCon);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
-                    if (reader.HasRows)
+                    CouriersList.Clear();
+                    while (reader.Read())
                     {
-                        CouriersList.Clear();
-                        while (reader.Read())
+                        CouriersList.Add(new User
                         {
-                            CouriersList.Add(new User
-                            {
-                                UserId = Convert.ToInt32(reader["UserID"]),
-                                UserName = reader["UserName"].ToString(),
-                                Name = reader["Name"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["Phone"].ToString(),
-                                Address = reader["UserAddress"].ToString()
-                            });
-                        }
+                            UserId = Convert.ToInt32(reader["UserID"]),
+                            UserName = reader["UserName"].ToString(),
+                            Name = reader["Name"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            PhoneNumber = reader["Phone"].ToString(),
+                            Address = reader["UserAddress"].ToString()
+                        });
                     }
                 }
             }
@@ -512,39 +495,37 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
-                    if (reader.HasRows)
+                    ClientList.Clear();
+                    while (reader.Read())
                     {
-                        ClientList.Clear();
-                        while (reader.Read())
+                        ClientList.Add(new Client
                         {
-                            ClientList.Add(new Client
-                            {
-                                ClientId = Convert.ToInt32(reader["ClientID"]),
-                                Name = reader["Name"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                ClientAddress = reader["ClientAddress"].ToString(),
-                                Phone = reader["Phone"].ToString()
-                            });
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Reader has no rows");
+                            ClientId = Convert.ToInt32(reader["ClientID"]),
+                            Name = reader["Name"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            ClientAddress = reader["ClientAddress"].ToString(),
+                            Phone = reader["Phone"].ToString()
+                        });
                     }
                 }
+                else
+                {
+                    MessageBox.Show("Reader has no rows");
+                }
+
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         private void LoadClientsByStatus(string status)
         {
             if (string.IsNullOrEmpty(status)) return;
-            ClientList.Clear(); 
+            ClientList.Clear();
             if (status == "All") { GetClients(); return; }
 
             // Sql setup
@@ -667,31 +648,17 @@ namespace BayWyn_Couriers.ViewModels
                     AllJobs.Clear();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                mySqlCon.Close();
-            }
-            finally
-            {
-                mySqlCon.Close();
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         // This method is used to update or filter the data grid source based on the selected job status
         private void LoadContractsByStatus(string contractStatus)
         {
-            if (contractStatus == null) // Checking for null value
-            {
-                return;
-            }
+            if (contractStatus == null) { return; } // Checking for null value
 
             //If the status is "All", call show all jobs method
-            if (contractStatus == "All")
-            {
-                GetAllContracts();
-                return;
-            }
+            if (contractStatus == "All") { GetAllContracts(); return; }
 
             RefreshPage(); // Refreshing before updating the form
 
@@ -754,7 +721,6 @@ namespace BayWyn_Couriers.ViewModels
                 // Command setup to check the status of the client
                 SqlCommand cmdGetStatus = new SqlCommand("SELECT ContractStatus FROM Contracts WHERE ClientID = @ClientID", mySqlCon);
                 cmdGetStatus.Parameters.AddWithValue("@ClientID", clientID);
-
                 SqlDataReader reader = cmdGetStatus.ExecuteReader();
 
                 if (reader.HasRows)
@@ -825,23 +791,12 @@ namespace BayWyn_Couriers.ViewModels
                     listJobs.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                mySqlCon.Close();
-            }
-
-            finally
-            {
-                mySqlCon.Close();
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
         public void GetAllContracts()
         {
             RefreshPage(); // Refreshing before updating the form
-
-            // Check the status (expiry date) // If contract past the date upadted the database  (status and price)
-
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
             SqlConnection mySqlCon = new(myCon);
@@ -880,16 +835,9 @@ namespace BayWyn_Couriers.ViewModels
                     reader.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                mySqlCon.Close();
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
 
-            finally
-            {
-                mySqlCon.Close();
-            }
         }
 
 

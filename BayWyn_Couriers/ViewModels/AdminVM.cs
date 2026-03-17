@@ -445,9 +445,9 @@ namespace BayWyn_Couriers.ViewModels
             public List<ClientMonthlyJobReport> ClientJobs { get; set; }
         }
 
-        public class JobReport : Job 
+        public class JobReport : Job
         {
-            public string ClientName { get;set;  }
+            public string ClientName { get; set; }
         }
 
         public class ClientMonthlyJobReport
@@ -699,23 +699,22 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // Update this
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier' AND WorkingStatus = 'Active'", mySqlCon);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
-                    if (reader.HasRows)
+                    CouriersList.Clear();
+                    while (reader.Read())
                     {
-                        CouriersList.Clear();
-                        while (reader.Read())
+                        CouriersList.Add(new User
                         {
-                            CouriersList.Add(new User
-                            {
-                                UserId = Convert.ToInt32(reader["UserID"]),
-                                UserName = reader["UserName"].ToString(),
-                                Name = reader["Name"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["Phone"].ToString(),
-                                Address = reader["UserAddress"].ToString()
-                            });
-                        }
+                            UserId = Convert.ToInt32(reader["UserID"]),
+                            UserName = reader["UserName"].ToString(),
+                            Name = reader["Name"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            PhoneNumber = reader["Phone"].ToString(),
+                            Address = reader["UserAddress"].ToString()
+                        });
                     }
                 }
             }
@@ -734,28 +733,28 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
-                    if (reader.HasRows)
+                    ClientList.Clear();
+                    while (reader.Read())
                     {
-                        ClientList.Clear();
-                        while (reader.Read())
+                        ClientList.Add(new Client
                         {
-                            ClientList.Add(new Client
-                            {
-                                ClientId = Convert.ToInt32(reader["ClientID"]),
-                                Name = reader["Name"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                ClientAddress = reader["ClientAddress"].ToString(),
-                                Phone = reader["Phone"].ToString()
-                            });
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Reader has no rows");
+                            ClientId = Convert.ToInt32(reader["ClientID"]),
+                            Name = reader["Name"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            ClientAddress = reader["ClientAddress"].ToString(),
+                            Phone = reader["Phone"].ToString()
+                        });
                     }
                 }
+                else
+                {
+                    MessageBox.Show("Reader has no rows");
+                }
+
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
@@ -1355,7 +1354,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                
+
 
                 // If no contracts
                 // Setting up the sql command

@@ -30,7 +30,7 @@ namespace BayWyn_Couriers.ViewModels
 
             LCApprovedJobs(null);// Showing the default page
 
-           
+
         }
 
 
@@ -58,11 +58,11 @@ namespace BayWyn_Couriers.ViewModels
         private bool _timePickerEnabled = false; // To disable timer pickers unless a date is picked
         private bool _enableCourierSelection = false; // Disables the courier dropdown by default
 
-        public List<String> LCJobsFilterList { get; } = ["All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed" ]; // A list of string for the items in the job status combo box (item source)
+        public List<String> LCJobsFilterList { get; } = ["All", "Approved", "Assigned", "Accepted", "Cancelled", "Completed"]; // A list of string for the items in the job status combo box (item source)
         public List<string> JobsStatusList { get; } = ["Approved", "Assigned", "Accepted", "Cancelled", "Completed"];  // A list to show the conditions in the edit box        
-        public ObservableCollection<Job> AllJobs { get; set; } = new (); // To hold the jobs (used for filtered list as well)
-        public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new ();
-        public ObservableCollection<User> CouriersList { get; set; } = new (); // Hold all the courier names and ID (using the user class)
+        public ObservableCollection<Job> AllJobs { get; set; } = new(); // To hold the jobs (used for filtered list as well)
+        public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new();
+        public ObservableCollection<User> CouriersList { get; set; } = new(); // Hold all the courier names and ID (using the user class)
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
         //public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
 
@@ -269,7 +269,7 @@ namespace BayWyn_Couriers.ViewModels
                     if (SelectedCourier != null)
                     {
                         RefreshAvailableSlots(SelectedDeliveryDate, SelectedCourier.UserId);
-                    }                    
+                    }
                     // Enabling the date picker but disabling the time picker
                     DatePickerEnabled = true;
                     TimePickerEnabled = true; // Only enabled when a date is selected
@@ -420,13 +420,13 @@ namespace BayWyn_Couriers.ViewModels
             // 1. Reset all slots to enabled first
             //foreach (var slot in TimeSlots) slot.IsEnabled = true;
             InitializeTimeSlots();
-        
+
 
             // Disabling break slots (12-1pm)
             foreach (var slot in TimeSlots)
             {
                 // Alternating the breaks to the coueirs. Even number couriers get type 1 breaks while odd numbers get type 2
-                if (courierId%2 == 0)
+                if (courierId % 2 == 0)
                 {
                     if (lstBreaksType1.Contains(slot.SlotName))
                     {
@@ -441,7 +441,7 @@ namespace BayWyn_Couriers.ViewModels
                         slot.IsEnabled = false;
                         slot.DisplayName = "Break/Disabled";
                     }
-                }               
+                }
             }
 
             //Finding out slots that are already booked.Looping throught the slots first then looping through each item in the list
@@ -512,26 +512,24 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 SqlCommand cmd = new SqlCommand("SELECT UserID, Username FROM Users WHERE UserRole = 'Courier' AND WorkingStatus = 'Active'", mySqlCon);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
                 {
-                    if (reader.HasRows)
+                    CouriersList.Clear();
+                    while (reader.Read())
                     {
-                        CouriersList.Clear();
-                        while (reader.Read())
+                        CouriersList.Add(new User
                         {
-                            CouriersList.Add(new User
-                            {
-                                UserId = Convert.ToInt32(reader["UserID"]),
-                                UserName = reader["UserName"].ToString(),
-                            });
-                        }
+                            UserId = Convert.ToInt32(reader["UserID"]),
+                            UserName = reader["UserName"].ToString(),
+                        });
                     }
                 }
+
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         public void GetAllJobs()
