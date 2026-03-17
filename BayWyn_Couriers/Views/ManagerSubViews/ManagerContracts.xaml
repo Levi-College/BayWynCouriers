@@ -93,13 +93,6 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Edit section for the selected contract -->
-
-
-                     
-
-
-                        <!---->
                         <Label Grid.Row="1" Grid.Column="0" Content="Company/Client:" Foreground="#94A3B8" VerticalAlignment="Center"/>
                         <TextBox Grid.Row="1" Grid.Column="1"  Margin="0,5" Text="{Binding SelectedClient.Name}" Style="{StaticResource InputTextBox}"/>
 
@@ -129,7 +122,6 @@
                             <Label Content="Notes:" Foreground="#94A3B8"/>
                             <TextBox TextWrapping="Wrap" Text="{Binding SelectedContract.Notes, Mode=TwoWay}" Style="{StaticResource InputTextBox}" Height="60"/>
                         </StackPanel>
-
 
 
                             <Label Grid.Row="8" Grid.Column="0" Content="Contract Status:" Foreground="#94A3B8" VerticalAlignment="Center"/>

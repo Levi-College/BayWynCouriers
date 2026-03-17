@@ -550,7 +550,6 @@ namespace BayWyn_Couriers.ViewModels
         // Admin couriers page
         public ICommand DeleteCourierCommand { get; }
         public ICommand UpdateCourierCommand { get; }
-        //public ICommand NewCourierCommand { get; }
         public ICommand RefreshCouriersCommand { get; }
 
         // Reports page 
@@ -711,6 +710,13 @@ namespace BayWyn_Couriers.ViewModels
         // Logout
         public void ExecuteLogout(object? obj)
         {
+
+            //Clearing all the item sources
+            ReportJobs.Clear();
+            GroupedMonthlyClientReport.Clear();
+            GroupedMonthlyReport.Clear();
+            MonthlyClientValueReportList.Clear();
+
             // Setting dimensions for the login screen
             _navigationVM.WindowWidth = 400;
             _navigationVM.WindowHeight = 450;
@@ -1938,7 +1944,6 @@ namespace BayWyn_Couriers.ViewModels
                 SqlDataReader reader = cmGetJobs.ExecuteReader();
 
                 // Temporary list to hold every job found
-                //List<JobAssignment> tempAllJobs = new List<JobAssignment>();
                 List<JobReport> tempAllJobs = new List<JobReport>();
 
                 if (reader.HasRows)

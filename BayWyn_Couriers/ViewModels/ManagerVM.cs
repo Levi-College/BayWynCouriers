@@ -434,7 +434,11 @@ namespace BayWyn_Couriers.ViewModels
         // Logout
         public void ExecuteLogout(object? obj)
         {
-            GroupedMonthlyReport.Clear(); // Clearing the report data
+            //Clearing all the item sources
+            ReportJobs.Clear();
+            GroupedMonthlyClientReport.Clear();
+            GroupedMonthlyReport.Clear();
+            MonthlyClientValueReportList.Clear();
 
             // Setting dimensions for the login screen
             _navigationVM.WindowWidth = 400;
@@ -453,6 +457,12 @@ namespace BayWyn_Couriers.ViewModels
             if (CostOfJob != null) { CostOfJob = 0; }
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
+
+            //Clearing all the item sources
+            ReportJobs.Clear();
+            GroupedMonthlyClientReport.Clear();
+            GroupedMonthlyReport.Clear();
+            MonthlyClientValueReportList.Clear();
         }
 
         //To get all the couriers with their ID and to add it to the list of couriers. Used for combo box dropdown
@@ -618,7 +628,6 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
                 SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status AND c.Status = 'Active' ", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
@@ -1106,7 +1115,6 @@ namespace BayWyn_Couriers.ViewModels
                 SqlDataReader reader = cmGetJobs.ExecuteReader();
 
                 // Temporary list to hold every job found
-                //List<JobAssignment> tempAllJobs = new List<JobAssignment>();
                 List<JobReport> tempAllJobs = new List<JobReport>();
 
                 if (reader.HasRows)
@@ -1145,9 +1153,7 @@ namespace BayWyn_Couriers.ViewModels
             mySqlCon.Open();
 
             try
-            {
-                // 1. Updated SQL: Removed CourierID filter, added JOIN to Users to get CourierName, 
-                // and changed Date filter to look at Month/Year.
+            {   // Links multiple tables (Left join so that null values are used if no record)
                 SqlCommand cmGetJobs = new SqlCommand(
                     "SELECT j.JobID, j.StartDate AS DateCreated, j.DeliveryAddress AS Address, j.Cost, " +
                     "c.Name AS ClientName, c.Email AS ClientEmail, " +

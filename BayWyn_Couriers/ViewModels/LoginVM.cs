@@ -17,12 +17,8 @@ namespace BayWyn_Couriers.ViewModels
         // A private field to hold the reference to the navigation view model, which will be used to navigate to different views based on the user's role after a successful login
         private NavigationVM _navigationVM;
 
-
-
         // To hold the current user information
         public string UserId;
-        //public string UserFName;
-        //public string UserLName;
         public string Role;
 
 

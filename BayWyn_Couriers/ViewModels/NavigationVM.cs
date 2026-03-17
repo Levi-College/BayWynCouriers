@@ -52,28 +52,19 @@ namespace BayWyn_Couriers.ViewModels
         /// Sets the current view to the home page by initializing a new instance of the <see cref="HomeVM"/> class.
         /// </summary>
         /// <param name="obj">An optional parameter that is not used in this method.</param>
-        //private void Login(object? obj) => CurrentView = new LoginVM(this);
 
         // Can also be written as:
         private void Login(object? obj)
         {
-            WindowHeight = 400; // Set the window height to 800 when navigating to the admin dashboard
-            WindowWidth = 400; // Set the window width to 1200 when navigating to the admin dashboard
+            WindowHeight = 400; // Set the window height to 400 when navigating to the admin dashboard
+            WindowWidth = 450; // Set the window width to 400 when navigating to the admin dashboard
             CurrentView = new LoginVM(this);
         }
 
-        //private void AdminDashboard(object? obj) => CurrentView = new AdminVM(this);
-
-        private void AdminDashboard(object? obj)
-        {
-            CurrentView = new AdminVM(this);
-        }
-
+        private void AdminDashboard(object? obj) { CurrentView = new AdminVM(this); }
         private void CourierDashboard(object? obj) => CurrentView = new CourierVM(this);
         private void LCDashboard(object? obj) => CurrentView = new LCVM(this);
         private void ManagerDashboard(object? obj) => CurrentView = new ManagerVM(this);
-
-        //private void Logout(object? obj) => CurrentView = new LoginVM(this);\
 
         private void Logout(object? obj)
         {

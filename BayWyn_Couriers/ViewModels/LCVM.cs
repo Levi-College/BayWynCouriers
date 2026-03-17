@@ -18,7 +18,7 @@ namespace BayWyn_Couriers.ViewModels
             // When the LogoutCommand is executed (e.g., when a logout button is clicked in the UI), it will call the ExecuteLogout method,
             // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
-            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning }
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning
             LCApprovedJobsCommand = new RelayCommand(LCApprovedJobs);
             LCCompletedJobsCommand = new RelayCommand(LCCompletedJobsPage);
             LCAssignedJobsCommand = new RelayCommand(LCAssignedJobsPage);
@@ -62,7 +62,6 @@ namespace BayWyn_Couriers.ViewModels
         public ObservableCollection<JobAssignment> AllJobAssignments { get; set; } = new();
         public ObservableCollection<User> CouriersList { get; set; } = new(); // Hold all the courier names and ID (using the user class)
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
-        //public ObservableCollection<TimeSlot> TimeSlots { get; set; } // Used to set up the time slots (radio buttons)
 
         private readonly List<String> lstBreaksType1 = ["S15", "S16", "S17", "S18"]; // Break slots
         private readonly List<String> lstBreaksType2 = ["S19", "S20", "S21", "S22"]; // Break slots
@@ -312,8 +311,6 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             GetCouriers(); // Populate the status filter
             LoadJobsByStatus("Approved"); // Loads all the jobs for the page
-            //SetupSlotMap();
-            //InitializeTimeSlots();
         }
 
         private void LCAssignedJobsPage(object? obj)
@@ -323,8 +320,6 @@ namespace BayWyn_Couriers.ViewModels
             SelectedJobAssignment = null;
             GetCouriers(); // Populate the status filter
             GetAllAssignedJobs();
-            //SetupSlotMap();
-            //InitializeTimeSlots();
         }
 
         private void LCCompletedJobsPage(object? obj)
@@ -364,8 +359,6 @@ namespace BayWyn_Couriers.ViewModels
             DatePickerEnabled = false;
             TimePickerEnabled = false;
             EnableCourierSelection = false;
-            //SetupSlotMap();
-            //InitializeTimeSlots(); // Resetting the time slots
         }
 
         public void RefreshBookingPage()
@@ -416,7 +409,6 @@ namespace BayWyn_Couriers.ViewModels
         {
             if (courierId <= 0) return; //Only if a valid courierID is sent, null ignored
             // 1. Reset all slots to enabled first
-            //foreach (var slot in TimeSlots) slot.IsEnabled = true;
             InitializeTimeSlots();
 
 
@@ -662,7 +654,6 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
                 SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status AND c.Status = 'Active' ", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
@@ -727,9 +718,6 @@ namespace BayWyn_Couriers.ViewModels
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    // Testing the time slot selected
-
-
                     // Setting up sql connection
                     string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
                     SqlConnection mySqlCon = new(myCon);
@@ -749,8 +737,7 @@ namespace BayWyn_Couriers.ViewModels
 
                         cmdAssign.ExecuteNonQuery();
 
-                        // 2. Update the main Jobs table status
-                        string updateQuery = "UPDATE Jobs SET JobStatus = 'Assigned' WHERE JobID = @JobID";
+                        
 
                         SqlCommand cmdUpdate = new SqlCommand("UPDATE Jobs SET JobStatus = 'Assigned', CourierID = @CourierID WHERE JobID = @JobID", mySqlCon);
                         cmdUpdate.Parameters.AddWithValue("@JobID", SelectedJob.JobId);

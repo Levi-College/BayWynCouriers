@@ -21,7 +21,7 @@ namespace BayWyn_Couriers.ViewModels
             // which will handle the logout logic such as clearing the user session and navigating back to the login screen.
             _navigationVM = _nav; // Assigning the passed navigation view model to the private field _navigationVM, allowing the AdminVM to use it for navigation purposes (e.g., navigating back to the login screen after logout)
             UserID = _userID;
-            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning }
+            LogoutCommand = new RelayCommand(ExecuteLogout); // Giving the LogoutCommand a meaning
             CourierPendingJobsCommand = new RelayCommand(CourierPendingJobsPage);
             CourierAcceptedJobsCommand = new RelayCommand(CourierAcceptedJobsPage);
             CourierShiftCommand = new RelayCommand(CourierShiftPage);
@@ -208,8 +208,6 @@ namespace BayWyn_Couriers.ViewModels
         public void RefreshPage()
         {
             SelectedJob = null; // Clearing all the fields   
-            //SelectedCourier = null; // Clear the dropdown selections
-            //DatePickerEnabled = false;
         }
 
 
@@ -314,8 +312,6 @@ namespace BayWyn_Couriers.ViewModels
                                  DeliveryAddress = reader["DeliveryAddress"].ToString(),
                                  Description = reader["Description"].ToString(),
                                  JobStatus = reader["JobStatus"].ToString(),
-
-                                 //DeliverySlot = reader["DeliverySlot"].ToString(),
                                  DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
                                  DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
                              }

@@ -8,11 +8,13 @@
         xmlns:view="clr-namespace:BayWyn_Couriers.Views"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
+        MinHeight="800"
+        MinWidth="1000"
         Background="Transparent"
         Title="BayWyn Couriers" Width="{Binding WindowWidth, Mode=TwoWay}" Height="{Binding WindowHeight, Mode=TwoWay}">
 
     <Window.DataContext>
-        <vm:NavigationVM />
+        <vm:NavigationVM/>
     </Window.DataContext>
 
     <!--This grid will hold the content control to switch between the user controls (login and user window-->
