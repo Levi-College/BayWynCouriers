@@ -147,7 +147,7 @@
 
             
             <!--Reports-->
-            <StackPanel Grid.Row="1" Visibility="{Binding DayReportVisibility}">
+            <Grid Grid.Row="1" Visibility="{Binding DayReportVisibility}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
                     <ItemsControl ItemsSource="{Binding ReportJobs}">
                         <ItemsControl.ItemTemplate>
@@ -178,9 +178,9 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </StackPanel>
+            </Grid>
 
-            <StackPanel Grid.Row="1" Visibility="{Binding MonthlyReportVisibility}">
+            <Grid Grid.Row="1" Visibility="{Binding MonthlyReportVisibility}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
                     <ItemsControl ItemsSource="{Binding GroupedMonthlyReport}">
                         <ItemsControl.ItemTemplate>
@@ -196,19 +196,19 @@
                                                 <Border BorderBrush="#2B1D42" BorderThickness="0,0,0,1" Margin="5" Padding="10">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="80"/>
+                           
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
 
-                                                        <TextBlock Text="{Binding DeliverySlot}" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+        
 
-                                                        <StackPanel Grid.Column="1" Margin="10,0">
+                                                        <StackPanel Grid.Column="0" Margin="10,0">
                                                             <TextBlock Text="{Binding ClientName}" Foreground="White" FontWeight="Bold"/>
                                                             <TextBlock Text="{Binding DeliveryAddress}" Foreground="#94A3B8" FontSize="12" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                                                         </StackPanel>
 
-                                                        <TextBlock Grid.Column="2" Text="{Binding EndDate, StringFormat=d}" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding EndDate, StringFormat=d}" Foreground="#94A3B8" VerticalAlignment="Center"/>
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
@@ -219,11 +219,11 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </StackPanel>
+            </Grid>
 
      
 
-            <StackPanel Grid.Row="1" Visibility="{Binding AllJobsReportVisibility}">
+            <Grid Grid.Row="1" Visibility="{Binding AllJobsReportVisibility}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
                     <ItemsControl ItemsSource="{Binding GroupedMonthlyClientReport}">
                         <ItemsControl.ItemTemplate>
@@ -233,7 +233,7 @@
                                         <Grid Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContentPresenter}, Path=ActualWidth}" Margin="0,5">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
+                                               
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel Orientation="Horizontal">
@@ -242,9 +242,7 @@
                                                 <TextBlock Text="{Binding ClientEmail}" Foreground="#94A3B8" FontSize="12" VerticalAlignment="Center"/>
                                             </StackPanel>
 
-                                            <Border Grid.Column="1" Padding="8,3" CornerRadius="4" Background="#2B1D42" Margin="0,0,30,0">
-                                                <TextBlock Text="{Binding ClientStatus}" Foreground="White" FontSize="10" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                            </Border>
+                            
                                         </Grid>
                                     </Expander.Header>
 
@@ -254,28 +252,22 @@
                                                 <Border Background="#0B0E14" CornerRadius="8" Margin="0,5" Padding="12">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="85"/>
+                                                            <!--<ColumnDefinition Width="85"/>-->
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="Auto"/>
                                                         </Grid.ColumnDefinitions>
 
-                                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                            <TextBlock Text="{Binding Cost, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" 
-                                                           Foreground="White" FontSize="15" FontWeight="Bold"/>
-                                                            <TextBlock Text="Cost" Foreground="#94A3B8" FontSize="9" HorizontalAlignment="Center" Opacity="0.7"/>
-                                                        </StackPanel>
-
-                                                        <StackPanel Grid.Column="1" Margin="15,0">
+                                                        <StackPanel Grid.Column="0" Margin="15,0">
                                                             <TextBlock Text="{Binding DeliveryAddress}" Foreground="White" FontSize="13" TextWrapping="Wrap" Margin="0,0,0,4"/>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <TextBlock Text="Job ID: " Foreground="#94A3B8" FontSize="11"/>
                                                                 <TextBlock Text="{Binding JobID}" Foreground="#9D7BFF" FontSize="11" FontWeight="SemiBold" Margin="0,0,15,0"/>
-                                                                <TextBlock Text="Date: " Foreground="#94A3B8" FontSize="11"/>
+                                                                <TextBlock Text="Date Created: " Foreground="#94A3B8" FontSize="11"/>
                                                                 <TextBlock Text="{Binding DateCreated, StringFormat=d}" Foreground="White" FontSize="11"/>
                                                             </StackPanel>
                                                         </StackPanel>
 
-                                                        <Ellipse Grid.Column="2" Width="6" Height="6" Fill="#9D7BFF" VerticalAlignment="Center" Margin="10,0"/>
+                                           
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
@@ -286,7 +278,7 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
-            </StackPanel>
+            </Grid>
 
             <Grid Grid.Row="1" Visibility="{Binding MonthlyValueReportVisibility}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
@@ -296,56 +288,30 @@
                                 <Border Background="#1A1F26" CornerRadius="10" Margin="0,0,10,12" Padding="20">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                  
 
                                         <StackPanel>
                                             <TextBlock Text="{Binding ClientId, StringFormat='ID: {0}'}" FontSize="10" Foreground="#94A3B8" FontWeight="Bold"/>
                                             <TextBlock Text="{Binding Name}" FontSize="18" FontWeight="Bold" Foreground="White" />
                                             <TextBlock Text="{Binding Email}" Foreground="#94A3B8" FontSize="12" Margin="0,2,0,0"/>
-                                        </StackPanel>
-
-                                        <Border Grid.Column="1" VerticalAlignment="Top" Padding="8,4" CornerRadius="4">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding ContractStatus}" Value="Active">
-                                                            <Setter Property="Background" Value="#1B2C24"/>
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding ContractStatus}" Value="None">
-                                                            <Setter Property="Background" Value="#2D1B1B"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                            <TextBlock Text="{Binding ContractStatus}" FontWeight="Bold" FontSize="10">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Style.Triggers>
-                                                            <Trigger Property="Text" Value="Active">
-                                                                <Setter Property="Foreground" Value="#4ADE80" />
-                                                            </Trigger>
-                                                            <Trigger Property="Text" Value="None">
-                                                                <Setter Property="Foreground" Value="#F87171" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
-                                        </Border>
-
-                                        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,15,0,0">
-                                            <TextBlock Text="Total Value" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="11" Margin="0,0,10,0"/>
-                                            <Border Background="#2B1D42" Padding="12,6" CornerRadius="6">
-                                                <TextBlock Text="{Binding MonthlyValue, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" 
-                                               Foreground="#9D7BFF" FontWeight="Bold" FontSize="16" />
+                                            <Border Style="{StaticResource StatusBadgeBorderStyle}" Margin="0,5,0,5">
+                                                <TextBlock Text="{Binding ContractStatus}" Style="{StaticResource StatusBadgeTextStyle}"/>
                                             </Border>
+                                            <Grid Margin="0,5,0,0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Grid.Row="0" Text="Total Value" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="11" Margin="0,0,10,0"/>
+                                                <Border  Grid.Row="1" Background="#2B1D42" Padding="12,6" CornerRadius="6">
+                                                    <TextBlock Text="{Binding MonthlyValue, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" Foreground="#9D7BFF" FontWeight="Bold" FontSize="16" />
+                                                </Border>
+                                            </Grid>
                                         </StackPanel>
+
+                             
                                     </Grid>
                                 </Border>
                             </DataTemplate>

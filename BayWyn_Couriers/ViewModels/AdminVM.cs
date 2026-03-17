@@ -1375,6 +1375,9 @@ namespace BayWyn_Couriers.ViewModels
 
         public void AddNewContract(object? obj)
         {
+
+            // Testing 
+
             // If client ID in the contracts list (return)
             foreach (var contract in AllContracts)
             {
