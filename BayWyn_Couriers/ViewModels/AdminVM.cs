@@ -1902,10 +1902,10 @@ namespace BayWyn_Couriers.ViewModels
                     "FROM Jobs j " +
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
                     "INNER JOIN Users u ON j.CourierID = u.UserID " + // JOIN to get Courier Name
-                    "WHERE j.JobStatus = 'Completed' " +
+                    "WHERE j.JobStatus = 'Completed' AND c.Status = 'Active' " +
                     "AND MONTH(j.EndDate) = @Month " +
                     "AND YEAR(j.EndDate) = @Year " +
-                    "WHERE c.Status = 'Active' ORDER BY u.UserName, j.EndDate DESC", mySqlCon);
+                    "ORDER BY u.UserName, j.EndDate DESC", mySqlCon);
 
                 // Filter by the current month and year
                 cmGetJobs.Parameters.AddWithValue("@Month", DateTime.Now.Month);
@@ -1955,8 +1955,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                // 1. Updated SQL: Removed CourierID filter, added JOIN to Users to get CourierName, 
-                // and changed Date filter to look at Month/Year.
+                // Switch case type usage.
                 SqlCommand cmGetJobs = new SqlCommand(
                     "SELECT j.JobID, j.StartDate AS DateCreated, j.DeliveryAddress AS Address, j.Cost, " +
                     "c.Name AS ClientName, c.Email AS ClientEmail, " +

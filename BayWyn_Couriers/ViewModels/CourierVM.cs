@@ -238,6 +238,7 @@ namespace BayWyn_Couriers.ViewModels
 
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         //Reject the selected job 

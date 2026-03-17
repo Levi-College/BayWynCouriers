@@ -29,8 +29,6 @@ namespace BayWyn_Couriers.ViewModels
             InitializeTimeSlots();
 
             LCApprovedJobs(null);// Showing the default page
-
-
         }
 
 
@@ -544,7 +542,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus NOT IN ('Pending', 'Completed')", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus NOT IN ('Pending', 'Completed') AND c.Status = 'Active' ", mySqlCon);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -665,7 +663,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // Creating the SQL command to check for user credential
                 //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
-                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status AND c.Status = 'Active' ", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
 
@@ -805,7 +803,7 @@ namespace BayWyn_Couriers.ViewModels
                 catch (Exception ex) { MessageBox.Show(ex.Message); }
                 finally { mySqlCon.Close(); }
                 AllJobAssignments.Clear();
-                LoadJobsByStatus("Assigned");
+                GetAllAssignedJobs();
 
             }
         }

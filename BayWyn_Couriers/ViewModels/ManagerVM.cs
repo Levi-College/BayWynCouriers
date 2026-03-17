@@ -672,7 +672,8 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetContracts = new SqlCommand("SELECT cnt.*, c.Name AS ClientName FROM Contracts cnt INNER JOIN Clients c ON cnt.ClientID = c.ClientID WHERE ContractStatus = @contractStatus", mySqlCon);
+                SqlCommand cmGetContracts = new SqlCommand("SELECT cnt.*, c.Name AS ClientName FROM Contracts cnt INNER " +
+                    "JOIN Clients c ON cnt.ClientID = c.ClientID WHERE ContractStatus = @contractStatus AND c.Status = 'Active' ", mySqlCon);
                 cmGetContracts.Parameters.AddWithValue("@contractStatus", contractStatus);
                 SqlDataReader reader = cmGetContracts.ExecuteReader();
 
@@ -1151,9 +1152,9 @@ namespace BayWyn_Couriers.ViewModels
                     "END AS CalculatedClientStatus " +
                     "FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID " +
                     "LEFT JOIN Contracts con ON c.ClientID = con.ClientID " +
-                    "WHERE j.JobStatus NOT IN ('Pending') " +
+                    "WHERE j.JobStatus NOT IN ('Pending') AND c.Status = 'Active'" +
                     "AND MONTH(j.StartDate) = @Month " +
-                    "AND YEAR(j.StartDate) = @Year WHERE c.Status = 'Active' " +
+                    "AND YEAR(j.StartDate) = @Year " +
                     "ORDER BY c.Name ASC, j.StartDate DESC ", mySqlCon);
 
                 // Filter by the current month and year
