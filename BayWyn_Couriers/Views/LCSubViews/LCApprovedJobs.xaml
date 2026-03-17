@@ -176,14 +176,14 @@
 
         <Grid Grid.Row="0" Margin="0,0,0,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Approved Jobs Assignment" FontSize="20" FontWeight="Bold" Foreground="#1A1F26" VerticalAlignment="Center"/>
+                <TextBlock Text="Approved Jobs Assignment" FontSize="20" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Margin="0,0,20,0">
@@ -197,7 +197,13 @@
                           IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding JobId}" Width="50"/>
-                        <DataGridTextColumn Header="Address" Binding="{Binding DeliveryAddress}" Width="*"/>
+                        <DataGridTemplateColumn Header="Delivery Address" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="5"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="100"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
                     </DataGrid.Columns>
@@ -235,9 +241,9 @@
                                       Height="35" Margin="0,0,0,15"/>
 
                             <TextBlock Text="Delivery Date" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
+
                             <DatePicker SelectedDate="{Binding SelectedDeliveryDate, UpdateSourceTrigger=PropertyChanged}" 
-                                        IsEnabled="{Binding DatePickerEnabled}"
-                                        Margin="0,0,0,15"/>
+                                        IsEnabled="{Binding DatePickerEnabled}"/>
 
                             <TextBlock Text="Time Slot" FontSize="11" Foreground="#94A3B8" Margin="0,0,0,5"/>
                             <Expander Header="Select Delivery Time Slot" 

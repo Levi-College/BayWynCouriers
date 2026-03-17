@@ -103,7 +103,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Margin="0,0,20,0">
@@ -117,7 +117,13 @@
                           IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding JobId}" Width="60"/>
-                        <DataGridTextColumn Header="Address" Binding="{Binding DeliveryAddress}" Width="*"/>
+                        <DataGridTemplateColumn Header="Delivery Address" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding DeliveryAddress}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="5"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Completed Date" Binding="{Binding EndDate, StringFormat=d}" Width="120"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
                     </DataGrid.Columns>

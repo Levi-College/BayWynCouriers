@@ -6,7 +6,6 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -81,12 +80,12 @@ namespace BayWyn_Couriers.ViewModels
 
         private bool _enableCompleteJobButton = false;
         private bool _startShiftEnabler = false;
-        private bool _endShiftEnabler = false;    
+        private bool _endShiftEnabler = false;
         public ObservableCollection<JobAssignment> PendingJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the jobs waiting to be accepted
         public ObservableCollection<JobAssignment> AcceptedJobs { get; set; } = new ObservableCollection<JobAssignment>();
         public ObservableCollection<JobAssignment> DailyJobs { get; set; } = new ObservableCollection<JobAssignment>(); // To hold the daily jobs of the courier
         public Dictionary<string, string> SlotsDictionary { get; set; } //Dictionary to hold the time slot name and the time
- 
+
         // Objects
         // To update the sub view
         // Notify the view that the CurrentSubView property has changed, allowing the UI to update accordingly (e.g., displaying the new subview content)
@@ -122,7 +121,7 @@ namespace BayWyn_Couriers.ViewModels
         public string ShiftTimerDisplay
         {
             get => _shiftTimerDisplay;
-            set{_shiftTimerDisplay = value;OnPropertyChanged();}
+            set { _shiftTimerDisplay = value; OnPropertyChanged(); }
         }
 
         public string CurrentTimeDisplay
@@ -238,7 +237,7 @@ namespace BayWyn_Couriers.ViewModels
                 PendingJobs.Remove(SelectedJob);
 
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);}
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         //Reject the selected job 
@@ -386,8 +385,8 @@ namespace BayWyn_Couriers.ViewModels
                     reader.Close();
                 }
             }
-            catch (Exception ex){MessageBox.Show(ex.Message);}
-            finally{mySqlCon.Close();}
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
         }
 
         // Gets the jobs for the current day for the couriers shift
@@ -445,7 +444,7 @@ namespace BayWyn_Couriers.ViewModels
                     }
                     reader.Close();
                 }
-                else{MessageBox.Show("No jobs for today");}
+                else { MessageBox.Show("No jobs for today"); }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
@@ -460,7 +459,7 @@ namespace BayWyn_Couriers.ViewModels
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += (s, e) =>
-            {   
+            {
                 CurrentTimeDisplay = DateTime.Now.ToString(@"HH:mm"); // Live time
                 if (_stopwatch.IsRunning) { ShiftTimerDisplay = _stopwatch.Elapsed.ToString(@"hh\:mm\:ss"); }
             };
@@ -480,7 +479,7 @@ namespace BayWyn_Couriers.ViewModels
         }
 
         private void EndShift(object? obj)
-        {           
+        {
             _stopwatch.Stop(); // Stop and reset
             _stopwatch.Reset();
 
@@ -488,8 +487,8 @@ namespace BayWyn_Couriers.ViewModels
             MessageBox.Show("Thank you for the shift. Have a great time off");
             // Disabling and enabling the buttons
             EnableCompleteJobButton = false;
-            StartShiftEnabler = true ;
-            EndShiftEnabler= false;
+            StartShiftEnabler = true;
+            EndShiftEnabler = false;
         }
 
         private void CompleteDelivery(object? obj)
@@ -509,11 +508,11 @@ namespace BayWyn_Couriers.ViewModels
             {
                 SqlCommand cmdCompleteJob = new SqlCommand("UPDATE Jobs SET JobStatus = 'Completed', EndDate = @EndDate WHERE JobID = @JobID", mySqlCon);
                 cmdCompleteJob.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
-                cmdCompleteJob.Parameters.AddWithValue("@EndDate",DateTime.Now);
+                cmdCompleteJob.Parameters.AddWithValue("@EndDate", DateTime.Now);
                 cmdCompleteJob.Transaction = transaction;
                 cmdCompleteJob.ExecuteNonQuery();
 
-                SqlCommand cmdRemoveAssignment = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID",mySqlCon);
+                SqlCommand cmdRemoveAssignment = new SqlCommand("DELETE FROM JobAssignments WHERE JobID = @JobID", mySqlCon);
                 cmdRemoveAssignment.Parameters.AddWithValue("@JobID", SelectedJob.JobId);
                 cmdRemoveAssignment.Transaction = transaction;
                 cmdRemoveAssignment.ExecuteNonQuery();
@@ -526,7 +525,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 MessageBox.Show("Delivery completed");
             }
-            catch (Exception ex){ transaction.Rollback(); MessageBox.Show(ex.Message);}
+            catch (Exception ex) { transaction.Rollback(); MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
         }
 

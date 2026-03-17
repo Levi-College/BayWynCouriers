@@ -460,7 +460,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Update this
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier'", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Users WHERE UserRole = 'Courier' AND WorkingStatus = 'Active' ", mySqlCon);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 if (reader.HasRows)
@@ -494,7 +494,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Clients WHERE Status = 'Active' ", mySqlCon);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 if (reader.HasRows)
@@ -538,7 +538,8 @@ namespace BayWyn_Couriers.ViewModels
                 if (status == "Contract")
                 {
                     // Command setup to check the status of the client for all active contract clients
-                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c INNER JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus = 'Active'", mySqlCon);
+                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c INNER JOIN Contracts co ON c.ClientID = co.ClientID " +
+                        "WHERE co.ContractStatus = 'Active' AND c.Status = 'Active' ", mySqlCon);
                     SqlDataReader reader = cmdGetClients.ExecuteReader();
 
                     if (reader.HasRows)
@@ -560,7 +561,8 @@ namespace BayWyn_Couriers.ViewModels
                 }
                 else if (status == "No Contract/Expired")
                 {
-                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus IS NULL OR co.ContractStatus = 'Expired'", mySqlCon);
+                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID " +
+                        "WHERE (co.ContractStatus IS NULL OR co.ContractStatus = 'Expired') AND c.Status='Active'", mySqlCon);
                     SqlDataReader reader = cmdGetClients.ExecuteReader();
 
                     if (reader.HasRows)
@@ -611,7 +613,7 @@ namespace BayWyn_Couriers.ViewModels
             {
                 // Creating the SQL command to check for user credential
                 //SqlCommand cmGetJobs = new SqlCommand("SELECT * FROM Jobs WHERE JobStatus = @Status",mySqlCon);
-                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status AND c.Status = 'Active' ", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
 
@@ -759,7 +761,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE c.Status = 'Active' ", mySqlCon);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -805,7 +807,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand("SELECT cnt.*, c.Name AS ClientName FROM Contracts cnt INNER JOIN Clients c ON cnt.ClientID = c.ClientID", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT cnt.*, c.Name AS ClientName FROM Contracts cnt INNER JOIN Clients c ON cnt.ClientID = c.ClientID WHERE c.Status = 'Active' ", mySqlCon);
                 SqlDataReader reader = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -1151,7 +1153,7 @@ namespace BayWyn_Couriers.ViewModels
                     "LEFT JOIN Contracts con ON c.ClientID = con.ClientID " +
                     "WHERE j.JobStatus NOT IN ('Pending') " +
                     "AND MONTH(j.StartDate) = @Month " +
-                    "AND YEAR(j.StartDate) = @Year " +
+                    "AND YEAR(j.StartDate) = @Year WHERE c.Status = 'Active' " +
                     "ORDER BY c.Name ASC, j.StartDate DESC ", mySqlCon);
 
                 // Filter by the current month and year
@@ -1205,7 +1207,7 @@ namespace BayWyn_Couriers.ViewModels
                     "COALESCE(co.MonthlyCost, 0) + SUM(ISNULL(j.Cost, 0)) AS TotalValue " +
                     "FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID " +
                     "LEFT JOIN Jobs j ON c.ClientID = j.ClientID AND j.JobStatus != 'Pending' AND MONTH(j.StartDate) = @Month AND YEAR(j.StartDate) = @Year " +
-                    "GROUP BY c.ClientID, c.Name, c.Email, co.ContractStatus, co.MonthlyCost", mySqlCon);
+                    "WHERE c.Status = 'Active' GROUP BY c.ClientID, c.Name, c.Email, co.ContractStatus, co.MonthlyCost", mySqlCon);
 
                 // Filter by the current month and year
                 cmdGetValue.Parameters.AddWithValue("@Month", month);

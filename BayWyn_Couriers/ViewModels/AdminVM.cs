@@ -79,6 +79,8 @@ namespace BayWyn_Couriers.ViewModels
         private Contract _selectedContract; // Hold contract details
         private string _selectedContractStatus = "All"; //Default status for the contracts list
         private bool _enableItemsForNewContract = false;
+        private bool _disableItemsForNewContract = false;
+
         private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
         private bool _enableItemsForNewClient = false;
         private string _hideCosts = "Visible";
@@ -357,7 +359,21 @@ namespace BayWyn_Couriers.ViewModels
                 }
 
                 HideCosts = "Visible";
-                EnableItemsForNewContract = false;
+
+                // Checking if it has a valid contract ID (only items from the list)
+                // If no proper ID (0 when creating a new one), then the combo box is disabled
+                if (_selectedContract.ContractId != 0)
+                {
+                    EnableItemsForNewContract = false;
+                    DisableItemsForNewContract = true;
+                }
+                else
+                {
+                    // This ensures it stays true when the NewContract method 
+                    // assigns the empty object
+                    EnableItemsForNewContract = true;
+                    DisableItemsForNewContract = false; // Disables the renew button
+                }
 
                 //Matching the courier using the ID
                 //foreach (User courier in CouriersList)
@@ -406,6 +422,16 @@ namespace BayWyn_Couriers.ViewModels
             set
             {
                 _enableItemsForNewContract = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DisableItemsForNewContract
+        {
+            get => _disableItemsForNewContract;
+            set
+            {
+                _disableItemsForNewContract = value;
                 OnPropertyChanged();
             }
         }
@@ -561,6 +587,7 @@ namespace BayWyn_Couriers.ViewModels
             LoadContractsByStatus("All"); // Loads all the jobs initially 
             HideCosts = "Visible";
             EnableItemsForNewContract = false; // Used to enable and disable buttons for the edit window
+            DisableItemsForNewContract = false;
         }
 
         private void ReportsPage(object? obj)
@@ -682,7 +709,6 @@ namespace BayWyn_Couriers.ViewModels
             if (CostOfJob != null) { CostOfJob = 0; }
             GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
-            //LoadJobsByStatus("Pending"); // Loads all the jobs initially 
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
             EnableItemsForNewClient = false;
         }
@@ -732,7 +758,7 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Clients", mySqlCon);
+                SqlCommand cmd = new SqlCommand("SELECT * FROM Clients WHERE Status = 'Active' ", mySqlCon);
                 SqlDataReader reader = cmd.ExecuteReader();
 
                 if (reader.HasRows)
@@ -776,7 +802,8 @@ namespace BayWyn_Couriers.ViewModels
                 if (status == "Contract")
                 {
                     // Command setup to check the status of the client for all active contract clients
-                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c INNER JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus = 'Active'", mySqlCon);
+                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c INNER JOIN Contracts co ON c.ClientID = co.ClientID " +
+                        "WHERE co.ContractStatus = 'Active' AND c.Status = 'Active' ", mySqlCon);
                     SqlDataReader reader = cmdGetClients.ExecuteReader();
 
                     if (reader.HasRows)
@@ -797,7 +824,8 @@ namespace BayWyn_Couriers.ViewModels
                 }
                 else if (status == "No Contract/Expired")
                 {
-                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID WHERE co.ContractStatus IS NULL OR co.ContractStatus = 'Expired'", mySqlCon);
+                    SqlCommand cmdGetClients = new SqlCommand("SELECT c.* FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID WHERE " +
+                        "(co.ContractStatus IS NULL OR co.ContractStatus = 'Expired') AND c.Status = 'Active' ", mySqlCon);
                     SqlDataReader reader = cmdGetClients.ExecuteReader();
                     if (reader.HasRows)
                     {
@@ -1063,7 +1091,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE c.Status = 'Active' ", mySqlCon);
                 SqlDataReader listJobs = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -1142,7 +1170,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Creating the SQL command to check for user credential
-                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT j.*, c.Name AS ClientName FROM Jobs j INNER JOIN Clients c ON j.ClientID = c.ClientID WHERE JobStatus = @Status AND c.Status = 'Active' ", mySqlCon);
                 cmGetJobs.Parameters.AddWithValue("@Status", jobStatus);
                 SqlDataReader drlistJobs = cmGetJobs.ExecuteReader();
 
@@ -1277,7 +1305,7 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 // Setting up the sql command
-                SqlCommand cmGetJobs = new SqlCommand("SELECT cnt.*, c.Name AS ClientName FROM Contracts cnt INNER JOIN Clients c ON cnt.ClientID = c.ClientID", mySqlCon);
+                SqlCommand cmGetJobs = new SqlCommand("SELECT cnt.*, c.Name AS ClientName FROM Contracts cnt INNER JOIN Clients c ON cnt.ClientID = c.ClientID WHERE c.Status = 'Active' ", mySqlCon);
                 SqlDataReader reader = cmGetJobs.ExecuteReader();
 
                 // Looping through the data reader and adding them to the list
@@ -1325,8 +1353,10 @@ namespace BayWyn_Couriers.ViewModels
             GetAllContracts();
             MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
             HideCosts = "Hidden";
-            // Setting the boolean to show client list to true
+            // Setting the boolean to show client list to true (only if the new job is not selected)
+
             EnableItemsForNewContract = true;
+            DisableItemsForNewContract = false;
 
             // Creating an empty SelectedJob so that the values can be used to add it to the database
             SelectedContract = new Contract()
@@ -1605,7 +1635,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("DELETE FROM Clients WHERE ClientID = @ID", mySqlCon);
+                    SqlCommand cmd = new SqlCommand("UPDATE Clients SET STATUS = 'Inactive' WHERE ClientID = @ID", mySqlCon);
                     cmd.Parameters.AddWithValue("@ID", SelectedClient.ClientId);
 
                     cmd.ExecuteNonQuery();
@@ -1625,43 +1655,7 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage();
         }
 
-        //public void NewCourier(object? obj)
-        //{
-        //    RefreshPage();
-        //    GetCouriers();
-        //    MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
-        //    SelectedCourier = new User();
-        //}
-
-        //public void AddNewCourier(object? obj)
-        //{
-        //    // Setting up sql connection
-        //    string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
-        //    SqlConnection mySqlCon = new(myCon);
-        //    mySqlCon.Open();
-
-        //    try
-        //    {
-        //        // Setting up the sql command
-        //        SqlCommand cmdAddCourier = new SqlCommand("INSERT INTO Users (Username, Name, LoginPassword, Email, Phone, UserAddress, UserRole) " +
-        //            "VALUES (@Username, @Name, @LoginPassword, @Email, @Phone, @UserAddress, 'Courier')", mySqlCon);
-
-        //        cmdAddCourier.Parameters.AddWithValue("@Username", SelectedCourier.UserName);
-        //        cmdAddCourier.Parameters.AddWithValue("@Name", SelectedCourier.Name);
-        //        //cmdAddCourier.Parameters.AddWithValue("@LoginPassword", SelectedCourier.LoginPassword);
-        //        cmdAddCourier.Parameters.AddWithValue("@Email", SelectedCourier.Email);
-        //        cmdAddCourier.Parameters.AddWithValue("@Phone", SelectedCourier.PhoneNumber);
-        //        cmdAddCourier.Parameters.AddWithValue("@UserAddress", SelectedCourier.Address);
-
-        //        cmdAddCourier.ExecuteNonQuery();
-        //        MessageBox.Show("Courier Added");
-        //        RefreshPage();
-        //        GetCouriers(); // Refresh the list
-        //    }
-        //    catch (Exception ex) { MessageBox.Show("Error adding the courier: " + ex.Message); }
-        //    finally { mySqlCon.Close(); }
-        //}
-
+     
         public void UpdateCourier(object? obj)
         {
             if (SelectedCourier == null)
@@ -1911,7 +1905,7 @@ namespace BayWyn_Couriers.ViewModels
                     "WHERE j.JobStatus = 'Completed' " +
                     "AND MONTH(j.EndDate) = @Month " +
                     "AND YEAR(j.EndDate) = @Year " +
-                    "ORDER BY u.UserName, j.EndDate DESC", mySqlCon);
+                    "WHERE c.Status = 'Active' ORDER BY u.UserName, j.EndDate DESC", mySqlCon);
 
                 // Filter by the current month and year
                 cmGetJobs.Parameters.AddWithValue("@Month", DateTime.Now.Month);
@@ -2030,7 +2024,7 @@ namespace BayWyn_Couriers.ViewModels
                     "COALESCE(co.MonthlyCost, 0) + SUM(ISNULL(j.Cost, 0)) AS TotalValue " +
                     "FROM Clients c LEFT JOIN Contracts co ON c.ClientID = co.ClientID " +
                     "LEFT JOIN Jobs j ON c.ClientID = j.ClientID AND j.JobStatus != 'Pending' AND MONTH(j.StartDate) = @Month AND YEAR(j.StartDate) = @Year " +
-                    "GROUP BY c.ClientID, c.Name, c.Email, co.ContractStatus, co.MonthlyCost", mySqlCon);
+                    "WHERE c.Status = 'Active' GROUP BY c.ClientID, c.Name, c.Email, co.ContractStatus, co.MonthlyCost", mySqlCon);
 
                 // Filter by the current month and year
                 cmdGetValue.Parameters.AddWithValue("@Month", month);

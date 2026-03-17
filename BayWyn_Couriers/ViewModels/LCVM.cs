@@ -801,10 +801,11 @@ namespace BayWyn_Couriers.ViewModels
                     MessageBox.Show("Job successfully unassigned. It is now back in the pending assignment list.");
 
                     RefreshPage(); // Calling your method to refresh the UI and lists
-                    LoadJobsByStatus("Assigned");
                 }
                 catch (Exception ex) { MessageBox.Show(ex.Message); }
                 finally { mySqlCon.Close(); }
+                AllJobAssignments.Clear();
+                LoadJobsByStatus("Assigned");
 
             }
         }

@@ -226,9 +226,10 @@
                         </StackPanel>
 
                         <Label Grid.Row="8" Grid.Column="0" Content="Contract Status:" Foreground="#94A3B8" VerticalAlignment="Center"/>
-                        <ComboBox Grid.Row="8" Grid.Column="1" Margin="0,5" Height="30"
+                        <TextBox Grid.Row="8" Grid.Column="1" TextWrapping="Wrap" Text="{Binding SelectedContract.ContractStatus, Mode=TwoWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" />
+                        <!--<ComboBox Grid.Row="8" Grid.Column="1" Margin="0,5" Height="30"
                           ItemsSource="{Binding ContractsStatusList}"  Style="{StaticResource ModernComboBoxStyle2}"
-                          SelectedItem="{Binding SelectedContract.ContractStatus, Mode=TwoWay}"/>
+                          SelectedItem="{Binding SelectedContract.ContractStatus, Mode=TwoWay}"/>-->
 
                         <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,10">
                             <Label Content="Monthly Cost:" Foreground="#94A3B8"/>
@@ -239,13 +240,26 @@
                     </Grid>
                 </ScrollViewer>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Delete" Command="{Binding DeleteContractCommand}" Width="70" Height="30" Margin="5" />
-                    <Button Content="Update" Command="{Binding UpdateContractCommand}" Width="70" Height="30" Margin="5"/>
-                    <Button Content="Renew" Command="{Binding RenewContractCommand}"  Width="70" Height="30" Margin="5"/>
-                    <Button Content="Add" Command="{Binding AddContractCommand}" IsEnabled="{Binding EnableItemsForNewContract}" Width="70" Height="30" Margin="5" />
+                <StackPanel Grid.Row="1">
+                    
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Button Grid.Row="0" Grid.Column="0" Content="Renew" Command="{Binding RenewContractCommand}" IsEnabled="{Binding DisableItemsForNewContract}"  Height="30" Margin="5"/>
+                        <Button Grid.Row="1" Grid.Column="0" Content="Delete" Command="{Binding DeleteContractCommand}" Height="30" Margin="5" />
+                        <Button Grid.Row="0" Grid.Column="1" Content="Update" Command="{Binding UpdateContractCommand}" Height="30" Margin="5"/>
+                        <Button Grid.Row="1" Grid.Column="1" Content="Add" Command="{Binding AddContractCommand}" IsEnabled="{Binding EnableItemsForNewContract}" Height="30" Margin="5" />
+                    </Grid>
                 </StackPanel>
             </Grid>
+           
         </Border>
         
     </Grid>

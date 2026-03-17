@@ -2,6 +2,7 @@
 using BayWyn_Couriers.Utilities;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -53,12 +54,13 @@ namespace BayWyn_Couriers.ViewModels
 
             // Refresh database
             RefreshJobAssignments();
+            RefreshContracts();
         }
 
         private void ExecuteLogin(object? obj)
         {
             // Getting the object that is passed through to get the password
-            var passwordBox = (PasswordBox)obj;
+            var passwordBox = obj as PasswordBox;
 
             if (passwordBox != null)
             {
@@ -113,7 +115,7 @@ namespace BayWyn_Couriers.ViewModels
                     return true;
                 }
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); mySqlCon.Close(); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
             return false;
         }
@@ -145,7 +147,27 @@ namespace BayWyn_Couriers.ViewModels
                 transaction.Commit();
             }
             catch (Exception ex) { transaction.Rollback(); MessageBox.Show(ex.Message); }
+            finally {  mySqlCon.Close(); }
         }
+
+        private void RefreshContracts()
+        {
+            // Getting the database connection string
+            string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
+            SqlConnection mySqlCon = new SqlConnection(myCon);
+            mySqlCon.Open();
+
+            try
+            {
+                SqlCommand cmdResetJobs = new SqlCommand("Update Contracts SET ContractStatus = 'Expired' WHERE EndDate < CAST(GETDATE() AS DATE) AND ContractStatus = 'Active' ", mySqlCon);
+  
+                cmdResetJobs.ExecuteNonQuery();
+
+            }
+            catch (Exception ex) {MessageBox.Show(ex.Message); }
+            finally { mySqlCon.Close(); }
+        }
+
 
     }
 }

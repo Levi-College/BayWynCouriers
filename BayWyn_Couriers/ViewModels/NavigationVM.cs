@@ -105,8 +105,6 @@ namespace BayWyn_Couriers.ViewModels
             // It was added to allow the LoginVM to call the methods in the NavigationVM to change the current view based on the user's role after a successful login.
             CurrentView = new LoginVM(this);
 
-            // During Testing setting view as admin dashboard to bypass login
-            //CurrentView = new AdminVM(this);
         }
     }
 }
