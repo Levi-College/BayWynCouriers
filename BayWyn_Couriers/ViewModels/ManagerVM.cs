@@ -100,6 +100,7 @@ namespace BayWyn_Couriers.ViewModels
         }
 
 
+
         // Creating a property for the selected job to display the details by accessing the Job properites (e.g., JobId, ClientId, CourierId, JobStatus) in the JobDetails property.
         // This allows the admin user to see the details of the selected job in the UI (e.g., in a details panel) when they select a job from the list of pending jobs.
         public Job SelectedJob
@@ -443,6 +444,8 @@ namespace BayWyn_Couriers.ViewModels
         // Logout
         public void ExecuteLogout(object? obj)
         {
+            GroupedMonthlyReport.Clear(); // Clearing the report data
+
             // Setting dimensions for the login screen
             _navigationVM.WindowWidth = 400;
             _navigationVM.WindowHeight = 450;
@@ -1031,13 +1034,13 @@ namespace BayWyn_Couriers.ViewModels
         public void LoadMonthlyReport()
         {
             // Get all the jobs for the month
-            List<JobAssignment> allJobs = GetJobsForTheMonth();
+            List<JobReport> allJobs = GetJobsForTheMonth();
 
             //Clearing the list
             if (GroupedMonthlyReport.Count > 0) { GroupedMonthlyReport.Clear(); }
 
             // Loop through each job
-            foreach (JobAssignment currentJob in allJobs)
+            foreach (JobReport currentJob in allJobs)
             {
                 // We need to check: Do we already have an Expander/Group for this courier?
                 CourierGroupHeader foundGroup = null;
@@ -1119,7 +1122,7 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
-        private List<JobAssignment> GetJobsForTheMonth()
+        private List<JobReport> GetJobsForTheMonth()
         {
             // Setting up sql connection
             string myCon = ConfigurationManager.ConnectionStrings["BayWynCouriersDB"].ConnectionString;
@@ -1128,19 +1131,16 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                // 1. Updated SQL: Removed CourierID filter, added JOIN to Users to get CourierName, 
-                // and changed Date filter to look at Month/Year.
                 SqlCommand cmGetJobs = new SqlCommand(
-                    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, " +
-                    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
+                    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, j.EndDate, " +
+                    "c.ClientID, c.Name AS ClientName " +
                     "FROM Jobs j " +
-                    "INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
                     "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
-                    "INNER JOIN Users u ON ja.CourierID = u.UserID " + // JOIN to get Courier Name
-                    "WHERE j.JobStatus = 'Accepted' " +
-                    "AND MONTH(ja.DeliveryDate) = @Month " +
-                    "AND YEAR(ja.DeliveryDate) = @Year " +
-                    "ORDER BY u.UserName, ja.DeliverySlot DESC", mySqlCon);
+                    "INNER JOIN Users u ON j.CourierID = u.UserID " + // JOIN to get Courier Name
+                    "WHERE j.JobStatus = 'Completed' " +
+                    "AND MONTH(j.EndDate) = @Month " +
+                    "AND YEAR(j.EndDate) = @Year " +
+                    "ORDER BY u.UserName, j.EndDate DESC", mySqlCon);
 
                 // Filter by the current month and year
                 cmGetJobs.Parameters.AddWithValue("@Month", DateTime.Now.Month);
@@ -1149,34 +1149,34 @@ namespace BayWyn_Couriers.ViewModels
                 SqlDataReader reader = cmGetJobs.ExecuteReader();
 
                 // Temporary list to hold every job found
-                List<JobAssignment> tempAllJobs = new List<JobAssignment>();
+                //List<JobAssignment> tempAllJobs = new List<JobAssignment>();
+                List<JobReport> tempAllJobs = new List<JobReport>();
 
                 if (reader.HasRows)
                 {
                     while (reader.Read())
                     {
-                        tempAllJobs.Add(new JobAssignment
+                        tempAllJobs.Add(new JobReport
                         {
                             JobId = Convert.ToInt32(reader["JobId"]),
                             CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
-                            CourierName = reader["CourierName"].ToString(), // Make sure your class has this property!
+                            CourierName = reader["CourierName"].ToString(),
                             ClientId = Convert.ToInt32(reader["ClientId"]),
                             ClientName = reader["ClientName"].ToString(),
                             DeliveryAddress = reader["DeliveryAddress"].ToString(),
                             Description = reader["Description"].ToString(),
                             JobStatus = reader["JobStatus"].ToString(),
-                            DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
-                            DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
+                            EndDate = Convert.ToDateTime(reader["EndDate"]),
                         });
                     }
                 }
+                else { MessageBox.Show("No data to be viewed. Edit and try again."); }
                 reader.Close();
                 return tempAllJobs;
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
             return null;
-
         }
 
         private List<ClientMonthlyJobReport> GetClientJobsForTheMonth(int month, int year)

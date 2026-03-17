@@ -546,7 +546,9 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage(); // Refreshing the fields and the page
             //GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
-            LoadJobsByStatus("Pending"); // Loads all the pending approval jobs
+            GetAllJobs();
+            SelectedJobStatus = "All";
+            //LoadJobsByStatus("Pending"); // Loads all the pending approval jobs
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
 
@@ -1803,7 +1805,6 @@ namespace BayWyn_Couriers.ViewModels
         public void LoadMonthlyReport()
         {
             // Get all the jobs for the month
-            //List<JobAssignment> allJobs = GetJobsForTheMonth();
             List<JobReport> allJobs = GetJobsForTheMonth();
 
             //Clearing the list
@@ -1902,20 +1903,6 @@ namespace BayWyn_Couriers.ViewModels
 
             try
             {
-                // 1. Updated SQL: Removed CourierID filter, added JOIN to Users to get CourierName, 
-                // and changed Date filter to look at Month/Year.
-                //SqlCommand cmGetJobs = new SqlCommand(
-                //    "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, " +
-                //    "c.ClientID, c.Name AS ClientName, ja.DeliverySlot, ja.DeliveryDate " +
-                //    "FROM Jobs j " +
-                //    "INNER JOIN JobAssignments ja ON j.JobID = ja.JobID " +
-                //    "INNER JOIN Clients c ON j.ClientID = c.ClientID " +
-                //    "INNER JOIN Users u ON ja.CourierID = u.UserID " + // JOIN to get Courier Name
-                //    "WHERE j.JobStatus = 'Accepted' " +
-                //    "AND MONTH(ja.DeliveryDate) = @Month " +
-                //    "AND YEAR(ja.DeliveryDate) = @Year " +
-                //    "ORDER BY u.UserName, ja.DeliverySlot DESC", mySqlCon);
-
                 SqlCommand cmGetJobs = new SqlCommand(
                     "SELECT j.JobID, j.CourierID, u.UserName AS CourierName, j.DeliveryAddress, j.Description, j.JobStatus, j.EndDate, " +
                     "c.ClientID, c.Name AS ClientName " +
@@ -1943,16 +1930,6 @@ namespace BayWyn_Couriers.ViewModels
                     {
                         tempAllJobs.Add(new JobReport
                         {
-                            //JobId = Convert.ToInt32(reader["JobId"]),
-                            //CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
-                            //CourierName = reader["CourierName"].ToString(),
-                            //ClientId = Convert.ToInt32(reader["ClientId"]),
-                            //ClientName = reader["ClientName"].ToString(),
-                            //DeliveryAddress = reader["DeliveryAddress"].ToString(),
-                            //Description = reader["Description"].ToString(),
-                            //JobStatus = reader["JobStatus"].ToString(),
-                            //DeliverySlot = SlotsDictionary[reader["DeliverySlot"].ToString()],
-                            //DeliveryDate = Convert.ToDateTime(reader["DeliveryDate"])
                             JobId = Convert.ToInt32(reader["JobId"]),
                             CourierId = reader["CourierId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["CourierId"]),
                             CourierName = reader["CourierName"].ToString(),
