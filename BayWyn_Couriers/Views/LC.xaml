@@ -59,37 +59,6 @@
             </Border>
 
         </Grid>
-        <!--<Grid Grid.Column="1" Background="Azure">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0" Background="#2C3E50">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="600" />
-                    <ColumnDefinition Width="200" />
-                </Grid.ColumnDefinitions>
-
-                <Grid Grid.Column="0">
-                    <Label Content="Welcome LC" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
-                </Grid>
-
-                <Grid Grid.Column="1">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" >
-                        <Label Content="LC" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="AntiqueWhite" FontFamily="Arial Black" FontSize="20"/>
-                        <Button Content="Logout" Command="{Binding LogoutCommand}" Width="80" Height="30"/>
-                    </StackPanel>
-                </Grid>
-
-
-            </Grid>
-
-            <Grid Grid.Row="1" Background="White">
-                <ContentControl Content="{Binding CurrentSubView}" />
-            </Grid>
-
-        </Grid>-->
+   
     </Grid>
 </UserControl>

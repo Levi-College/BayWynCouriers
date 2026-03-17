@@ -106,14 +106,14 @@
                         </Grid.ColumnDefinitions>
                         
                         <Button Content="Delete" 
-                            Command="{Binding DeleteClientCommand}" Margin="0,0,5,0" Grid.Column="0"
-                            Foreground="Red" FontWeight="Bold"/>
+                            Command="{Binding DeleteClientCommand}" IsEnabled="{Binding DisableItemsForNewClient}" Margin="0,0,5,0" Grid.Column="0"
+                            Style="{StaticResource btnDelete}"/>
 
                         <Button Content="Update" Margin="0,0,5,0" Grid.Column="1"
-                            Command="{Binding UpdateClientCommand}" />
+                            Command="{Binding UpdateClientCommand}" IsEnabled="{Binding DisableItemsForNewClient}" Style="{StaticResource btnUpdate}"/>
 
                         <Button Content="Add New" Margin="0,0,5,0" Grid.Column="2"
-                            Command="{Binding AddClientCommand}" IsEnabled="{Binding EnableItemsForNewClient}" FontWeight="Bold"/>
+                            Command="{Binding AddClientCommand}"  Style="{StaticResource btnAdd}" IsEnabled="{Binding EnableItemsForNewClient}" FontWeight="Bold"/>
                 </Grid>
             </Grid>
         </Border>

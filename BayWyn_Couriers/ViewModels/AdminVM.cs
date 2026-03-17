@@ -83,6 +83,8 @@ namespace BayWyn_Couriers.ViewModels
 
         private string _selectedClientStatus = "All"; // Setting the variable to filter clients 
         private bool _enableItemsForNewClient = false;
+        private bool _disableItemsForNewClient = false;
+
         private string _hideCosts = "Visible";
         // Boolean which hide the grids/stackpanel used for report
         private string _dayReportVisibility = "Hidden";
@@ -263,6 +265,9 @@ namespace BayWyn_Couriers.ViewModels
                     // Setting the client id
                     if (_selectedClient != null)
                     {
+                        if (SelectedClient.ClientId !=0) { DisableItemsForNewClient = true; EnableItemsForNewClient = false; }
+                        else {  DisableItemsForNewClient = false; }
+ 
                         // Only if a job is selected as this property is also used in the clients page
                         if (_selectedJob != null)
                         {
@@ -296,6 +301,13 @@ namespace BayWyn_Couriers.ViewModels
             get => _enableItemsForNewClient;
             set { _enableItemsForNewClient = value; OnPropertyChanged(); }
         }
+
+        public bool DisableItemsForNewClient
+        {
+            get => _disableItemsForNewClient;
+            set { _disableItemsForNewClient = value; OnPropertyChanged(); }
+        }
+
 
         // To update the boolean in UI when it is updated in code
         public bool EnableItemsForNewJob
@@ -374,17 +386,6 @@ namespace BayWyn_Couriers.ViewModels
                     EnableItemsForNewContract = true;
                     DisableItemsForNewContract = false; // Disables the renew button
                 }
-
-                //Matching the courier using the ID
-                //foreach (User courier in CouriersList)
-                //{
-                //    if (courier.UserId == _selectedJob.CourierId)
-                //    {
-                //        // Update the selected courier
-                //        SelectedCourier = courier;
-                //        break;
-                //    }
-                //}
 
                 //Setting the client in the edit window(using the selected job client Id)
                 foreach (Client client in ClientList)
@@ -570,11 +571,9 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminJobs();
             RefreshPage(); // Refreshing the fields and the page
-            //GetCouriers(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             GetAllJobs();
             SelectedJobStatus = "All";
-            //LoadJobsByStatus("Pending"); // Loads all the pending approval jobs
             EnableItemsForNewJob = false; // Used to enable and disable buttons for the edit window
         }
 
@@ -582,7 +581,6 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminContracts();
             RefreshPage(); // Refreshing the fields and the page
-            //GetContracts(); // Populate the status filter
             GetClients(); // Populate the clients combo box
             LoadContractsByStatus("All"); // Loads all the jobs initially 
             HideCosts = "Visible";
@@ -594,6 +592,12 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminReports();
             SetupSlotMap();// Setting up the slot map 
+
+            //Clearing all the item sources
+            ReportJobs.Clear();
+            GroupedMonthlyClientReport.Clear();
+            GroupedMonthlyReport.Clear();
+            MonthlyClientValueReportList.Clear();
         }
 
         private void ClientsPage(object? obj)
@@ -934,7 +938,6 @@ namespace BayWyn_Couriers.ViewModels
                 SqlCommand cmAddJob = new SqlCommand("INSERT INTO Jobs (ClientID, DeliveryAddress, Description, Cost,  JobStatus) " +
                     "VALUES(@ClientID, @DeliveryAddress, @Description, @Cost, @JobStatus)", mySqlCon);
 
-
                 // Use the ID to find the record, then set the new values
                 cmAddJob.Parameters.AddWithValue("@ClientID", SelectedClient.ClientId);
                 cmAddJob.Parameters.AddWithValue("@DeliveryAddress", SelectedJob.DeliveryAddress);
@@ -942,22 +945,14 @@ namespace BayWyn_Couriers.ViewModels
 
                 // Logic to find out the price based on the client. If client contract status == active, cost of job is 2.5, else it is 10
                 cmAddJob.Parameters.AddWithValue("@Cost", GetCostOfTheJob(SelectedClient.ClientId));
-
-
                 cmAddJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
-
-
-
-
                 cmAddJob.ExecuteReader();
                 MessageBox.Show("Job Added Successfully");
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 MessageBox.Show("Please try again");
-                mySqlCon.Close();
             }
 
             finally
@@ -1011,7 +1006,6 @@ namespace BayWyn_Couriers.ViewModels
                         {
                             cmUpdateJob.Parameters.AddWithValue("@JobStatus", SelectedJob.JobStatus);
                         }
-
 
                         cmUpdateJob.ExecuteReader(); // Running the sql command to update the database
                         MessageBox.Show("Job Updated Successfully");
@@ -1103,15 +1097,6 @@ namespace BayWyn_Couriers.ViewModels
                         AllJobs.Add(
                              new Job
                              {
-                                 //JobId = Convert.ToInt32(listJobs["JobId"]),
-                                 //ClientId = Convert.ToInt32(listJobs["ClientId"]),
-                                 //CourierId = listJobs["CourierId"] as int? ?? 0,
-                                 //ClientName = listJobs["Name"].ToString(),
-                                 ////CourierName = listJobs["CourierName"].ToString(),
-                                 //StartDate = Convert.ToDateTime(listJobs["StartDate"]),
-                                 //JobStatus = listJobs["JobStatus"].ToString(),
-                                 //DeliveryAddress = listJobs["DeliveryAddress"].ToString(),
-                                 //Description = listJobs["Description"].ToString(),
 
                                  JobId = Convert.ToInt32(listJobs["JobId"]),
                                  ClientId = Convert.ToInt32(listJobs["ClientId"]),
@@ -1491,7 +1476,7 @@ namespace BayWyn_Couriers.ViewModels
                 return;
             }
 
-            // 2. If contract status is expired, renew for 1 month
+            // If contract status is expired, renew for 1 month
             if (SelectedContract.ContractStatus == "Expired")
             {
                 // Setting the new start and end date (today and 1 month)
@@ -1501,8 +1486,7 @@ namespace BayWyn_Couriers.ViewModels
                 // Change status back to Active
                 SelectedContract.ContractStatus = "Active";
 
-                // 3. Notify the UI that these properties have changed
-                // This ensures the TextBoxes on your form update immediately
+                // TextBoxes updates immediately
                 OnPropertyChanged(nameof(SelectedContract));
 
                 MessageBox.Show("Contract dates have been reset for 1 month. Click 'Update Contract' to save these changes to the database.");
@@ -1534,14 +1518,8 @@ namespace BayWyn_Couriers.ViewModels
                     MessageBox.Show("Contract Deleted.");
                     GetAllContracts();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error deleting contract: " + ex.Message);
-                }
-                finally
-                {
-                    mySqlCon.Close();
-                }
+                catch (Exception ex) { MessageBox.Show("Error deleting contract: " + ex.Message); }
+                finally { mySqlCon.Close(); }
             }
 
         }
@@ -1558,6 +1536,7 @@ namespace BayWyn_Couriers.ViewModels
             GetClients();
             MessageBox.Show("Please enter details in the Edit/New window. After completion click Add");
             EnableItemsForNewClient = true;
+            DisableItemsForNewClient = false;
             SelectedClient = new Client();
         }
         public void AddNewClient(object? obj)
@@ -1655,7 +1634,7 @@ namespace BayWyn_Couriers.ViewModels
             RefreshPage();
         }
 
-     
+
         public void UpdateCourier(object? obj)
         {
             if (SelectedCourier == null)
@@ -2031,8 +2010,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 SqlDataReader reader = cmdGetValue.ExecuteReader();
 
-                // Clearing the observable collection
-                //MonthlyClientValueReportList.Clear();
+               
 
                 if (reader.HasRows)
                 {

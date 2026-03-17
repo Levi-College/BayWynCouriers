@@ -407,6 +407,12 @@ namespace BayWyn_Couriers.ViewModels
         {
             CurrentSubView = new AdminReports();
             SetupSlotMap();// Setting up the slot map 
+
+            //Clearing all the item sources
+            ReportJobs.Clear();
+            GroupedMonthlyClientReport.Clear();
+            GroupedMonthlyReport.Clear();
+            MonthlyClientValueReportList.Clear();
         }
 
         private void ManagerClientsPage(object? obj)

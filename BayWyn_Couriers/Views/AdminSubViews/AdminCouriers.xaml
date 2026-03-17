@@ -108,11 +108,10 @@
                     </Grid.ColumnDefinitions>
                     
                     <Button Grid.Column="0" Content="Delete" Margin="0,0,5,0" 
-                        Command="{Binding DeleteCourierCommand}" 
-                        FontWeight="Bold"/>
+                        Command="{Binding DeleteCourierCommand}" Style="{StaticResource btnDelete}" FontWeight="Bold"/>
 
                     <Button Content="Update" Grid.Column="1" Margin="0,0,5,0"
-                        Command="{Binding UpdateCourierCommand}" />
+                        Command="{Binding UpdateCourierCommand}"  Style="{StaticResource btnUpdate}" />
                 </Grid>
 
             </Grid>

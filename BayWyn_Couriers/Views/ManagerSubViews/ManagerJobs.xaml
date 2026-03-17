@@ -9,154 +9,118 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
 
-
     <Grid Margin="10">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="300"/>
-        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <ComboBox ItemsSource="{Binding JobsFilterList}" 
+                          SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}" 
+                          Style="{StaticResource ModernComboBoxStyle}" Width="150" Height="35" 
+                          Margin="0,0,10,0" VerticalContentAlignment="Center"/>
 
-        <!-- Structure to hold the edit window and the buttons-->
+                <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" Style="{StaticResource PageButton}"/>
+            </StackPanel>
+        </Grid>
 
-        <!--Filter-->
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <ComboBox ItemsSource="{Binding JobsFilterList}" SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}" 
-                      Style="{StaticResource ModernComboBoxStyle}" Width="150" Height="35" 
-                      Margin="0,0,10,0" VerticalContentAlignment="Center"/>
-
-            <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" Style="{StaticResource PageButton}"/>
-        </StackPanel>
-
-        <!--<ComboBox Grid.Row="0" Grid.Column="0" 
-              ItemsSource="{Binding JobsFilterList}"
-              SelectedItem="{Binding SelectedJobStatus, UpdateSourceTrigger=PropertyChanged}"
-              Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
-        </ComboBox>
-
-        <Button Content="Refresh" Command="{Binding RefreshJobsCommand}" 
-    HorizontalAlignment="Left" Width="126" Height="23" Margin="249,15,0,0" VerticalAlignment="Top"/>-->
-
-        <!--Header for the edit column-->
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="Details" Foreground ="White" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-
-
-        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
-            
-            <Border Grid.Row="1" Grid.Column="0" Margin="0,0,20,0">
+
+            <Border Grid.Column="0" Margin="0,0,20,0">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
                 </Border.Effect>
-            
 
-            <!--Data grid for the jobs to be displayed-->
-                <DataGrid  x:Name="jobsList" AutoGenerateColumns="False" ItemsSource="{Binding AllJobs}" 
-                      SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}" 
-                      Style="{StaticResource MainDataGridStyle}" IsReadOnly="True">
-
+                <DataGrid x:Name="jobsList" ItemsSource="{Binding AllJobs}" 
+                          SelectedItem="{Binding Path=SelectedJob, Mode=TwoWay}" 
+                          Style="{StaticResource MainDataGridStyle}">
                     <DataGrid.Columns>
-                    <DataGridTextColumn Header="Job ID" Binding="{Binding JobId}" Width="Auto"/>
-                    <!--<DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="*"/>-->
-                    <DataGridTemplateColumn Header="Client" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0" TextWrapping="Wrap" Background="Transparent"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="*"/>
-                </DataGrid.Columns>
-
-            </DataGrid>
+                        <DataGridTextColumn Header="ID" Binding="{Binding JobId}" Width="50"/>
+                        <DataGridTemplateColumn Header="Client" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="5,0" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Date Created" Binding="{Binding StartDate, StringFormat=d}" Width="*"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding JobStatus}" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
+            <Border Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
                 </Border.Effect>
 
-                <Grid Grid.Row="1" Grid.Column="1">
-                    <!-- Edit section for the selected job -->
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Job Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Job ID:" Style="{StaticResource LabelStyle}"/>
-                                <Label x:Name="txtJobID" Content="{Binding SelectedJob.JobId, Mode=OneWay}" Width="50" Style="{StaticResource LabelBox}"/>
-                            </StackPanel>
+                            <TextBlock Text="Job ID" Style="{StaticResource PlaceholderText}"/>
+                            <TextBox Text="{Binding SelectedJob.JobId, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsEnabled="False" Margin="0,0,0,10"/>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Client Name:" Style="{StaticResource LabelStyle}"/>
-                                <Label Content="{Binding SelectedJob.ClientName}" Style="{StaticResource LabelBox}"/>
-                            </StackPanel>
+                            <TextBlock Text="Client Name" Style="{StaticResource PlaceholderText}"/>
+                            <TextBox Text="{Binding SelectedJob.ClientName}" Style="{StaticResource InputTextBox}" IsEnabled="False" Margin="0,0,0,10"/>
 
+                            <TextBlock Text="Assigned Courier" Style="{StaticResource PlaceholderText}"/>
+                            <TextBox Text="{Binding SelectedCourier.UserName}" Style="{StaticResource InputTextBox}" IsEnabled="False" Margin="0,0,0,10"/>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Courier Name:" Style="{StaticResource LabelStyle}"/>
-                                <Label Content="{Binding SelectedCourier.UserName}" Style="{StaticResource LabelBox}"/>
-                            </StackPanel>
-
-
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
+                            <Grid Margin="0,5,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                                <Label Content="Start Date:" Grid.Row="0" Foreground="#94A3B8" HorizontalAlignment="Center"/>
-                                <TextBox Grid.Row="1" IsEnabled="False" Margin="5,0,5,5" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" />
+                                <TextBlock Text="Start Date" Grid.Row="0" Grid.Column="0" Style="{StaticResource PlaceholderText}" HorizontalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="0" IsEnabled="False" Margin="0,0,5,0" Style="{StaticResource InputTextBox}" 
+                                         Text="{Binding SelectedJob.StartDate, StringFormat=d}" HorizontalContentAlignment="Center"/>
 
-                                <Label Content="End Date:" Grid.Row="0" Grid.Column="1" Foreground="#94A3B8" HorizontalAlignment="Center"/>
-                                <TextBox Margin="5,0,5,5" Grid.Row="1" Grid.Column="1" IsEnabled="False" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" />
+                                <TextBlock Text="End Date" Grid.Row="0" Grid.Column="1" Style="{StaticResource PlaceholderText}" HorizontalAlignment="Center"/>
+                                <TextBox Grid.Row="1" Grid.Column="1" IsEnabled="False" Margin="5,0,0,0" Style="{StaticResource InputTextBox}" 
+                                         Text="{Binding SelectedJob.EndDate, StringFormat=d}" HorizontalContentAlignment="Center"/>
                             </Grid>
-                            
-                            <!--<StackPanel Orientation="Horizontal">
-                                <Label Content="Start Date:" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtDateCreated" IsEnabled="False" Margin="0,0,0,10" Text="{Binding SelectedJob.StartDate, StringFormat=d, Mode=TwoWay}" Style="{StaticResource InputTextBox}" />
-                            </StackPanel>
 
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="End Date:" Style="{StaticResource LabelStyle}"/>
-                                <TextBox Margin="0,0,0,10" IsEnabled="False" Text="{Binding SelectedJob.EndDate, StringFormat=d, Mode=TwoWay}" Style="{StaticResource InputTextBox}" />
-                            </StackPanel>-->
+                            <TextBlock Text="Delivery Address" Style="{StaticResource PlaceholderText}"/>
+                            <TextBox Text="{Binding SelectedJob.DeliveryAddress}" Style="{StaticResource InputTextBox}" 
+                                     Height="60" TextWrapping="Wrap" IsReadOnly="True" Margin="0,0,0,10"/>
 
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Total Cost" Style="{StaticResource PlaceholderText}"/>
-                                <TextBlock Text="{Binding CostOfJob, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" FontSize="20" FontWeight="Bold" Foreground="Black"/>
-                            </StackPanel>
+                            <TextBlock Text="Description" Style="{StaticResource PlaceholderText}"/>
+                            <TextBox Text="{Binding SelectedJob.Description}" Style="{StaticResource InputTextBox}" 
+                                     Height="60" TextWrapping="Wrap" IsReadOnly="True" Margin="0,0,0,10"/>
 
+                            <TextBlock Text="Current Status" Style="{StaticResource PlaceholderText}"/>
+                            <TextBox Text="{Binding SelectedJob.JobStatus}" Style="{StaticResource InputTextBox}" IsEnabled="False" Margin="0,0,0,15"/>
 
-
-                            <Label Content="Delivery Address:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="txtDeliveryAddress" Margin="0,0,0,10" Text="{Binding SelectedJob.DeliveryAddress}" Style="{StaticResource InputTextBox}" IsReadOnly="True" Height="51"/>
-
-                            <Label Content="Description:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="txtDescription" Margin="0,0,0,10" TextWrapping="Wrap" Style="{StaticResource InputTextBox}" Text="{Binding SelectedJob.Description}" IsReadOnly="True" Height="49"/>
-
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Status:" Style="{StaticResource LabelStyle}"/>
-                                <Label Content="{Binding SelectedJob.JobStatus}" Style="{StaticResource LabelBox}"/>
-                            </StackPanel>
+                            <Border Background="#2B1D42" CornerRadius="5" Padding="10">
+                                <StackPanel>
+                                    <TextBlock Text="Total Revenue" FontSize="11" Foreground="#94A3B8"/>
+                                    <TextBlock Text="{Binding CostOfJob, StringFormat='{}{0:C}', ConverterCulture='en-GB'}" 
+                                               FontSize="22" FontWeight="Bold" Foreground="White"/>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </ScrollViewer>
-
-
                 </Grid>
             </Border>
         </Grid>
-
     </Grid>
 </UserControl>

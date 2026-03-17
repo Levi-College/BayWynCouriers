@@ -96,8 +96,7 @@
                         <!-- Edit section for the selected contract -->
 
 
-                        <!--<Label Grid.Row="1" Grid.Column="0" Content="Company/Client:" Foreground="#94A3B8" VerticalAlignment="Center"/>
-                        <Label x:Name="txtContractID" Content="{Binding SelectedContract.ContractId, Mode=OneWay}" Width="50"/>-->
+                     
 
 
                         <!---->
@@ -115,29 +114,6 @@
                         <Label Grid.Row="4" Grid.Column="0" Content="Phone:" Foreground="#94A3B8" VerticalAlignment="Center"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Margin="0,5" Height="30" Style="{StaticResource InputTextBox}" Text="{Binding SelectedContract.PhoneNumber}"/>
 
-
-
-                        <!--<Label Content="Started Date:"/>
-                            <TextBox Width="100" Text="{Binding SelectedContract.StartDate, StringFormat=d}" />
-             
-
-          
-                            <Label Content="End Date:     "/>
-                            <TextBox IsReadOnly="True" Width="100" Text="{Binding SelectedContract.EndDate, StringFormat=d}" />
-                
-
-                            <Label Content="Phone:"/>
-                            <TextBox Margin="0,0,0,10" Width="200" Text="{Binding SelectedContract.PhoneNumber}" Height="30"/>-->
-
-
-                        <!--<Label Content="Email:"/>
-                        <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Email}" Height="31"/>
-
-                        <Label Content="Address:"/>
-                        <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Address}" Height="31"/>-->
-
-                        <!--<Label Content="Notes:"/>
-                        <TextBox Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedContract.Notes}" Height="30"/>-->
 
                         <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5">
                             <Label Content="Email:" Foreground="#94A3B8"/>

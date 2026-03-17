@@ -28,8 +28,6 @@
               Margin="10" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <!--<DatePicker Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
-
 
         <Button Content="New Contract" Command="{Binding NewContractCommand}" Style="{StaticResource PageButton}"
             Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,0,20,0"
@@ -66,99 +64,7 @@
         </Border>
 
 
-        <!--<Border Grid.Row="1" Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
-            </Border.Effect>
-
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                --><!-- Edit section for the selected contract --><!--
-                <StackPanel Grid.ColumnSpan="2">
-
-    
-                        <Label Content="Contract ID:" Foreground="#94A3B8"/>
-                        <Label x:Name="txtContractID" Grid.Column="1"  Content="{Binding SelectedContract.ContractId, Mode=OneWay}" Width="50"/>
-       
-
-                    --><!----><!--
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Company/Client:" Foreground="#94A3B8"/>
-                        <ComboBox Width="200" x:Name="comboBoxClients" ItemsSource="{Binding ClientList}" SelectedItem="{Binding SelectedClient}"
-                              DisplayMemberPath="Name" SelectedValuePath="ClientId" IsEnabled="{Binding EnableItemsForNewContract}"/>
-                    </StackPanel>
-
-                    --><!--<TextBox x:Name="txtClientName" Margin="0,0,0,10" Text="{Binding SelectedContract.ClientName, Mode=TwoWay}"/>
-
-                <Label Content="Courier Name:"/>
-                <ComboBox ItemsSource="{Binding CouriersList}" 
-                      SelectedItem="{Binding SelectedCourier, Mode=TwoWay}" 
-                      DisplayMemberPath="UserName" SelectedValuePath="UserId" />
-                -->
-
-                    <!--<TextBox x:Name="txtCourierName" Margin="0,0,0,10" Text="{Binding SelectedContract.CourierId, Mode=TwoWay}"/>--><!--
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Started Date:" Foreground="#94A3B8"/>
-                        <TextBox IsEnabled="{Binding EnableItemsForNewContract}" Width="100" Text="{Binding SelectedContract.StartDate, StringFormat=d, Mode=TwoWay}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="End Date:     " Foreground="#94A3B8"/>
-                        <TextBox IsEnabled="{Binding EnableItemsForNewContract}" Width="100" Text="{Binding SelectedContract.EndDate, StringFormat=d, Mode=TwoWay}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Phone:" Foreground="#94A3B8"/>
-                        <TextBox Margin="0,0,0,10" Width="200"  Text="{Binding SelectedContract.PhoneNumber, Mode=TwoWay}" Height="30"/>
-                    </StackPanel>
-
-                    <Label Content="Email:" Foreground="#94A3B8"/>
-                    <TextBox Margin="0,0,0,10" Text="{Binding SelectedContract.Email, Mode=TwoWay}" Height="31"/>
-
-                    <Label Content="Address:" Foreground="#94A3B8"/>
-                    <TextBox Margin="0,0,0,10"  Text="{Binding SelectedContract.Address, Mode=TwoWay}" Height="31"/>
-
-                    <Label Content="Notes:" Foreground="#94A3B8"/>
-                    <TextBox Margin="0,0,0,10" TextWrapping="Wrap" Text="{Binding SelectedContract.Notes, Mode=TwoWay}" Height="30"/>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Contract Status:" Foreground="#94A3B8"/>
-                        <ComboBox Width="150" 
-                          ItemsSource="{Binding ContractsStatusList}"
-                          SelectedItem="{Binding SelectedContract.ContractStatus, Mode=TwoWay}"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Monthly Cost" Foreground="#94A3B8"/>
-                        <Label Content="{Binding SelectedContract.MonthlyCost}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Cost Per Job" Foreground="#94A3B8"/>
-                        <Label Content="{Binding SelectedContract.CostPerJob}"/>
-                    </StackPanel>
-
-
-
-                </StackPanel>
-
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Grid.ColumnSpan="2">
-                    <Button Content="Delete" Command="{Binding DeleteContractCommand}" Width="50" Margin="5" />
-                    <Button Content="Update" Command="{Binding UpdateContractCommand}" Width="50" Margin="5"/>
-                    <Button Content="Renew" Command="{Binding RenewContractCommand}"  Width="50" Margin="5"/>
-                    <Button Content="Add" Command="{Binding AddContractCommand}" IsEnabled="{Binding EnableItemsForNewContract}" Width="50" Margin="5" />
-                </StackPanel>
-            </Grid>
-        </Border>-->
-
+      
         <Border Grid.Row="1" Grid.Column="1" Background="#1A1F26" CornerRadius="10" Padding="20">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.05"/>
@@ -188,9 +94,6 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
-                        <!--<Label Grid.Row="0" Grid.Column="0" Content="Contract ID:" Foreground="#94A3B8" VerticalAlignment="Center"/>
-                        <Label Grid.Row="0" Grid.Column="1" x:Name="txtContractID" Content="{Binding SelectedContract.ContractId, Mode=OneWay}" Foreground="White" FontWeight="Bold"/>-->
 
                         <Label Grid.Row="1" Grid.Column="0" Content="Company/Client:" Foreground="#94A3B8" VerticalAlignment="Center"/>
                         <ComboBox Grid.Row="1" Grid.Column="1" x:Name="comboBoxClients" Margin="0,5"  Style="{StaticResource ModernComboBoxStyle2}"
@@ -227,9 +130,7 @@
 
                         <Label Grid.Row="8" Grid.Column="0" Content="Contract Status:" Foreground="#94A3B8" VerticalAlignment="Center"/>
                         <TextBox Grid.Row="8" Grid.Column="1" TextWrapping="Wrap" Text="{Binding SelectedContract.ContractStatus, Mode=TwoWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" />
-                        <!--<ComboBox Grid.Row="8" Grid.Column="1" Margin="0,5" Height="30"
-                          ItemsSource="{Binding ContractsStatusList}"  Style="{StaticResource ModernComboBoxStyle2}"
-                          SelectedItem="{Binding SelectedContract.ContractStatus, Mode=TwoWay}"/>-->
+
 
                         <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,10">
                             <Label Content="Monthly Cost:" Foreground="#94A3B8"/>
@@ -252,10 +153,10 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Grid.Row="0" Grid.Column="0" Content="Renew" Command="{Binding RenewContractCommand}" IsEnabled="{Binding DisableItemsForNewContract}"  Height="30" Margin="5"/>
-                        <Button Grid.Row="1" Grid.Column="0" Content="Delete" Command="{Binding DeleteContractCommand}" Height="30" Margin="5" />
-                        <Button Grid.Row="0" Grid.Column="1" Content="Update" Command="{Binding UpdateContractCommand}" Height="30" Margin="5"/>
-                        <Button Grid.Row="1" Grid.Column="1" Content="Add" Command="{Binding AddContractCommand}" IsEnabled="{Binding EnableItemsForNewContract}" Height="30" Margin="5" />
+                        <Button Grid.Row="0" Grid.Column="0" Content="Renew"  Style="{StaticResource btnRenew}" Command="{Binding RenewContractCommand}" IsEnabled="{Binding DisableItemsForNewContract}"  Height="30" Margin="5"/>
+                        <Button Grid.Row="1" Grid.Column="0" Content="Delete"  Style="{StaticResource btnDelete}" Command="{Binding DeleteContractCommand}" Height="30" Margin="5" />
+                        <Button Grid.Row="0" Grid.Column="1" Content="Update"  Style="{StaticResource btnUpdate}" Command="{Binding UpdateContractCommand}" Height="30" Margin="5"/>
+                        <Button Grid.Row="1" Grid.Column="1" Content="Add"  Style="{StaticResource btnAdd}" Command="{Binding AddContractCommand}" IsEnabled="{Binding EnableItemsForNewContract}" Height="30" Margin="5" />
                     </Grid>
                 </StackPanel>
             </Grid>

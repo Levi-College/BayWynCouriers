@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!--Generic-->
+
     <Style TargetType="Button">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="2" />
@@ -23,6 +23,224 @@
     </Style>
 
 
+    <Style x:Key="WhiteHeader" TargetType="TextBlock" >
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontSize" Value="24"/>
+    </Style>
+
+    <Style x:Key="PurpleSubHeader" TargetType="TextBlock" >
+        <Setter Property="Foreground" Value="#64748B"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
+    <Style x:Key="ShiftButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="180"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="Margin" Value="10,0"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="BorderThickness" Value="0"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="BtnBorder" 
+                            Background="{TemplateBinding Background}" 
+                            CornerRadius="8" 
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BtnBorder" Property="Opacity" Value="0.85"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="BtnBorder" Property="Opacity" Value="0.7"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="BtnBorder" Property="Background" Value="#D1D5DB"/>
+                            <Setter Property="Foreground" Value="#9CA3AF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RoundedActionButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#0369A1"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Width" Value="110"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="ActionBorder" 
+                            Background="{TemplateBinding Background}" 
+                            CornerRadius="20" 
+                            BorderThickness="0">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ActionBorder" Property="Background" Value="#0EA5E9"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ActionBorder" Property="Background" Value="#075985"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ActionBorder" Property="Background" Value="#94A3B8"/>
+                            <Setter Property="Opacity" Value="0.4"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="JobCardBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Margin" Value="0,0,0,15"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.1"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="JobActionButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="BtnBorder" 
+                            Background="{TemplateBinding Background}" 
+                            CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BtnBorder" Property="Opacity" Value="0.9"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="BtnBorder" Property="Opacity" Value="0.7"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="BtnBorder" Property="Background" Value="#CBD5E1"/>
+                            <Setter Property="Foreground" Value="#94A3B8"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="btnUpdate" TargetType="Button">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="#9D7BFF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0,20,0,10"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#334155"/>
+                <Setter Property="Foreground" Value="#94A3B8"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="btnAdd" TargetType="Button">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="#10B981"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0,20,0,10"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#334155"/>
+                <Setter Property="Foreground" Value="#94A3B8"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="btnRenew" TargetType="Button">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="#F59E0B"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0,20,0,10"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#334155"/>
+                <Setter Property="Foreground" Value="#94A3B8"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="btnDelete" TargetType="Button">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="#EF4444"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Margin" Value="0,20,0,10"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Style.Resources>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="5"/>
+            </Style>
+        </Style.Resources>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#334155"/>
+                <Setter Property="Foreground" Value="#94A3B8"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style x:Key="LoginWindowBorder" TargetType="Border">
         <Setter Property="Background" Value="#0B0E14"/>
@@ -445,5 +663,7 @@ ClickMode="Press"/>
         <Setter Property="FontSize" Value="11"/>
         <Setter Property="Margin" Value="0,0,0,5"/>
     </Style>
+    
+    
 
 </ResourceDictionary>
