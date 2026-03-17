@@ -1,6 +1,5 @@
 ﻿using BayWyn_Couriers.Utilities;
 using System.Windows.Input;
-using BayWyn_Couriers.Views;
 
 namespace BayWyn_Couriers.ViewModels
 {
@@ -18,13 +17,14 @@ namespace BayWyn_Couriers.ViewModels
         /// </summary>
         /// <remarks>Changing this property raises the <see
         /// cref="INotifyPropertyChanged.PropertyChanged"/> event.</remarks>
-        public object CurrentView { 
+        public object CurrentView
+        {
             get { return _currentView; }
             // Update the current view and notify any listeners that the property has changed
             // OnPropertyChanged is a method from the base class ViewModelBase that raises the PropertyChanged event
             // to notify the UI of changes to the property
             set { _currentView = value; OnPropertyChanged(); }
-        } 
+        }
 
         public int WindowWidth
         {
@@ -45,7 +45,7 @@ namespace BayWyn_Couriers.ViewModels
         public ICommand AdminCommand { get; set; } = null!;   // Command for navigating to the admin dashboard page
         public ICommand CourierCommand { get; set; } = null!;   // Command for navigating to the courier dashboard page
         public ICommand LCCommand { get; set; } = null!;   // Command for navigating to the logistics coordinator dashboard page
-        public ICommand ManagerCommand { get; set;} = null!;  
+        public ICommand ManagerCommand { get; set; } = null!;
         public ICommand LogoutCommand { get; set; } = null!;   // Command for logging out and navigating back to the login page
 
         /// <summary>

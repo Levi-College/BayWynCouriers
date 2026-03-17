@@ -1,8 +1,6 @@
-﻿using BayWyn_Couriers.Models;
-using BayWyn_Couriers.Utilities;
+﻿using BayWyn_Couriers.Utilities;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -83,10 +81,11 @@ namespace BayWyn_Couriers.ViewModels
                 else if (Role == "Courier") { _navigationVM.CurrentView = new CourierVM(_navigationVM, UserId); }// Get the user ID and send it to the VM (to display details appropriate for the courier)
                 else if (Role == "Owner" || Role == "Manager") { _navigationVM.CurrentView = new ManagerVM(_navigationVM); }
             }
-            else {
+            else
+            {
                 UserName = "";
                 passwordBox.Password = "";
-                MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error); 
+                MessageBox.Show("Invalid username or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -147,7 +146,7 @@ namespace BayWyn_Couriers.ViewModels
                 transaction.Commit();
             }
             catch (Exception ex) { transaction.Rollback(); MessageBox.Show(ex.Message); }
-            finally {  mySqlCon.Close(); }
+            finally { mySqlCon.Close(); }
         }
 
         private void RefreshContracts()
@@ -160,11 +159,11 @@ namespace BayWyn_Couriers.ViewModels
             try
             {
                 SqlCommand cmdResetJobs = new SqlCommand("Update Contracts SET ContractStatus = 'Expired' WHERE EndDate < CAST(GETDATE() AS DATE) AND ContractStatus = 'Active' ", mySqlCon);
-  
+
                 cmdResetJobs.ExecuteNonQuery();
 
             }
-            catch (Exception ex) {MessageBox.Show(ex.Message); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
             finally { mySqlCon.Close(); }
         }
 

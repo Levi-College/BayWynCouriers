@@ -265,9 +265,9 @@ namespace BayWyn_Couriers.ViewModels
                     // Setting the client id
                     if (_selectedClient != null)
                     {
-                        if (SelectedClient.ClientId !=0) { DisableItemsForNewClient = true; EnableItemsForNewClient = false; }
-                        else {  DisableItemsForNewClient = false; }
- 
+                        if (SelectedClient.ClientId != 0) { DisableItemsForNewClient = true; EnableItemsForNewClient = false; }
+                        else { DisableItemsForNewClient = false; }
+
                         // Only if a job is selected as this property is also used in the clients page
                         if (_selectedJob != null)
                         {
@@ -2010,7 +2010,7 @@ namespace BayWyn_Couriers.ViewModels
 
                 SqlDataReader reader = cmdGetValue.ExecuteReader();
 
-               
+
 
                 if (reader.HasRows)
                 {

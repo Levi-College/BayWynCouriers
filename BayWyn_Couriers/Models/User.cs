@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BayWyn_Couriers.Models
+﻿namespace BayWyn_Couriers.Models
 {
     public class User
     {
         // Setting properties as to ensure they must be provided during object initialization
-        
+
         public int UserId { get; set; }
         public string Name { get; set; }
         public string UserName { get; set; }
@@ -22,4 +16,4 @@ namespace BayWyn_Couriers.Models
     }
 }
 
-    
+
