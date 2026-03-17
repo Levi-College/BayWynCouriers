@@ -1351,6 +1351,13 @@ namespace BayWyn_Couriers.ViewModels
             }
         }
 
+        public bool CheckContractInputFields()
+        {
+            if (SelectedClient == null || SelectedContract.PhoneNumber == "" || SelectedContract.Email == "" || SelectedContract.Address == "" || SelectedContract == null) return false;
+            if (SelectedClient == null || SelectedContract.PhoneNumber == null || SelectedContract.Email == null || SelectedContract.Address == null || SelectedContract == null) return false;
+            else return true;
+        }
+
         public void NewContract(object? obj)
         {
             // Refreshing the texboxes in the edit window
@@ -1375,8 +1382,8 @@ namespace BayWyn_Couriers.ViewModels
 
         public void AddNewContract(object? obj)
         {
-
             // Testing 
+            if (!CheckContractInputFields()) { MessageBox.Show("Please fill all the fields"); return; }
 
             // If client ID in the contracts list (return)
             foreach (var contract in AllContracts)
@@ -1424,6 +1431,8 @@ namespace BayWyn_Couriers.ViewModels
 
         public void UpdateContract(object? obj)
         {
+            if (!CheckContractInputFields()) { MessageBox.Show("Please fill all the fields"); return; }
+
             //Checking if a job is selected
             if (SelectedContract == null)
             {
@@ -1484,6 +1493,8 @@ namespace BayWyn_Couriers.ViewModels
         //Renews the contracts (extends by 1 month. No details can be changed. Only the dates change)
         public void RenewContract(object? obj)
         {
+            if (!CheckContractInputFields()) { MessageBox.Show("Please fill all the fields"); return; }
+
             // Checking if a courier is selected
             if (SelectedContract == null)
             {
