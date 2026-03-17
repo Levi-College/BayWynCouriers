@@ -35,11 +35,12 @@ namespace BayWyn_Couriers.ViewModels
             StartShiftCommand = new RelayCommand(StartShift);
             EndShiftCommand = new RelayCommand(EndShift);
             CompleteDeliveryCommand = new RelayCommand(CompleteDelivery);
-            // Not able to deliver
 
             // Setting up the time slot dictionary (used to get the time from the slot)
             SetupSlotMap();
             StartTimer();
+
+            CourierPendingJobsPage(null);
         }
 
 

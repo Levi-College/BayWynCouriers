@@ -62,7 +62,7 @@
                 <StackPanel Grid.Row="1" Margin="10,20,10,0" >
                     <RadioButton Content="Pending Assignments" Command="{Binding CourierPendingJobsCommand}" IsChecked="True" Style="{StaticResource SidebarNavigationButtonStyle}"/>
                     <RadioButton Content="Assigned Jobs" Command="{Binding CourierAcceptedJobsCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
-                    <RadioButton Content="Completed Jobs" Command="{Binding CourierShiftCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
+                    <RadioButton Content="Shift Page" Command="{Binding CourierShiftCommand}" Style="{StaticResource SidebarNavigationButtonStyle}"/>
                 </StackPanel>
             </Grid>
 
